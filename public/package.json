@@ -38,6 +38,7 @@
     "store": "^2.0.12",
     "underscore": "^1.9.1",
     "vue": "^2.5.17",
+    "vue-smooth-dnd": "^0.2.8",
     "vue2-animate": "^2.1.0",
     "vue2-editor": "^2.6.6"
   },

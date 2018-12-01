@@ -13,7 +13,7 @@
   "thumbExt" : ".jpeg",
   "thumbFormat": "jpeg",
   "folderMetaFilename" : "meta",
-  "folderPreviewFilename" : "meta_preview",
+  "folderPreviewFilename" : "fond_de_carte",
 
   "metaDateFormat" : "YYYYMMDD_HHmmss",
   "textEncoding" : "UTF-8",

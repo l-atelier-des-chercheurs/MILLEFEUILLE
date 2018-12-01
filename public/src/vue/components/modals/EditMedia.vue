@@ -125,67 +125,6 @@
           <textarea v-model="mediadata.caption" :readonly="read_only">
           </textarea>
         </div>
-
-  <!-- Type of media (if guessed wrong from filename, will only be stored in the meta file and used as a reference when displaying that media on the client) -->
-  <!-- Disabled for now: if an image or video is tagged as "text" or marked, a folder becomes unreadable -->
-        <!-- <div class="margin-bottom-small">
-          <label>{{ $t('type') }}</label>
-          <select v-if="!read_only" ref="type" v-model="mediadata.type">
-            <option v-for="mediaType in $root.state.structure.media.type.options" :key="mediaType">
-              {{ mediaType }}
-            </option>
-          </select>
-          <input type="text" v-else :value="mediadata.type" readonly>
-        </div> -->
-
-  <!-- Keywords -->
-        <!-- <div v-if="!read_only || !!mediadata.keywords" class="margin-bottom-small">
-          <label>{{ $t('keywords') }}</label>
-          <textarea v-model="mediadata.keywords" :readonly="read_only">
-          </textarea>
-        </div> -->
-
-  <!-- Keywords -->
-      <div class="margin-bottom-small">
-        <label>{{ $t('keywords') }}<br>
-        *<small>{{ $t('validate_with_enter') }}</small></label>
-        <TagsInput 
-          :keywords="mediadata.keywords"
-          @tagsChanged="newTags => mediadata.keywords = newTags"
-        />
-      </div>
-
-  <!-- Author(s) -->
-        <div v-if="!read_only || !!mediadata.authors" class="margin-bottom-small">
-          <label>{{ $t('author') }}</label>
-
-          <AuthorsInput
-            :currentAuthors="mediadata.authors"
-            @authorsChanged="newAuthors => mediadata.authors = newAuthors"
-          />
-
-          <!-- <textarea v-model="mediadata.authors[0]" :readonly="read_only">
-          </textarea> -->
-        </div>
-
-  <!-- Fav or not -->
-        <div class="margin-bottom-small">
-          <span class="switch switch-xs">
-            <input type="checkbox" class="switch" id="favswitch_editmedia" v-model="mediadata.fav" :readonly="read_only">
-            <label for="favswitch_editmedia">
-              {{ $t('fav') }}
-              <svg version="1.1"
-                class="inline-svg"
-                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
-                x="0px" y="0px" width="78.5px" height="106.4px" viewBox="0 0 78.5 106.4" style="enable-background:new 0 0 78.5 106.4;"
-                xml:space="preserve">
-                <polygon class="st0" points="60.4,29.7 78.5,7.3 78.5,7.3 12.7,7.3 12.7,52 78.5,52 78.5,52 	"/>
-                <polygon class="st0" points="9.6,106.4 0,106.4 0,2 9.6,0 "/>
-              </svg>
-            </label>
-          </span>
-        </div>
-
       </div>
     </template>
 

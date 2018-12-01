@@ -134,9 +134,7 @@ Vue.prototype.$socketio = new Vue({
         //   .success(this.$t('notifications.connection_active'));
       }
 
-      // TODO : reenable auth for folders and publications
-      this.listFolders({ type: 'projects' });
-      this.listFolders({ type: 'authors' });
+      this.listFolders({ type: 'layers' });
       // this.sendAuth();
     },
 
@@ -448,34 +446,11 @@ let vm = new Vue({
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth,
 
-      capture_options: {
-        selected_mode: '',
-        selected_devicesId: {
-          audioinput: '',
-          videoinput: '',
-          audiooutput: ''
-        },
-        ideal_camera_resolution: {
-          name: '',
-          width: '',
-          height: ''
-        },
-
-        distant_flux: {
-          active: false,
-          username: `dodoc-${(
-            Math.random().toString(36) + '00000000000000000'
-          ).slice(2, 3 + 2)}`,
-          callee_username: ''
-        }
-      },
-
       current_slugPubliName: false,
       current_author: false,
 
       publi_zoom: 0.8,
 
-      show_publi_panel: false,
       enable_system_bar: window.state.is_electron && window.state.is_darwin,
 
       project_filter: {
@@ -540,36 +515,6 @@ let vm = new Vue({
         console.log(
           'ROOT EVENT: created / no errors, checking for content to load'
         );
-      }
-
-      // if a slugProjectName or a metaFileName is requested, load the content of that folder rightaway
-      // we are probably in a webbrowser that accesses a subfolder or a media
-      if (this.store.request.slugProjectName) {
-        this.$eventHub.$once('socketio.projects.folders_listed', () => {
-          this.openProject(this.store.request.slugProjectName);
-        });
-        // requesting edit of a media
-        if (this.store.request.metaFileName) {
-          this.$eventHub.$once('socketio.projects.listMedias', () => {
-            this.openMedia({
-              slugProjectName: this.store.request.slugProjectName,
-              metaFileName: this.store.request.metaFileName + '.txt'
-            });
-          });
-        }
-      } else if (
-        this.state.mode === 'export_publication' &&
-        Object.keys(this.store.publications).length > 0
-      ) {
-        const slugPubliName = Object.keys(this.store.publications)[0];
-        this.settings.current_slugPubliName = slugPubliName;
-      } else if (
-        this.state.mode === 'print_publication' &&
-        Object.keys(this.store.publications).length > 0
-      ) {
-        const slugPubliName = Object.keys(this.store.publications)[0];
-        this.settings.current_slugPubliName = slugPubliName;
-        this.settings.show_publi_panel = true;
       }
     }
 
@@ -809,9 +754,6 @@ let vm = new Vue({
         return false;
       }
 
-      this.do_navigation.view = 'ProjectView';
-      this.do_navigation.current_slugProjectName = slugProjectName;
-
       this.$socketio.listMedias({
         type: 'projects',
         slugFolderName: slugProjectName
@@ -952,7 +894,6 @@ let vm = new Vue({
       }
       // END MEDIA FILTER LOGIC
     },
-
     updateLocalLang: function(newLangCode) {
       if (window.state.dev_mode === 'debug') {
         console.log('ROOT EVENT: updateLocalLang');
@@ -966,75 +907,6 @@ let vm = new Vue({
 
       localstore.set('language', newLangCode);
     },
-    setAuthor: function(author) {
-      this.settings.current_author = author;
-    },
-    unsetAuthor: function() {
-      this.settings.current_author = false;
-    },
-    togglePubliPanel: function() {
-      if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: togglePubliPanel`);
-      }
-      if (this.settings.show_publi_panel) {
-        this.closePubliPanel();
-      } else {
-        this.openPubliPanel();
-      }
-    },
-    openPubliPanel: function() {
-      if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: openPubliPanel`);
-      }
-      this.settings.show_publi_panel = true;
-      this.settings.current_slugPubliName = false;
-
-      this.$socketio.listFolders({ type: 'publications' });
-    },
-    closePubliPanel: function() {
-      if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: closePubliPanel`);
-      }
-      this.settings.show_publi_panel = false;
-      this.settings.current_slugPubliName = false;
-    },
-
-    openPublication(slugPubliName) {
-      if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: openPublication: ${slugPubliName}`);
-      }
-      this.$socketio.listFolder({
-        type: 'publications',
-        slugFolderName: slugPubliName
-      });
-      this.$socketio.listMedias({
-        type: 'publications',
-        slugFolderName: slugPubliName
-      });
-      this.settings.current_slugPubliName = slugPubliName;
-    },
-    closePublication() {
-      if (window.state.dev_mode === 'debug') {
-        console.log('ROOT EVENT: closePublication');
-      }
-      this.settings.current_slugPubliName = false;
-    },
-    downloadPubliPDF({ slugPubliName }) {
-      if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: downloadPubliPDF: ${slugPubliName}`);
-      }
-      this.$socketio.downloadPubliPDF({
-        slugPubliName
-      });
-    },
-    downloadVideoPubli({ slugPubliName }) {
-      if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: downloadVideoPubli: ${slugPubliName}`);
-      }
-      this.$socketio.downloadVideoPubli({
-        slugPubliName
-      });
-    },
     listSpecificMedias(mdata) {
       if (window.state.dev_mode === 'debug') {
         console.log(
@@ -1046,95 +918,6 @@ let vm = new Vue({
         );
       }
       this.$socketio.listSpecificMedias(mdata);
-    },
-    setPublicationZoom(val) {
-      if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: setPublicationZoom with val = ${val}`);
-      }
-      this.settings.publi_zoom = val;
-    },
-
-    newTagDetected(e) {
-      if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: newTagDetected with e.detail = ${e.detail}`);
-      }
-
-      // EXPERIMENTAL : SPECIFIC TAGS OPEN MEDIA MODAL
-      // '3121284126' '3121310334' '3121063518' '3121370062'
-
-      // const nfc_custom_tags = [
-      //   {
-      //     id: '3121284126',
-      //     slugProjectName: '110bis-16-novembre',
-      //     metaFileName: 'question-1-49.jpg.txt'
-      //   },
-      //   {
-      //     id: '3121370062',
-      //     slugProjectName: '110bis-16-novembre',
-      //     metaFileName: 'question-2-49-49-49.jpg.txt'
-      //   },
-      //   {
-      //     id: '3121063518',
-      //     slugProjectName: '110bis-16-novembre',
-      //     metaFileName: 'question-3-49-49-49.jpg.txt'
-      //   }
-      // ];
-
-      // const matching_tags = nfc_custom_tags.filter(nfc => nfc.id === e.detail);
-
-      // if (matching_tags.length > 0) {
-      //   this.closeMedia();
-      //   this.media_modal.minimized = false;
-      //   this.media_modal.show_sidebar = false;
-
-      //   const matching_tag = matching_tags[0];
-
-      //   this.$socketio.listMedias({
-      //     type: 'projects',
-      //     slugFolderName: matching_tag.slugProjectName
-      //   });
-
-      //   this.$eventHub.$once('socketio.projects.listMedias', () => {
-      //     this.openMedia({
-      //       slugProjectName: matching_tag.slugProjectName,
-      //       metaFileName: matching_tag.metaFileName
-      //     });
-      //     setTimeout(() => {
-      //       this.openProject(matching_tag.slugProjectName);
-      //       this.settings.capture_options.selected_mode = 'video';
-      //       this.do_navigation.view = 'CaptureView';
-      //     }, 2000);
-
-      //     setTimeout(() => {
-      //       this.media_modal.minimized = true;
-      //     }, 4000);
-      //   });
-
-      //   return;
-      // }
-
-      const author = this.$_.findWhere(this.store.authors, {
-        nfc_tag: e.detail
-      });
-      if (!author) {
-        this.$alertify
-          .closeLogOnClick(true)
-          .delay(4000)
-          .error(this.$t('notifications.no_content_found_with_nfc_tag'));
-        return;
-      }
-
-      this.$alertify
-        .closeLogOnClick(true)
-        .delay(4000)
-        .success(
-          this.$t('notifications.author_found_with_nfc_tag') +
-            ' ' +
-            `<button class="bg-blanc padding-none c-bleumarine font-thin">${
-              author.name
-            }</button>`
-        );
-      this.setAuthor(author);
     },
 
     switchLang() {
@@ -1148,19 +931,6 @@ let vm = new Vue({
       }
     },
 
-    setMediaFilter(filter) {
-      if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: setMediaFilter`);
-      }
-
-      this.settings.media_filter = filter;
-    },
-    unsetMediaFilter() {
-      if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: unsetMediaFilter`);
-      }
-      this.settings.media_filter = {};
-    },
     loadAllProjectsMedias() {
       if (window.state.dev_mode === 'debug') {
         console.log(`ROOT EVENT: loadAllProjectsMedias`);

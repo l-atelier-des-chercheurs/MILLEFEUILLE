@@ -20,112 +20,21 @@
             :read_only="read_only"
           />
         </div>
-
-        <div class="m_actionbar--text">
-          {{ $t('layers') }}
-          <div>
-            <template v-if="Object.keys(projects).length > 0">
-              <template v-if="!show_medias_instead_of_projects">
-                {{ $t('showing') }} 
-                <span :class="{ 'c-rouge' : Object.keys(sortedProjectsSlug).length !== Object.keys(projects).length }">
-                  {{ sortedProjectsSlug.length }} 
-                  {{ $t('projects_of') }} 
-                  {{ Object.keys(projects).length }}
-                </span>
-                <template v-if="$root.allKeywords.length > 0 || $root.allAuthors.length > 0">
-                  — 
-                  <button type="button" class="button-nostyle text-uc button-triangle"
-                    :class="{ 'is--active' : show_filters }"
-                    @click="show_filters = !show_filters"
-                  >{{ $t('filters') }}</button>
-                </template>
-                <TagsAndAuthorFilters
-                  v-if="show_filters"
-                  :allKeywords="projectsKeywords"
-                  :allAuthors="projectsAuthors"
-                  :keywordFilter="$root.settings.project_filter.keyword"
-                  :authorFilter="$root.settings.project_filter.author"
-                  @setKeywordFilter="a => $root.setProjectKeywordFilter(a)"
-                  @setAuthorFilter="a => $root.setProjectAuthorFilter(a)"
-                />
-              </template>
-              <template v-else>
-                {{ $t('showing') }} 
-                <span :class="{ 'c-rouge' : Object.keys(sortedMedias).length !== Object.keys(allMedias).length }">
-                  {{ Object.keys(sortedMedias).length }} 
-                  {{ $t('medias_of') }} 
-                  {{ Object.keys(allMedias).length }}
-                </span>
-                <template v-if="$root.allKeywords.length > 0 || $root.allAuthors.length > 0">
-                  — 
-                  <button type="button" class="button-nostyle text-uc button-triangle"
-                    :class="{ 'is--active' : show_filters }"
-                    @click="show_filters = !show_filters"
-                  >{{ $t('filters') }}</button>
-                </template>
-
-                <TagsAndAuthorFilters
-                  v-if="show_filters"
-                  :allKeywords="mediasKeywords"
-                  :allAuthors="mediasAuthors"
-                  :keywordFilter="$root.settings.media_filter.keyword"
-                  :authorFilter="$root.settings.media_filter.author"
-                  :favFilter="$root.settings.media_filter.fav"
-                  @setKeywordFilter="a => $root.setMediaKeywordFilter(a)"
-                  @setAuthorFilter="a => $root.setMediaAuthorFilter(a)"
-                  @setFavFilter="a => $root.setFavAuthorFilter(a)"
-                />
-
-              </template>
-
-            </template>
-            <template v-else>
-              {{ $t('no_projects_yet') }}
-            </template>          
-          </div>
-        </div>
       </div>
         
-      <template v-if="!show_medias_instead_of_projects">
-        <transition-group
-          class="m_projects--list"
-          name="list-complete"
-        >
-          <Project
-            v-for="(sortedProject, index) in sortedProjectsSlug"
-            :key="sortedProject.slugProjectName"
-            :slugProjectName="sortedProject.slugProjectName"
-            :project="projects[sortedProject.slugProjectName]"
-            :read_only="read_only"
-            :index="index"
-          />
-        </transition-group>
-      </template>
-      <template v-else>
-        <transition-group
-          class="m_projects--list mini_scroll_panel"
-          name="list-complete"
-        >
-          <div v-for="item in groupedMedias" :key="item[0]">
-            <h3 class="font-folder_title margin-sides-small margin-none margin-bottom-small">
-              {{ $root.formatDateToHuman(item[0]) }}
-            </h3>
-
-            <div class="m_mediaShowAll"> 
-              <div v-for="media in item[1]" :key="media.slugMediaName">
-                <MediaCard
-                  :key="media.slugMediaName"
-                  :media="media"
-                  :metaFileName="media.metaFileName"
-                  :slugProjectName="media.slugProjectName"
-                  :preview_size="180"
-                >
-                </MediaCard>
-              </div>
-            </div>
-          </div>
-        </transition-group>
-      </template>
+      <transition-group
+        class="m_projects--list"
+        name="list-complete"
+      >
+        <Project
+          v-for="(sortedProject, index) in sortedProjectsSlug"
+          :key="sortedProject.slugProjectName"
+          :slugProjectName="sortedProject.slugProjectName"
+          :project="projects[sortedProject.slugProjectName]"
+          :read_only="read_only"
+          :index="index"
+        />
+      </transition-group>
     </main>
 
   </div>
@@ -138,15 +47,11 @@ import { setTimeout } from 'timers';
 
 export default {
   props: {
-    presentationMD: Object,
     read_only: Boolean,
     projects: Object
   },
   components: {
-    CreateProject,
-    Project,
-    MediaCard,
-    TagsAndAuthorFilters
+    CreateProject
   },
   data() {
     return {
@@ -174,18 +79,6 @@ export default {
   watch: {
     currentLang: function() {
       this.$root.updateLocalLang(this.currentLang);
-    },
-    show_medias_instead_of_projects: function() {
-      // load all projects’ medias if it isn’t there
-      if(this.show_medias_instead_of_projects) {
-        this.$root.loadAllProjectsMedias();
-      }
-    },
-    show_filters: function() {
-      if(!this.show_filters) {
-        this.$root.settings.project_filter.keyword = false;
-        this.$root.settings.project_filter.author = false;
-      }
     }
   },
   computed: {
@@ -293,14 +186,6 @@ export default {
       }
 
       return sortedSortable;
-    },
-    presentationText: function() {
-      if (this.presentationMD.hasOwnProperty(this.currentLang)) {
-        return this.presentationMD[this.currentLang];
-      } else if (this.presentationMD.hasOwnProperty('content')) {
-        return this.presentationMD['content'];
-      }
-      return this.presentationMD;
     },
     allMedias: function() {
       let allMedias = [];

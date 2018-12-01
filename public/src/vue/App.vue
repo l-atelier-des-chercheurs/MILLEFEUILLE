@@ -1,42 +1,32 @@
 <template>
   <div id="app">
 
-    <template 
-      v-if="$root.state.mode === 'live'"
-    >    
-
-      <SystemBar
-        v-if="$root.settings.enable_system_bar"
-        :withTitleBar="true"
-      >
-      </SystemBar>
-
-      </TopBar>
-
-
-
-      <EditMedia
-        v-if="$root.media_modal.open"
-        :slugMediaName="$root.media_modal.current_metaFileName"
-        :slugProjectName="$root.media_modal.current_slugProjectName"
-        :media="$root.store.projects[$root.media_modal.current_slugProjectName].medias[$root.media_modal.current_metaFileName]"
-        @close="$root.closeMedia()"
-        :read_only="!$root.state.connected"
-      >
-      </EditMedia>      
-
-    </template>  
+    <Sidebar />
+    <Calques />
+    
+    <EditMedia
+      v-if="$root.media_modal.open"
+      :slugMediaName="$root.media_modal.current_metaFileName"
+      :slugProjectName="$root.media_modal.current_slugProjectName"
+      :media="$root.store.projects[$root.media_modal.current_slugProjectName].medias[$root.media_modal.current_metaFileName]"
+      @close="$root.closeMedia()"
+      :read_only="!$root.state.connected"
+    />
 
     <portal-target name="modal_container" />
-
   </div>
 </template>
 
 <script>
+import Calques from './components/Calques.vue'
+import Sidebar from './components/Sidebar.vue'
+import EditMedia from './components/modals/EditMedia.vue'
 
 export default {
   name: 'app',
   components: {
+    Calques,
+    Sidebar,
     EditMedia
   },
   props: {

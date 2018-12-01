@@ -41,7 +41,7 @@ module.exports = function(app, io, m) {
       pageData.url = req.path;
       pageData.protocol = req.protocol;
       pageData.structure = settings.structure;
-      pageData.authorsFolder = settings.structure.authors.path;
+      // pageData.authorsFolder = settings.structure.authors.path;
       pageData.isDebug = dev.isDebug();
 
       pageData.mode = 'live';

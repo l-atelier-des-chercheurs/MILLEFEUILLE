@@ -12,11 +12,9 @@ html
     - if(mode === 'export_publication')
       style.
         @import "./_fonts/fira/fira.css";
-        @import "./_fonts/nanook/nanook.css";
     - else
       style.
         @import "/fonts/fira/fira.css";
-        @import "/fonts/nanook/nanook.css";
 
     script.
       /***********
@@ -31,14 +29,7 @@ html
     script.
       /* store contains content data */
       window.store = {
-        request: {
-          slugProjectName: "!{slugProjectName}",
-          metaFileName: "!{metaFileName}"
-        },
-        projects: !{ !!folderAndMediaData ? JSON.stringify(folderAndMediaData) : "{}" },
-        authors: {},
-        publications: !{ !!publiAndMediaData ? JSON.stringify(publiAndMediaData) : "{}" },
-        stopmotions: {}
+        layers:  "{}"
       };
 
       /* state contains settings data, time and client specific data */
