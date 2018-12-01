@@ -1,19 +1,19 @@
 {
-  "name": "dodoc",
-  "productName": "do•doc",
+  "name": "millefeuille",
+  "productName": "millefeuille",
   "version": "7.7.0-dev",
-  "description": "do•doc is a documentation tool for creativity.",
+  "description": "millefeuille is a collaborative tool for cartography.",
   "author": "L’Atelier des Chercheurs <https://latelier-des-chercheurs.fr/>",
-  "homepage": "https://github.com/l-atelier-des-chercheurs/dodoc#readme",
+  "homepage": "https://github.com/l-atelier-des-chercheurs/millefeuille#readme",
   "license": "CC-BY-NC-SA-4.0",
   "main": "main.js",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/l-atelier-des-chercheurs/dodoc.git"
+    "url": "https://github.com/l-atelier-des-chercheurs/millefeuille.git"
   },
   "bugs": {
-    "url": "https://github.com/l-atelier-des-chercheurs/dodoc/issues"
+    "url": "https://github.com/l-atelier-des-chercheurs/millefeuille/issues"
   },
   "scripts": {
     "start": "electron .",
@@ -31,8 +31,8 @@
   },
   "build": {
     "electronVersion": "2.0.5",
-    "appId": "dodoc2",
-    "productName": "do•doc",
+    "appId": "millefeuille",
+    "productName": "millefeuille",
     "asar": false,
     "mac": {
       "category": "public.app-category.education"
@@ -74,7 +74,7 @@
     "write-file-atomic": "^2.3.0"
   },
   "devDependencies": {
-    "electron": "2.0.5",
+    "electron": "^2.0.5",
     "electron-builder": "^20.35.0",
     "electron-packager": "^12.2.0",
     "electron-prebuilt": "^1.4.13",

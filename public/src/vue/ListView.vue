@@ -22,19 +22,7 @@
         </div>
 
         <div class="m_actionbar--text">
-          <div class="switch switch-xs switch_twoway">
-            <label for="switch-xs">
-              <span class=""> 
-                {{ $t('projects') }}
-              </span>  
-            </label>
-            <input type="checkbox" id="media_switch" v-model="show_medias_instead_of_projects">
-            <label for="media_switch">
-              <span class=""> 
-                {{ $t('medias') }}
-              </span>  
-            </label>
-          </div>
+          {{ $t('layers') }}
           <div>
             <template v-if="Object.keys(projects).length > 0">
               <template v-if="!show_medias_instead_of_projects">
@@ -143,11 +131,9 @@
   </div>
 </template>
 <script>
-import BottomFooter from './components/BottomFooter.vue';
 import Project from './components/Project.vue';
 import CreateProject from './components/modals/CreateProject.vue';
 import MediaCard from './components/subcomponents/MediaCard.vue';
-import TagsAndAuthorFilters from './components/subcomponents/TagsAndAuthorFilters.vue';
 import { setTimeout } from 'timers';
 
 export default {
@@ -159,7 +145,6 @@ export default {
   components: {
     CreateProject,
     Project,
-    BottomFooter,
     MediaCard,
     TagsAndAuthorFilters
   },

@@ -86,7 +86,7 @@ function startApp() {
     global.appRoot = path.resolve(__dirname);
     global.tempStorage = getPath.getCacheFolder();
 
-    dev.log(`——— Starting dodoc2 app version ${global.appInfos.version}`);
+    dev.log(`——— Starting millefeuille app version ${global.appInfos.version}`);
 
     cleanCacheFolder().then(
       () => {
@@ -261,7 +261,7 @@ function setApplicationMenu() {
       label: 'Electron',
       submenu: [
         {
-          label: 'About do•doc',
+          label: 'About millefeuille',
           selector: 'orderFrontStandardAboutPanel:'
         },
         {

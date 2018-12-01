@@ -1,6 +1,6 @@
-# dodoc2
+# millefeuille
 
-> do•doc is a documentation tool for creativity.
+> millefeuille is a collaborative tool for cartography.
 
 ## Build Setup
 
