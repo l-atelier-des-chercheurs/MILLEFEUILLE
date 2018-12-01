@@ -5,6 +5,8 @@
   "userDirPath": "documents",
   "userDirname": "dodoc2",
 
+  "process": "electron",
+
   "contentDirname" : "user",
   "cacheDirname" : "cache",
   "metaFileext" : ".txt",
@@ -28,6 +30,13 @@
   "structure" : {
     "projects": {
       "path": "",
+      "preview": {
+        "width": 1200,
+        "height": 1200,
+        "thumbs": {
+          "resolutions": [50, 320, 640]          
+        }
+      },
       "fields": {
         "name": {
           "type": "string"
@@ -46,12 +55,12 @@
           "read_only": true        
         },
         "authors": {
-          "type": "string"
+          "type": "array"
         },
+        "keywords": {
+          "type": "array"
+        },      
         "description": {
-          "type": "string"
-        },
-        "preview": {
           "type": "string"
         }
       },
@@ -94,11 +103,11 @@
             "type": "number"
           },
           "authors": {
-            "type": "string"
+            "type": "array"
           },
           "keywords": {
-            "type": "string"
-          },
+            "type": "array"
+          },      
           "caption": {
             "type": "string"
           }  
@@ -107,6 +116,13 @@
     },
     "authors": {
       "path": "_authors",
+      "preview": {
+        "width": 1200,
+        "height": 1200,
+        "thumbs": {
+          "resolutions": [180, 640]          
+        }
+      },
       "fields": {
         "name": {
           "type": "string"
@@ -118,9 +134,6 @@
         "description": {
           "type": "string"
         },
-        "preview": {
-          "type": "string"
-        },
         "nfc_tag": {
           "type": "string"
         }
@@ -128,6 +141,13 @@
     },
     "publications": {
       "path": "_publications",
+      "preview": {
+        "width": 1200,
+        "height": 1200,
+        "thumbs": {
+          "resolutions": [180, 640]          
+        }
+      },
       "fields": {
         "name": {
           "type": "string"
@@ -137,7 +157,7 @@
           "read_only": true        
         },
         "authors": {
-          "type": "string"
+          "type": "array"
         },
         "date_created": {
           "type": "date",
@@ -151,12 +171,9 @@
         "description": {
           "type": "string"
         },
-        "preview": {
-          "type": "string"
-        },
         "template": {
           "type": "string",
-          "options": ["page_by_page"],
+          "options": ["page_by_page", "video_assemblage"],
           "default": "page_by_page"          
         },
         "style": {
@@ -193,6 +210,9 @@
         },
         "pages": {
           "type": "array"
+        },
+        "medias_slugs": {
+          "type": "array"
         }
       },
       "medias": {
@@ -208,7 +228,7 @@
             "default": "current"
           },
           "authors": {
-            "type": "string"
+            "type": "array"
           },
           "page_id": {
             "type": "string"
@@ -241,7 +261,7 @@
           "default": "current"
         },
         "authors": {
-          "type": "string"
+          "type": "array"
         }
       },
       "medias": {
@@ -261,6 +281,9 @@
             "type": "string",
             "options": ["image"],
             "default": "other"
+          },
+          "authors": {
+            "type": "array"
           }
         }
       } 
