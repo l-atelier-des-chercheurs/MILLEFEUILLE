@@ -2,28 +2,20 @@
   <div class="calques"
     :class="{ 'is_persp' : $root.is_persp }"
   >
-    <div class="box" 
-      v-for="(layer, index) in layers" :key="layer.filename"
-      v-if="layer.active"
-      :style="boxStyle(index)"
-    >
-      <div class="face">
-        <img 
-          :src="`${baseUrl}layers/${layer.filename}`"
-          :style="imgStyle(layer)"
-        >
-      </div>
-      <!-- <div class="shadow"></div> -->
-    </div>
+    <Calque 
+      v-for="layer in layers_in_order" 
+      :key="layer.slugFolderName"
+      :layer="layer"
+    />
   </div>
 </template>
 <script>
-
+import Calque from './Calque.vue'
 
 export default {
-  props: {
-  },
+  props: ['layers'],
   components: {
+    Calque
   },
   data() {
     return {
@@ -40,21 +32,11 @@ export default {
   watch: {
   },
   computed: {
-    layers() {
-      return this.$root.layers.slice().reverse().filter(k => k.active);      
-    }
+    layers_in_order() {
+      return this.layers;      
+    },
   },
   methods: {
-    boxStyle(index) {
-      if(this.$root.is_persp) {
-        return { transform: `translate3d( 0, -${0 + 40 * index}px, 0) scale(0.8)` };
-      }
-
-      return '';
-    },
-    imgStyle(layer) {
-      return { opacity: layer.opacity }
-    }
   }
 }
 </script>

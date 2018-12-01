@@ -46,14 +46,6 @@
           {{ $t('remove') }}
         </button>
 
-        <template v-if="showQRModal">
-          <hr>
-          <CreateQRCode
-            :slugProjectName="slugProjectName"
-            :media_filename="media.media_filename"
-          />
-        </template>
-
         <button type="button" class="buttonLink c-noir" @click="showQRModal = !showQRModal">
           <svg version="1.1" class="inline-svg"
             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
@@ -148,10 +140,7 @@
 <script>
 import Modal from './BaseModal.vue';
 import MediaContent from '../subcomponents/MediaContent.vue';
-import DateTime from '../subcomponents/DateTime.vue';
-import CreateQRCode from './qr/CreateQRCode.vue';
 import { setTimeout } from 'timers';
-import AuthorsInput from '../subcomponents/AuthorsInput.vue';
 import TagsInput from '../subcomponents/TagsInput.vue';
 
 export default {
@@ -166,11 +155,8 @@ export default {
   },
   components: {
     Modal,
-    DateTime,
     MediaContent,
-    CreateQRCode,
-    TagsInput,
-    AuthorsInput
+    TagsInput
   },
   data() {
     return {

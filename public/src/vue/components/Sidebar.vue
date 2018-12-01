@@ -4,13 +4,13 @@
     <button type="button" @click="$root.setPersp()" v-html="'Perspective'"/>
     <h2>Liste des calques</h2>
     <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
-      <Draggable v-for="layer in $root.layers" :key="layer.filename">
+      <Draggable v-for="layer in layers" :key="layer.filename">
         <div class="draggable-item">
           <span class="column-drag-handle" :style="`background-image: url(${baseUrl}layers/${layer.filename})`">
             &#x2630;
           </span>
           <input type="checkbox" v-model="layer.active" />
-          <span class="item-name" v-html="layer.filename" />
+          <span class="item-name" v-html="layer.name" />
           <input type="range" v-if="layer.active" v-model="layer.opacity" min=0 max=1 step=0.01 />
         </div>
       </Draggable>
@@ -42,6 +42,7 @@ const applyDrag = (arr, dragResult) => {
 
 export default {
   name: 'SimpleScroller',
+  props: ['layers'],
 
   components: {
     Container, 
@@ -56,7 +57,7 @@ export default {
 
   methods: {
     onDrop (dropResult) {
-      this.$root.layers = applyDrag(this.$root.layers, dropResult)
+      // this.$root.layers = applyDrag(this.$root.layers, dropResult)
     }
   }
 }

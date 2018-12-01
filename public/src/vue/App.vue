@@ -1,8 +1,12 @@
 <template>
   <div id="app">
 
-    <Sidebar />
-    <Calques />
+    <Sidebar 
+      :layers="$root.store.layers"
+    />
+    <Calques
+      :layers="$root.store.layers"
+    />
     
     <EditMedia
       v-if="$root.media_modal.open"

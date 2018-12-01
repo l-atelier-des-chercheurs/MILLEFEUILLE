@@ -425,11 +425,6 @@ let vm = new Vue({
     justCreatedFolderID: false,
     justCreatedMediaID: false,
 
-    do_navigation: {
-      view: 'ListView',
-      current_slugProjectName: false,
-      current_metaFileName: false
-    },
     media_modal: {
       open: false,
       minimized: false,
@@ -438,30 +433,17 @@ let vm = new Vue({
       current_metaFileName: false
     },
 
+    config: {
+      layer_order: []
+    },
+
     // persistant, par device (dans le localstorage)
     settings: {
       has_modal_opened: false,
       capture_mode_cant_be_changed: false,
 
       windowHeight: window.innerHeight,
-      windowWidth: window.innerWidth,
-
-      current_slugPubliName: false,
-      current_author: false,
-
-      publi_zoom: 0.8,
-
-      enable_system_bar: window.state.is_electron && window.state.is_darwin,
-
-      project_filter: {
-        keyword: false,
-        author: false
-      },
-      media_filter: {
-        keyword: false,
-        author: false,
-        fav: false
-      }
+      windowWidth: window.innerWidth
     },
     lang: {
       available: lang_settings.available,
@@ -602,74 +584,9 @@ let vm = new Vue({
         return this.store.projects[this.do_navigation.current_slugProjectName];
       }
       return {};
-    },
-    allAuthors() {
-      let allAuthors = [];
-      for (let slugAuthorName in this.store.authors) {
-        let authorName = this.store.authors[slugAuthorName];
-        allAuthors.push(authorName);
-      }
-      allAuthors = allAuthors.filter(function(item, pos) {
-        return allAuthors.indexOf(item) == pos;
-      });
-      return allAuthors;
-    },
-    allKeywords() {
-      let allKeywords = [];
-      for (let slugProjectName in this.store.projects) {
-        let projectKeywords = this.store.projects[slugProjectName].keywords;
-        if (!!projectKeywords) {
-          projectKeywords.map(val => {
-            allKeywords.push(val.title);
-          });
-        }
-      }
-      allKeywords = allKeywords.filter(function(item, pos) {
-        return allKeywords.indexOf(item) == pos;
-      });
-
-      return allKeywords.map(kw => {
-        return {
-          text: kw,
-          classes: 'tagcolorid_' + (parseInt(kw, 36) % 2)
-        };
-      });
     }
   },
   methods: {
-    getAllKeywordsFrom(base) {
-      let uniqueKeywords = [];
-      Object.values(base).map(meta => {
-        if (!meta['keywords']) return;
-        meta.keywords.map(k => {
-          if (uniqueKeywords.indexOf(k.title) == -1)
-            uniqueKeywords.push(k.title);
-        });
-      });
-      return uniqueKeywords.map(kw => {
-        return {
-          text: kw,
-          classes: 'tagcolorid_' + (parseInt(kw, 36) % 2)
-        };
-      });
-    },
-    getAllAuthorsFrom(base) {
-      let uniqueAuthors = [];
-      Object.values(base).map(meta => {
-        if (!meta['authors']) return;
-        if (typeof meta.authors === 'string') {
-          meta.authors = [{ name: meta.authors }];
-        }
-        meta.authors.map(k => {
-          if (uniqueAuthors.indexOf(k.name) == -1) uniqueAuthors.push(k.name);
-        });
-      });
-      return uniqueAuthors.map(kw => {
-        return {
-          name: kw
-        };
-      });
-    },
     createFolder: function(fdata) {
       if (window.state.dev_mode === 'debug') {
         console.log(

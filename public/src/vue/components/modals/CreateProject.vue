@@ -59,8 +59,7 @@ export default {
   components: {
     Modal,
     ImageSelect,
-    TagsInput,
-    AuthorsInput
+    TagsInput
   },
   data() {
     return {

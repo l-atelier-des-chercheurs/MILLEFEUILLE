@@ -51,10 +51,6 @@
 <!-- Author(s) -->
       <div class="margin-bottom-small">
         <label>{{ $t('author') }}</label><br>
-        <AuthorsInput
-          :currentAuthors="projectdata.authors"
-          @authorsChanged="newAuthors => projectdata.authors = newAuthors"
-        />
       </div>
 
     </template>
@@ -70,7 +66,6 @@ import Modal from './BaseModal.vue';
 import slug from 'slugg';
 import ImageSelect from '../subcomponents/ImageSelect.vue';
 import TagsInput from '../subcomponents/TagsInput.vue';
-import AuthorsInput from '../subcomponents/AuthorsInput.vue';
 
 export default {
   props: {
@@ -81,8 +76,7 @@ export default {
   components: {
     Modal,
     ImageSelect,
-    TagsInput,
-    AuthorsInput
+    TagsInput
   },
   data() {
     return {
