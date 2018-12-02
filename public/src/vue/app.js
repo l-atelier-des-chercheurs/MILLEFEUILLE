@@ -434,7 +434,13 @@ let vm = new Vue({
     },
 
     config: {
-      layer_order: []
+      // exemple de contenu :
+      /* layers: [
+        { slugLayerName: plop, ordre: 0, opacite: .2 },
+        { slugLayerName: plop2, ordre: 0, opacite: .2 }
+      ]
+      */
+      layers: []
     },
 
     // persistant, par device (dans le localstorage)
@@ -661,13 +667,12 @@ let vm = new Vue({
       this.$socketio.editMedia(mdata);
     },
 
-    openProject: function(slugProjectName) {
+    openLayer: function(slugLayerName) {
       if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: openProject: ${slugProjectName}`);
+        console.log(`ROOT EVENT: openLayer: ${slugLayerName}`);
       }
-      if (!this.store.projects.hasOwnProperty(slugProjectName)) {
-        console.log('Missing folder key on the page, aborting.');
-        this.closeProject();
+      if (!this.store.layers.hasOwnProperty(slugLayerName)) {
+        console.log('Missing layer key on the page, aborting.');
         return false;
       }
 
@@ -676,11 +681,7 @@ let vm = new Vue({
         slugFolderName: slugProjectName
       });
 
-      history.pushState(
-        { slugProjectName },
-        this.store.projects[slugProjectName].name,
-        '/' + slugProjectName
-      );
+      this.$root.config;
     },
     closeProject: function() {
       if (window.state.dev_mode === 'debug') {
@@ -689,8 +690,6 @@ let vm = new Vue({
 
       this.do_navigation.view = 'ListView';
       this.do_navigation.current_slugProjectName = '';
-
-      history.pushState({ slugProjectName: '' }, '', '/');
     },
     openMedia({ slugProjectName, metaFileName }) {
       if (window.state.dev_mode === 'debug') {

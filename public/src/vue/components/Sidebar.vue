@@ -2,24 +2,41 @@
   <div class="sidebar" style="">
     <h1>cartographie sensible</h1>
     <button type="button" @click="$root.setPersp()" v-html="'Perspective'"/>
+
+    <button
+      class="barButton barButton_createLayer"
+      @click="showCreateLayerModal = true"
+      :disabled="!$root.state.connected"
+      :key="'createButton'"
+    >
+      <span>
+        {{ $t('create_a_layer') }}
+      </span>
+    </button>
+
+
     <h2>Liste des calques</h2>
     <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
-      <Draggable v-for="layer in layers" :key="layer.filename">
-        <div class="draggable-item">
-          <span class="column-drag-handle" :style="`background-image: url(${baseUrl}layers/${layer.filename})`">
-            &#x2630;
-          </span>
-          <input type="checkbox" v-model="layer.active" />
-          <span class="item-name" v-html="layer.name" />
-          <input type="range" v-if="layer.active" v-model="layer.opacity" min=0 max=1 step=0.01 />
-        </div>
+      <Draggable v-for="layer in layers" :key="layer.slugFolderName">
+        <SidebarLayer 
+          :layer="layer"
+        />
       </Draggable>
     </Container>
+
+    <CreateLayer
+      v-if="showCreateLayerModal"
+      @close="showCreateLayerModal = false"
+      :read_only="!$root.state.connected"
+    />
+
   </div>
 </template>
 
 <script>
 import { Container, Draggable } from 'vue-smooth-dnd'
+import CreateLayer from './modals/CreateLayer.vue';
+import SidebarLayer from './SidebarLayer.vue';
 
 const applyDrag = (arr, dragResult) => {
   const { removedIndex, addedIndex, payload } = dragResult
@@ -39,19 +56,21 @@ const applyDrag = (arr, dragResult) => {
   return result
 }
 
-
 export default {
   name: 'SimpleScroller',
   props: ['layers'],
 
   components: {
     Container, 
-    Draggable
+    Draggable,
+    CreateLayer,
+    SidebarLayer
   },
 
   data () {
     return {
       baseUrl: process.env.BASE_URL,
+      showCreateLayerModal: false,
     }
   },
 

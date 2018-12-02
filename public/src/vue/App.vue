@@ -7,7 +7,7 @@
     <Calques
       :layers="$root.store.layers"
     />
-    
+
     <EditMedia
       v-if="$root.media_modal.open"
       :slugMediaName="$root.media_modal.current_metaFileName"
