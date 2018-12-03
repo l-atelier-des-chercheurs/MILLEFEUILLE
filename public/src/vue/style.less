@@ -27,6 +27,7 @@
 
 html, body {
   height: 100%;
+  overflow: hidden;
 }
 
 html {
@@ -86,7 +87,7 @@ html,body {
   margin: 0;
   height: 100%;
 
-  @bg-color: #fff;
+  @bg-color: transparent;
   @dot-color: @c-gris_clair;
   @dot-size: 1px;
   @dot-spacing: 60px;
@@ -208,71 +209,6 @@ html,body {
     }
   }
 }
-
-
-// .m_sidebar {
-//   position: relative;
-//   flex: 1 0 320px;
-//   max-width: 320px;
-//   min-width: 320px;
-//   // padding: 1em;
-
-//   overflow: hidden;
-//   height: 100%;
-//   text-align: left;
-
-//   @bg-color: #fff;
-//   @dot-color: @c-gris;
-//   @dot-size: 1px;
-//   @dot-spacing: 40px;
-
-//   background: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, @bg-color @dot-size+1px);
-//   background-repeat: repeat;
-//   background-size: @dot-spacing @dot-spacing;
-//   background-position: -@dot-spacing/2 -@dot-spacing/2;
-
-//   display: flex;
-//   flex-flow: column nowrap;
-//   justify-content: space-between;
-
-//   .m_sidebar--header {
-//     min-height: 60px;
-//     flex: 0 0 auto;
-
-//     background-color: #f9f9f9;
-//   }
-//   .m_sidebar--layerlist {
-//     flex: 1 1 auto;
-//     overflow: auto;
-//     .custom_scrollbar(8px, 5px, 6px);
-//     background-color: #fff;
-//   }
-//   .m_sidebar--footer {
-//     flex: 0 0 auto;
-//     background-color: #eee;
-//   }
-// }
-
-// .draggable-item {
-//   height: auto;
-//   text-align: left;
-//   width: 100%;
-//   display: block;
-//   background-color: #fff;
-//   outline: 0;
-
-//   border: 1px solid #ccc;
-//   border-radius: 4px;
-//   overflow: hidden;
-
-//   margin-bottom: 4px;
-//   margin-top: 2px;
-//   cursor: default;
-//   -webkit-user-select: none;
-//       -moz-user-select: none;
-//       -ms-user-select: none;
-//           user-select: none;
-// }
 
 .column-drag-handle {
   cursor: move;
@@ -427,16 +363,6 @@ a {
   overflow: hidden;
   // border-right: 1px solid #000;
 
-  @bg-color: #fff;
-  @dot-color: @c-gris_clair;
-  @dot-size: 1px;
-  @dot-spacing: 30px;
-
-  background: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, @bg-color @dot-size+1px);
-  background-repeat: repeat;
-  background-size: @dot-spacing @dot-spacing;
-  background-position: 0 + @t-background_offset -@dot-spacing/2 + @t-background_offset;
-
   display: flex;
   flex-flow: column nowrap;
 
@@ -455,7 +381,7 @@ a {
     margin: 0;
     width: 100%;
     border: none;
-    border-top: 2px solid @dot-color;
+    border-top: 2px solid currentColor;
   }
 }
 
@@ -475,15 +401,6 @@ a {
     // margin-left:-1px;
     // border-left: 1px solid #000;
     // border-right: 1px solid #000;
-    @bg-color: transparent;
-    @dot-color: @c-gris_clair;
-    @dot-size: 1px;
-    @dot-spacing: 30px;
-  
-    background: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, @bg-color @dot-size+1px);
-    background-repeat: repeat;
-    background-size: @dot-spacing @dot-spacing;
-    background-position: @dot-spacing/2 + @t-background_offset -@dot-spacing/2 + @t-background_offset;
 
     // background-attachment: local;
   
@@ -520,7 +437,7 @@ a {
 
 .panel_pattern {
   > * {
-    border: 1px solid black;
+    // border: 1px solid black;
   }
 }
 
@@ -537,8 +454,8 @@ a {
 .m_controller--bottomBar {
   width: 100%;
   text-align: center;
-  .bg-blanc;
-  box-shadow: 0px 2px 7px 0px #c3c3c3;
+  // .bg-blanc;
+  // box-shadow: 0px 2px 7px 0px #c3c3c3;
 
   > * {
     flex: 0 0 auto;
@@ -576,7 +493,7 @@ a {
   margin: 0 auto;
   // background-color: #f9f9f9;
   text-align: center;
-  overflow:hidden;
+  overflow: visible;
 
   &::after {
     content:'';
@@ -793,6 +710,7 @@ a {
   display: block;
   margin-left: -1px;
   margin-top: -1px;
+  overflow: visible;
 
   // overflow: auto;
 
@@ -829,6 +747,7 @@ a {
     margin: 0;
     border: none;
     background-color: transparent;
+    overflow: visible;
 
     .grid {
       display: none;
@@ -845,7 +764,7 @@ a {
     bottom:1.5rem;
     right: 1.5rem;
     background-color: #fff;
-    border: 1px solid black;
+    box-shadow: 0px 2px 7px 0px #c3c3c3;
 
     button {
       min-width: 1rem;

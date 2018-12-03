@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-    <div class="card--header card--header_layer padding-small">
+    <div class="card--header card--header_layer">
       <button type="button" 
         class="bg-transparent"
         @click="$root.closeLayer()"
@@ -22,7 +22,6 @@
 
     <button
       class="barButton barButton_createLayer"
-      v-if="!showEditLayerModal"
       @click="showEditLayerModal = true"
       :disabled="!$root.state.connected"
     >

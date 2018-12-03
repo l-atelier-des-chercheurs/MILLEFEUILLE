@@ -21,11 +21,11 @@
     <div class="m_controller--content">
       <transition name="slideToLeft">
         <div class="panel panel_image" v-show="$root.settings.sidebar.view === 'Layers'">
-          <label class="margin-vert-verysmall margin-sides-medium">Liste des calques</label>
+          <label class="margin-vert-verysmall margin-sides-medium">Liste des couches</label>
 
           <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
             <Draggable v-for="layer in layers" :key="layer.slugFolderName">
-              <div class="card draggable-item margin-verysmall margin-sides-medium padding-verysmall">
+              <div class="card draggable-item margin-vert-verysmall margin-sides-medium padding-verysmall">
                 <div class="card--header card--header_layer"
                   @click="$root.openLayer(layer.slugFolderName)"
                 >
@@ -59,9 +59,10 @@
 
       <transition name="slideFromLeft">
         <div
-          class="panel panel_pattern padding-small"
+          class="panel panel_pattern padding-sides-medium"
           v-if="$root.settings.sidebar.view === 'Layer'"
         >
+          <label class="margin-vert-verysmall">Couche</label>
           <LayerPanel
             :layer="current_layer"
           />
