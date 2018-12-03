@@ -657,6 +657,16 @@ let vm = new Vue({
       this.settings.sidebar.view = 'Layers';
       this.settings.sidebar.layer_viewed = false;
     },
+    previewURL(layer, width = 1600) {
+      if (!layer.hasOwnProperty('preview') || layer.preview === '') {
+        return false;
+      }
+      const thumb = layer.preview.filter(p => p.size === width);
+      if (thumb.length > 0) {
+        return `${thumb[0].path}?${new Date().getTime()}`;
+      }
+      return false;
+    },
     openMedia({ slugLayerName, metaFileName }) {
       if (window.state.dev_mode === 'debug') {
         console.log(

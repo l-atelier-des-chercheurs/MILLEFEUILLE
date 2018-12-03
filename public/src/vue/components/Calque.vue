@@ -1,5 +1,5 @@
 <template>
-  <image :xlink:href="previewURL" :x="0" :y="0" :width="width" :height="height" />
+  <image :xlink:href="$root.previewURL(layer, 1600)" :x="0" :y="0" :width="width" :height="height" />
   <!-- <div class="box" :style="layerStyles">
     <div class="face" v-if="previewURL"
       :style="boxStyle(0)"
@@ -33,14 +33,6 @@ export default {
   watch: {
   },
   computed: {
-    previewURL() {
-      if(!this.layer.hasOwnProperty('preview') || this.layer.preview === '') {
-        return false;
-      }
-      const thumb = this.layer.preview.filter(p => p.size === 800);
-      if(thumb.length > 0) { return `${thumb[0].path}?${(new Date()).getTime()}` }
-      return false;
-    },
     layerStyles() {
       return `transform: translate3d(${this.index * 10}px, ${this.index * 10}px, 0px)`;   
     }

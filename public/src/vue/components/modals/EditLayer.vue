@@ -23,7 +23,7 @@
       <div class="margin-bottom-small">
         <label>{{ $t('preview') }}</label><br>
         <ImageSelect 
-          :previewURL="previewURL"
+          :previewURL="$root.previewURL(layer,800)"
           @newPreview="value => { preview = value }"
         >
         </ImageSelect>
@@ -39,19 +39,19 @@
  -->
 
 <!-- Keywords -->
-      <div class="margin-bottom-small">
+      <!-- <div class="margin-bottom-small">
         <label>{{ $t('keywords') }}<br>
         *<small>{{ $t('validate_with_enter') }}</small></label>
         <TagsInput 
           :keywords="layerdata.keywords"
           @tagsChanged="newTags => layerdata.keywords = newTags"
         />
-      </div>
+      </div> -->
 
 <!-- Author(s) -->
-      <div class="margin-bottom-small">
+      <!-- <div class="margin-bottom-small">
         <label>{{ $t('author') }}</label><br>
-      </div>
+      </div> -->
 
     </template>
 
@@ -99,14 +99,6 @@ export default {
   mounted() {
   },
   computed: {
-    previewURL() {
-      if(!this.layer.hasOwnProperty('preview') || this.layer.preview === '') {
-        return false;
-      }
-      const thumb = this.layer.preview.filter(p => p.size === 640);
-      if(thumb.length > 0) { return `${thumb[0].path}?${(new Date()).getTime()}` }
-      return false;
-    }
   },
   methods: {
     editThisLayer: function(event) {

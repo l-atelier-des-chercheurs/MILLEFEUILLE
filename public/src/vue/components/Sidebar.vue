@@ -32,7 +32,7 @@
                   <span class="column-drag-handle" @mouseup.stop="">
                     &#x2630;
                   </span>
-                  <img :src="previewURL(layer)">
+                  <img :src="$root.previewURL(layer,50)">
                   <span class="titre">
                     {{ layer.name }}
                   </span>
@@ -58,41 +58,13 @@
       </transition>
 
       <transition name="slideFromLeft">
-        <div class="panel panel_pattern" v-show="$root.settings.sidebar.view === 'Layer'">
-          <div class="card">
-            <div class="card--header card--header_layer padding-small bg-noir c-blanc">
-              <button type="button" 
-                class="bg-transparent"
-                @click="$root.closeLayer()"
-              >
-                ◄
-              </button>
-              <span class="titre">
-                {{ current_layer.name }}
-              </span>
-            </div>
-          </div>
-
-          <Card
-            v-for="media in current_layer.medias"
-            :key="media.metaFileName"
-            class="margin-small"
-          >
-            <div slot="header">
-              {{ media.media_filename }}
-            </div>
-            <div slot="body">
-              <MediaContent
-                :context="'preview'"
-                :slugFolderName="$root.settings.sidebar.layer_viewed"
-                :media="media"
-                :read_only="read_only"
-                v-model="media.content"
-              >
-              </MediaContent>
-            </div>
-          </Card>
-
+        <div
+          class="panel panel_pattern padding-small"
+          v-if="$root.settings.sidebar.view === 'Layer'"
+        >
+          <LayerPanel
+            :layer="current_layer"
+          />
         </div>
       </transition>
     </div>
@@ -152,9 +124,8 @@
 import Card from './subcomponents/Card.vue';
 import { Container, Draggable } from 'vue-smooth-dnd'
 import CreateLayer from './modals/CreateLayer.vue';
-import SidebarLayer from './SidebarLayer.vue';
 import CreateMedia from './modals/CreateMedia.vue';
-import MediaContent from './subcomponents/MediaContent.vue';
+import LayerPanel from './subcomponents/LayerPanel.vue';
 
 const applyDrag = (arr, dragResult) => {
   const { removedIndex, addedIndex, payload } = dragResult
@@ -180,10 +151,9 @@ export default {
     Container, 
     Draggable,
     CreateLayer,
-    SidebarLayer,
+    LayerPanel,
     Card,
-    CreateMedia,
-    MediaContent
+    CreateMedia
   },
   data () {
     return {
@@ -202,14 +172,6 @@ export default {
   methods: {
     onDrop (dropResult) {
       // this.$root.layers = applyDrag(this.$root.layers, dropResult)
-    },
-    previewURL(layer) {
-      if(!layer.hasOwnProperty('preview') || layer.preview === '') {
-        return false;
-      }
-      const thumb = layer.preview.filter(p => p.size === 800);
-      if(thumb.length > 0) { return `${thumb[0].path}?${(new Date()).getTime()}` }
-      return false;
     }
   }
 }

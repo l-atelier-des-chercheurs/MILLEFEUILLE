@@ -17,14 +17,14 @@
 
 export default {
   props: {
-    previewURL: String,
+    previewURL: [String, Boolean],
     instructions: String
   },
   components: {
   },
   data() {
     return {
-      image: this.previewURL
+      image: this.previewURL ? this.previewURL:false
     }
   },
   
