@@ -109,7 +109,7 @@
             </span>
           </button>
           <CreateMedia
-            v-if="$root.settings.sidebar.view === 'Layer' && showCreateMediaModal"
+            v-if="showCreateMediaModal"
             @close="showCreateMediaModal = false"
             :read_only="!$root.state.connected"
           />
@@ -162,7 +162,8 @@ export default {
   data () {
     return {
       baseUrl: process.env.BASE_URL,
-      showCreateLayerModal: false      
+      showCreateLayerModal: false,
+      showCreateMediaModal: false
     }
   },
   computed: {
