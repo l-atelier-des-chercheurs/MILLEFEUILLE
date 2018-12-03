@@ -1,5 +1,6 @@
 <template>
-  <div class="box" :style="layerStyles">
+  <image :xlink:href="previewURL" :x="0" :y="0" :width="width" :height="height" />
+  <!-- <div class="box" :style="layerStyles">
     <div class="face" v-if="previewURL"
       :style="boxStyle(0)"
     >
@@ -8,13 +9,13 @@
         :style="imgStyle(layer)"
       >
     </div> 
-  </div>      
+  </div>       -->
 </template>
 <script>
 
 
 export default {
-  props: ['layer', 'index'],
+  props: ['layer', 'index', 'width', 'height'],
   components: {
   },
   data() {
@@ -41,7 +42,6 @@ export default {
       return false;
     },
     layerStyles() {
-      debugger;
       return `transform: translate3d(${this.index * 10}px, ${this.index * 10}px, 0px)`;   
     }
   },

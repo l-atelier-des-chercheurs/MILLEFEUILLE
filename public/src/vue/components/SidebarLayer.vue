@@ -1,18 +1,20 @@
 <template>
-  <div class="draggable-item">
-    <div class="titlebar">
-      <span class="column-drag-handle" :style="`background-image: url(${previewURL}); background-size: contain;`">
-        &#x2630;
+  <div class="card padding-left-medium padding-top-small draggable-item" :class="type">
+    <div class="card--header card--header_layer column-drag-handle">
+      <img :src="previewURL">
+      <span class="titre">
+        {{ layer.name }}
       </span>
-      <input type="checkbox" v-model="layer.active" />
+      <!-- <input type="checkbox" v-model="layer.active" />
       <span class="item-name" v-html="layer.name" />
-      <input type="range" v-if="layer.active" v-model="layer.opacity" min=0 max=1 step=0.01 />
+      <input type="range" v-if="layer.active" v-model="layer.opacity" min=0 max=1 step=0.01 /> -->
+      </span>
+      <button type="button" 
+        @click="$root.loadLayer(slugLayerName)"
+      >
+        >
+      </button>
     </div>
-    <button type="button" 
-      @click="$root.loadLayer(slugLayerName)"
-    >
-      charger médias
-    </button>
 
     <div 
       v-for="media in layer.medias"

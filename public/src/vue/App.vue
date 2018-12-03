@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div class="flex-sidebyside">
 
     <Sidebar 
       :layers="$root.store.layers"
@@ -16,8 +16,6 @@
       @close="$root.closeMedia()"
       :read_only="!$root.state.connected"
     />
-
-    <portal-target name="modal_container" />
   </div>
 </template>
 
