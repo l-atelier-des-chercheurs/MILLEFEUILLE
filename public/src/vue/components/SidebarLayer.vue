@@ -1,5 +1,5 @@
 <template>
-  <div class="card padding-left-medium padding-top-small draggable-item" :class="type">
+  <div class="card">
     <div class="card--header card--header_layer column-drag-handle">
       <img :src="previewURL">
       <span class="titre">
@@ -8,11 +8,11 @@
       <!-- <input type="checkbox" v-model="layer.active" />
       <span class="item-name" v-html="layer.name" />
       <input type="range" v-if="layer.active" v-model="layer.opacity" min=0 max=1 step=0.01 /> -->
-      </span>
+      <!-- </span> -->
       <button type="button" 
         @click="$root.loadLayer(slugLayerName)"
       >
-        >
+        ►
       </button>
     </div>
 

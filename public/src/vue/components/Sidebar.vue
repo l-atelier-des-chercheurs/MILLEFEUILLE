@@ -1,7 +1,7 @@
 <template>
   <div class="m_controller" style="">
     <div class="m_controller--topBar">
-      <div class="padding-vert-medium border-bottom">
+      <div class="padding-vert-medium">
         <h1 class="margin-none padding-sides-medium">Cartographie Sensible</h1>
         <span class="margin-none padding-sides-medium">workshop Stéréolux</span>
         <!-- <button type="button" @click="$root.setPersp()" v-html="'Perspective'"/> -->
@@ -21,20 +21,34 @@
     </div>      
 
     <div class="m_controller--content">
-      <transition name="flipfront_left">
-        <div class="panel panel_image padding-vert-small padding-sides-medium" v-show="current_view === 'Layers'">
-          <Card :type="'section_separator'">
-            <div slot="header">
-              Liste des calques
-            </div>
-          </Card>
+      <hr>
+      <transition name="slideToLeft">
+        <div class="panel panel_image" v-show="$root.settings.sidebar.view === 'Layers'">
+          <label class="margin-vert-verysmall margin-sides-small">Liste des calques</label>
 
           <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
             <Draggable v-for="layer in layers" :key="layer.slugFolderName">
-              <SidebarLayer 
-                :layer="layer"
-                :slugLayerName="layer.slugFolderName"
-              />
+              <div class="card draggable-item margin-verysmall margin-sides-small padding-verysmall">
+                <div class="card--header card--header_layer column-drag-handle">
+                  <span class="column-drag-handle">
+                    &#x2630;
+                  </span>
+                  <img :src="previewURL(layer)">
+                  <span class="titre">
+                    {{ layer.name }}
+                  </span>
+                  <!-- <input type="checkbox" v-model="layer.active" />
+                  <span class="item-name" v-html="layer.name" />
+                  <input type="range" v-if="layer.active" v-model="layer.opacity" min=0 max=1 step=0.01 /> -->
+                  <!-- </span> -->
+                  <button type="button" 
+                    @click="$root.loadLayer(layer.slugFolderName)"
+                  >
+                    ►
+                  </button>
+                </div>
+              </div>
+
               <!-- <Card :type="'section_separator'">
                 <div slot="header">
                   {{ layer.slugFolderName }}
@@ -45,12 +59,43 @@
         </div>
       </transition>
 
-      <transition name="flipfront_right">
-        <div class="panel panel_pattern padding-vert-small" v-show="current_view === 'Layer'">
+      <transition name="slideFromLeft">
+        <div class="panel panel_pattern" v-show="$root.settings.sidebar.view === 'Layer'">
+          <div class="card">
+            <div class="card--header card--header_layer padding-small bg-noir c-blanc">
+              <button type="button" 
+                class="bg-transparent"
+                @click="$root.closeLayer()"
+              >
+                ◄
+              </button>
+              <span class="titre">
+                {{ current_layer.name }}
+              </span>
+            </div>
+            <div class="card--body">
+              <div 
+                v-for="media in current_layer.medias"
+                :key="media.metaFileName"
+              >
+                <MediaContent
+                  :context="'preview'"
+                  :slugFolderName="slugLayerName"
+                  :media="media"
+                  :read_only="read_only"
+                  v-model="media.content"
+                >
+                </MediaContent>
+              </div> 
+            </div>
+          </div>
         </div>
       </transition>
     </div>
-    <div class="m_controller--bottomBar border-top padding-medium">
+
+
+    <div class="m_controller--bottomBar">
+      <hr>
       <button
         class="barButton barButton_createLayer"
         v-if="!showCreateLayerModal"
@@ -107,13 +152,28 @@ export default {
   data () {
     return {
       baseUrl: process.env.BASE_URL,
-      showCreateLayerModal: false,
-      current_view: 'Layers'
+      showCreateLayerModal: false      
+    }
+  },
+  computed: {
+    current_layer() {
+      if(this.$root.settings.sidebar.layer_viewed && this.layers.hasOwnProperty(this.$root.settings.sidebar.layer_viewed)) {
+        return this.layers[this.$root.settings.sidebar.layer_viewed];
+      }
+      return false;
     }
   },
   methods: {
     onDrop (dropResult) {
       // this.$root.layers = applyDrag(this.$root.layers, dropResult)
+    },
+    previewURL(layer) {
+      if(!layer.hasOwnProperty('preview') || layer.preview === '') {
+        return false;
+      }
+      const thumb = layer.preview.filter(p => p.size === 800);
+      if(thumb.length > 0) { return `${thumb[0].path}?${(new Date()).getTime()}` }
+      return false;
     }
   }
 }

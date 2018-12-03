@@ -446,8 +446,10 @@ let vm = new Vue({
     // persistant, par device (dans le localstorage)
     settings: {
       has_modal_opened: false,
-      capture_mode_cant_be_changed: false,
-
+      sidebar: {
+        view: 'Layers',
+        layer_viewed: false
+      },
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth
     },
@@ -639,20 +641,21 @@ let vm = new Vue({
         return false;
       }
 
+      this.settings.sidebar.view = 'Layer';
+      this.settings.sidebar.layer_viewed = slugLayerName;
+
       this.$socketio.listMedias({
         type: 'layers',
         slugFolderName: slugLayerName
       });
-
-      this.$root.config;
+      // this.$root.config;
     },
-    closeProject: function() {
+    closeLayer: function() {
       if (window.state.dev_mode === 'debug') {
-        console.log('ROOT EVENT: closeProject');
+        console.log('ROOT EVENT: closeLayer');
       }
-
-      this.do_navigation.view = 'ListView';
-      this.do_navigation.current_slugLayerName = '';
+      this.settings.sidebar.view = 'Layers';
+      this.settings.sidebar.layer_viewed = false;
     },
     openMedia({ slugLayerName, metaFileName }) {
       if (window.state.dev_mode === 'debug') {
