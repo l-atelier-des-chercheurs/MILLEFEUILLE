@@ -32,7 +32,7 @@
                   <span class="column-drag-handle" @mouseup.stop="">
                     &#x2630;
                   </span>
-                  <img :src="$root.previewURL(layer,50)">
+                  <img v-if="$root.previewURL(layer,50)" :src="$root.previewURL(layer,50)">
                   <span class="titre">
                     {{ layer.name }}
                   </span>

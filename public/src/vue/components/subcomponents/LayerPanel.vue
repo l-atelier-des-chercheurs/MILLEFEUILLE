@@ -25,7 +25,6 @@
       v-if="!showEditLayerModal"
       @click="showEditLayerModal = true"
       :disabled="!$root.state.connected"
-      :key="'createButton'"
     >
       <span>
         {{ $t('edit_layer') }}
@@ -34,7 +33,7 @@
     <EditLayer
       v-if="showEditLayerModal"
       @close="showEditLayerModal = false"
-      :slugLayerName="layer.slugFolderName",
+      :slugLayerName="layer.slugFolderName"
       :layer="layer"
       :read_only="!$root.state.connected"
     />

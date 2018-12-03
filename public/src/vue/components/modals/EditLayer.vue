@@ -1,5 +1,4 @@
 <template>
-
   <Modal
     @close="$emit('close')"
     @submit="editThisLayer"
@@ -12,7 +11,6 @@
     </template>
 
     <template slot="sidebar">
-
 <!-- Human name -->
       <div class="margin-bottom-small">
         <label>{{ $t('layer_name') }}</label>
