@@ -632,9 +632,9 @@ let vm = new Vue({
       this.$socketio.editMedia(mdata);
     },
 
-    loadLayer: function(slugLayerName) {
+    openLayer: function(slugLayerName) {
       if (window.state.dev_mode === 'debug') {
-        console.log(`ROOT EVENT: loadLayer: ${slugLayerName}`);
+        console.log(`ROOT EVENT: openLayer: ${slugLayerName}`);
       }
       if (!this.store.layers.hasOwnProperty(slugLayerName)) {
         console.log('Missing layer key on the page, aborting.');

@@ -1,9 +1,9 @@
 <template>
   <Modal
+    :backgroundColor="mediadata.color"
     @close="$emit('close')"
-    @submit="createThisMedia"
+    @submit="editThisMedia"
     :read_only="read_only"
-    :typeOfModal="media.type !== 'text' ? 'LargeAndNoScroll' : 'LargeAndScroll'"
     :askBeforeClosingModal="askBeforeClosingModal"
     :show_sidebar="$root.media_modal.show_sidebar"
     :is_minimized="$root.media_modal.minimized"

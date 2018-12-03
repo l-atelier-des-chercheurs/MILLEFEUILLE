@@ -6,7 +6,6 @@
         <span class="margin-none padding-sides-medium">workshop Stéréolux</span>
         <!-- <button type="button" @click="$root.setPersp()" v-html="'Perspective'"/> -->
       </div>
-
       <!-- <div class="mode_switcher border-bottom">
         <label for="image" class="padding-vert-small padding-sides-medium">
           <input type="radio" id="image" value="Image" v-model="current_options_mode">
@@ -17,20 +16,20 @@
           <span>2. Design</span>
         </label>
       </div> -->
-
     </div>      
 
     <div class="m_controller--content">
-      <hr>
       <transition name="slideToLeft">
         <div class="panel panel_image" v-show="$root.settings.sidebar.view === 'Layers'">
-          <label class="margin-vert-verysmall margin-sides-small">Liste des calques</label>
+          <label class="margin-vert-verysmall margin-sides-medium">Liste des calques</label>
 
           <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
             <Draggable v-for="layer in layers" :key="layer.slugFolderName">
-              <div class="card draggable-item margin-verysmall margin-sides-small padding-verysmall">
-                <div class="card--header card--header_layer column-drag-handle">
-                  <span class="column-drag-handle">
+              <div class="card draggable-item margin-verysmall margin-sides-medium padding-verysmall">
+                <div class="card--header card--header_layer"
+                  @click="$root.openLayer(layer.slugFolderName)"
+                >
+                  <span class="column-drag-handle" @mouseup.stop="">
                     &#x2630;
                   </span>
                   <img :src="previewURL(layer)">
@@ -42,7 +41,6 @@
                   <input type="range" v-if="layer.active" v-model="layer.opacity" min=0 max=1 step=0.01 /> -->
                   <!-- </span> -->
                   <button type="button" 
-                    @click="$root.loadLayer(layer.slugFolderName)"
                   >
                     ►
                   </button>
@@ -73,45 +71,79 @@
                 {{ current_layer.name }}
               </span>
             </div>
-            <div class="card--body">
-              <div 
-                v-for="media in current_layer.medias"
-                :key="media.metaFileName"
-              >
-                <MediaContent
-                  :context="'preview'"
-                  :slugFolderName="slugLayerName"
-                  :media="media"
-                  :read_only="read_only"
-                  v-model="media.content"
-                >
-                </MediaContent>
-              </div> 
-            </div>
           </div>
+
+          <Card
+            v-for="media in current_layer.medias"
+            :key="media.metaFileName"
+            class="margin-small"
+          >
+            <div slot="header">
+              {{ media.media_filename }}
+            </div>
+            <div slot="body">
+              <MediaContent
+                :context="'preview'"
+                :slugFolderName="$root.settings.sidebar.layer_viewed"
+                :media="media"
+                :read_only="read_only"
+                v-model="media.content"
+              >
+              </MediaContent>
+            </div>
+          </Card>
+
         </div>
       </transition>
     </div>
 
 
     <div class="m_controller--bottomBar">
-      <hr>
-      <button
-        class="barButton barButton_createLayer"
-        v-if="!showCreateLayerModal"
-        @click="showCreateLayerModal = true"
-        :disabled="!$root.state.connected"
-        :key="'createButton'"
-      >
-        <span>
-          {{ $t('create_a_layer') }}
-        </span>
-      </button>
-      <CreateLayer
-        v-if="showCreateLayerModal"
-        @close="showCreateLayerModal = false"
-        :read_only="!$root.state.connected"
-      />
+
+      <transition name="slideFromBottom" mode="out-in">
+        <div v-if="$root.settings.sidebar.view === 'Layers'"
+          :key="'layers_options'"
+        >
+          <button
+            class="barButton barButton_createLayer"
+            v-if="!showCreateLayerModal"
+            @click="showCreateLayerModal = true"
+            :disabled="!$root.state.connected"
+            :key="'createButton'"
+          >
+            <span>
+              {{ $t('create_a_layer') }}
+            </span>
+          </button>
+          <CreateLayer
+            v-if="$root.settings.sidebar.view === 'Layers' && showCreateLayerModal"
+            @close="showCreateLayerModal = false"
+            :read_only="!$root.state.connected"
+          />
+        </div>
+        <div v-else-if="$root.settings.sidebar.view === 'Layer'"
+          :key="'layer_options'"
+        >
+          <button
+            class="barButton barButton_addData"
+            v-if="$root.settings.sidebar.view === 'Layer' && !showCreateMediaModal"
+            @click="showCreateMediaModal = true"
+            :disabled="!$root.state.connected"
+            :key="'createButton'"
+          >
+            <span>
+              {{ $t('add_data') }}
+            </span>
+          </button>
+          <CreateMedia
+            v-if="$root.settings.sidebar.view === 'Layer' && showCreateMediaModal"
+            @close="showCreateMediaModal = false"
+            :read_only="!$root.state.connected"
+          />
+        </div>
+      </transition>
+
+
     </div>
   </div>
 </template>
@@ -121,6 +153,8 @@ import Card from './subcomponents/Card.vue';
 import { Container, Draggable } from 'vue-smooth-dnd'
 import CreateLayer from './modals/CreateLayer.vue';
 import SidebarLayer from './SidebarLayer.vue';
+import CreateMedia from './modals/CreateMedia.vue';
+import MediaContent from './subcomponents/MediaContent.vue';
 
 const applyDrag = (arr, dragResult) => {
   const { removedIndex, addedIndex, payload } = dragResult
@@ -147,7 +181,9 @@ export default {
     Draggable,
     CreateLayer,
     SidebarLayer,
-    Card
+    Card,
+    CreateMedia,
+    MediaContent
   },
   data () {
     return {

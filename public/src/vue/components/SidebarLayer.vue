@@ -10,7 +10,7 @@
       <input type="range" v-if="layer.active" v-model="layer.opacity" min=0 max=1 step=0.01 /> -->
       <!-- </span> -->
       <button type="button" 
-        @click="$root.loadLayer(slugLayerName)"
+        @click="$root.openLayer(slugLayerName)"
       >
         ►
       </button>
