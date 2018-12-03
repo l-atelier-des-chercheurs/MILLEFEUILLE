@@ -1,8 +1,8 @@
 <template>
-  <div
+  <Modal
     @submit="newLayer"
+    @close="$emit('close')"
     :read_only="read_only"
-    :typeOfModal="'EditMeta'"
     :askBeforeClosingModal="askBeforeClosingModal"
     >
     <template slot="header">

@@ -1,5 +1,5 @@
 <template>
-  <div class="calques"
+  <div class="m_calques"
     :class="{ 'is_persp' : $root.is_persp }"
   >
     <Calque 

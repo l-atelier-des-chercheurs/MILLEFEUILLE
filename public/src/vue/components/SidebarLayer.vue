@@ -1,7 +1,7 @@
 <template>
   <div class="draggable-item">
     <div class="titlebar">
-      <span class="column-drag-handle" :style="`background-image: url(${baseUrl}layers/${layer.filename})`">
+      <span class="column-drag-handle" :style="`background-image: url(${previewURL}); background-size: contain;`">
         &#x2630;
       </span>
       <input type="checkbox" v-model="layer.active" />
@@ -53,17 +53,18 @@ export default {
   watch: {
   },
   computed: {
+    previewURL() {
+      if(!this.layer.hasOwnProperty('preview') || this.layer.preview === '') {
+        return false;
+      }
+      const thumb = this.layer.preview.filter(p => p.size === 800);
+      if(thumb.length > 0) { return `${thumb[0].path}?${(new Date()).getTime()}` }
+      return false;
+    }
   },
   methods: {
   }
 }
 </script>
 <style>
-.titlebar {
-  height: 3em;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-}
-
 </style>

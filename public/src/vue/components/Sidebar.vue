@@ -1,37 +1,40 @@
 <template>
-  <div class="sidebar" style="">
-    <h1>cartographie sensible</h1>
-    <button type="button" @click="$root.setPersp()" v-html="'Perspective'"/>
+  <div class="m_sidebar" style="">
+    <div class="m_sidebar--header">
+      <h1>cartographie sensible</h1>
+      <button type="button" @click="$root.setPersp()" v-html="'Perspective'"/>
+    </div>
 
+    <div class="m_sidebar--layerlist">
+      <label>Liste des calques</label>
+      <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
+        <Draggable v-for="layer in layers" :key="layer.slugFolderName">
+          <SidebarLayer 
+            :layer="layer"
+            :slugLayerName="layer.slugFolderName"
+          />
+        </Draggable>
+      </Container>
+    </div>
 
-    <h2>Liste des calques</h2>
-    <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
-      <Draggable v-for="layer in layers" :key="layer.slugFolderName">
-        <SidebarLayer 
-          :layer="layer"
-          :slugLayerName="layer.slugFolderName"
-        />
-      </Draggable>
-    </Container>
-
-
-    <button
-      class="barButton barButton_createLayer"
-      @click="showCreateLayerModal = true"
-      :disabled="!$root.state.connected"
-      :key="'createButton'"
-    >
-      <span>
-        {{ $t('create_a_layer') }}
-      </span>
-    </button>
-
-
-    <CreateLayer
-      v-if="showCreateLayerModal"
-      @close="showCreateLayerModal = false"
-      :read_only="!$root.state.connected"
-    />
+    <div class="m_sidebar--footer">
+      <button
+        class="barButton barButton_createLayer"
+        v-if="!showCreateLayerModal"
+        @click="showCreateLayerModal = true"
+        :disabled="!$root.state.connected"
+        :key="'createButton'"
+      >
+        <span>
+          {{ $t('create_a_layer') }}
+        </span>
+      </button>
+      <CreateLayer
+        v-if="showCreateLayerModal"
+        @close="showCreateLayerModal = false"
+        :read_only="!$root.state.connected"
+      />
+    </div>
 
   </div>
 </template>
@@ -88,73 +91,4 @@ export default {
 
 </script>
 <style lang="less">
-.sidebar {
-  position: relative;
-  flex: 0 0 320px;
-  max-width: 320px;
-  min-width: 320px;
-  padding: 1em;
-
-  overflow: auto;
-  height: 100%;
-}
-
-.draggable-item {
-  height: auto;
-  text-align: left;
-  width: 100%;
-  display: block;
-  background-color: #fff;
-  outline: 0;
-
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  overflow: hidden;
-
-  margin-bottom: 4px;
-  margin-top: 2px;
-  cursor: default;
-  -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-
-.column-drag-handle {
-  position: relative;
-  background-color: #fff;
-  color: #000;
-  text-shadow: 0px 0px 4px white;
-  background-size: cover;
-  overflow: hidden;
-  flex: 0 0 3em;
-  cursor: move;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-self: stretch;
-}
-
-.item-name {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  // padding: 1em;
-  text-align: left;
-  flex: 1 1 auto;
-  padding: 0 1em;
-}
-
-input[type="checkbox"] {
-}
-input[type="range"] {
-  max-width: 50px;
-}
-
-h2 {
-  font-size:1em;
-  text-align: left;
-}
-
 </style>

@@ -11,8 +11,8 @@
 
 @import "less/_variables";
 @import "less/_globals";
-@import "less/_media";
-@import "less/_modal";
+// @import "less/_media";
+// @import "less/_modal";
 
 ::-moz-selection {
   background: rgba(151, 151, 151,0.25);
@@ -42,7 +42,6 @@ body {
   font-size: var(--font-size);
   line-height: var(--line-height);
 
-  .bg-creme;
   color: @c-noir;
 
   position: relative;
@@ -70,50 +69,38 @@ body {
 ************************************************************************/
 
 #app {
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-
-  display: flex;
-  flex-flow: column nowrap;
-
-  > * {
-    flex: 0 0 auto;
-
-    &.m_activitiesPanel {
-      flex-grow: 1;
-    }
-  }
-}
-
-
-html,body {
-  margin: 0;
-  height: 100%;
-  background-color: #eee;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   align-content: center;
 
   height: 100%;
+  width: 100%;
   margin: 0 auto;
 
-  > * {
-    flex: 1 1 auto;
-  }
+
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+
+html,body {
+  margin: 0;
+  height: 100%;
+
+  @bg-color: #fff;
+  @dot-color: @c-gris;
+  @dot-size: 1px;
+  @dot-spacing: 80px;
+
+  background: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, @bg-color @dot-size+1px);
+  background-repeat: repeat;
+  background-size: @dot-spacing @dot-spacing;
+  background-position: -@dot-spacing/2 -@dot-spacing/2;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 
@@ -221,6 +208,109 @@ html,body {
     button {
     }
   }
+}
+
+
+.m_sidebar {
+  position: relative;
+  flex: 1 0 320px;
+  max-width: 320px;
+  min-width: 320px;
+  // padding: 1em;
+
+  overflow: hidden;
+  height: 100%;
+  text-align: left;
+
+  @bg-color: #fff;
+  @dot-color: @c-gris;
+  @dot-size: 1px;
+  @dot-spacing: 40px;
+
+  background: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, @bg-color @dot-size+1px);
+  background-repeat: repeat;
+  background-size: @dot-spacing @dot-spacing;
+  background-position: -@dot-spacing/2 -@dot-spacing/2;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+
+  .m_sidebar--header {
+    min-height: 60px;
+    flex: 0 0 auto;
+
+    background-color: #f9f9f9;
+  }
+  .m_sidebar--layerlist {
+    flex: 1 1 auto;
+    overflow: auto;
+    .custom_scrollbar(8px, 5px, 6px);
+    background-color: #fff;
+  }
+  .m_sidebar--footer {
+    flex: 0 0 auto;
+    background-color: #eee;
+  }
+}
+
+.draggable-item {
+  height: auto;
+  text-align: left;
+  width: 100%;
+  display: block;
+  background-color: #fff;
+  outline: 0;
+
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+
+  margin-bottom: 4px;
+  margin-top: 2px;
+  cursor: default;
+  -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.column-drag-handle {
+  position: relative;
+  background-color: #fff;
+  color: #000;
+  text-shadow: 0px 0px 4px white;
+  background-size: cover;
+  overflow: hidden;
+  flex: 0 0 3em;
+  cursor: move;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+}
+
+.item-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  // padding: 1em;
+  text-align: left;
+  flex: 1 1 auto;
+  padding: 0 1em;
+}
+
+.m_calques {
+  position: relative;
+  flex: 1 0 auto;
+  min-width: 320px;
+  // padding: 1em;
+
+  overflow: hidden;
+  height: 100%;
+  text-align: left;
+ 
 }
 
 
