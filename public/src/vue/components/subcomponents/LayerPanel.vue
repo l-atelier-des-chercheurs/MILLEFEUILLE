@@ -22,6 +22,7 @@
 
     <button
       class="barButton barButton_createLayer"
+      type="button"
       @click="showEditLayerModal = true"
       :disabled="!$root.state.connected"
     >
@@ -29,6 +30,11 @@
         {{ $t('edit_layer') }}
       </span>
     </button>
+
+    <button type="button" class="buttonLink" @click="removeLayer()" :disabled="!$root.state.connected">
+      {{ $t('remove') }}
+    </button>
+
     <EditLayer
       v-if="showEditLayerModal"
       @close="showEditLayerModal = false"
@@ -98,6 +104,15 @@ export default {
   computed: {
   },
   methods: {
+    removeLayer() {
+      if (window.confirm(this.$t('sure_to_remove_layer'))) {
+        this.$root.removeFolder({ 
+          type: 'layers', 
+          slugFolderName: this.layer.slugFolderName
+        });
+        this.$root.closeLayer();
+      }
+    },
   }
 }
 </script>
