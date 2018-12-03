@@ -117,6 +117,9 @@
 
 
     </div>
+
+    <portal-target name="modal_container" />
+
   </div>
 </template>
 

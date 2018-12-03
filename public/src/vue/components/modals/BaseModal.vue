@@ -1,175 +1,177 @@
 <template>
-  <div 
-    class="m_modal--mask"
-    :class="[ 
-      'typeOfModal-' + typeOfModal, 
-      { 'is_invisible' : !showModal },
-      { 'is_minimized' : is_minimized }
-    ]"
-    @mousedown.self="/* closeModal */"
-    :style="`height: ${$root.settings.windowHeight}px`"
-  >
-    <div class="m_modal--container"
-      :class="[
-        'color-' + backgroundColor, 
+  <portal to="modal_container">
+    <div 
+      class="m_modal--mask"
+      :class="[ 
+        'typeOfModal-' + typeOfModal, 
         { 'is_invisible' : !showModal },
         { 'is_minimized' : is_minimized }
       ]"
-      @keyup.ctrl.enter="$emit('submit')"
+      @mousedown.self="/* closeModal */"
+      :style="`height: ${$root.settings.windowHeight}px`"
     >
-
-      <div
-        class="m_modal--container--content"
-        ref="modalContent"
+      <div class="m_modal--container"
+        :class="[
+          'color-' + backgroundColor, 
+          { 'is_invisible' : !showModal },
+          { 'is_minimized' : is_minimized }
+        ]"
+        @keyup.ctrl.enter="$emit('submit')"
       >
-        <div v-if="!!this.$slots['preview']" class="m_modal--preview">
-          <!-- if there is no sidebar, output header here -->
-          <template v-if="!this.$slots['sidebar']">
-            <div class="m_modal--header">
-              <h3 class="margin-none">
-                <slot name="header">
-                    default header
-                </slot>
-              </h3>
-            </div>
-          </template>
 
-          <slot name="preview">
-            default preview
-          </slot>
-        </div>
-        
-        <form
-          class="m_modal--sidebar"
-          :class="{ 'is_collapsed' : !show_sidebar }"
-          v-on:submit.prevent="$emit('submit')"
-          v-if="!!this.$slots['sidebar'] && !is_minimized"
-          ref="form"
+        <div
+          class="m_modal--container--content"
+          ref="modalContent"
         >
-          <button type="button" 
-            class="m_modal--sidebar--toggle"
-            @click="toggleSidebar"
-            v-if="can_minimize"
-          > 
-            &#x2630;
-          </button>
-
-          <template v-if="!!this.$slots['sidebar'] && show_sidebar && !is_minimized">
-            <div class="m_modal--header">
-              <h3 class="margin-none">
-                <slot name="header">
-                    default header
-                </slot>
-              </h3>
-            </div>
-
-            <div class="m_modal--metaOptions">
-              <slot name="sidebar">
-                default sidebar
-              </slot>
-            </div>
-
-            <div 
-              v-if="!!this.$slots['submit_button']"
-              class="m_modal--buttons"
-            >
-              <button
-                type="submit"
-                :disabled="read_only"
-                class="button button-bg_rounded bg-bleuvert"
-              >
-                <img src="/images/i_enregistre.svg"/>
-                <span class="text-cap font-verysmall">
-                  <slot name="submit_button">
-                    {{ $t('save') }}
+          <div v-if="!!this.$slots['preview']" class="m_modal--preview">
+            <!-- if there is no sidebar, output header here -->
+            <template v-if="!this.$slots['sidebar']">
+              <div class="m_modal--header">
+                <h3 class="margin-none">
+                  <slot name="header">
+                      default header
                   </slot>
-                </span>
-              </button>
-            </div>
-          </template>
-        </form>
+                </h3>
+              </div>
+            </template>
 
-        <form 
-          v-if="!!this.$slots['buttons']" 
-          class="m_modal--buttons"
-          v-on:submit.prevent="$emit('submit')"
-          ref="form"
-        >
-
-          <button
-            type="button"
-            @click="closeModal"
-            class="button button-bg_rounded bg-orange"
+            <slot name="preview">
+              default preview
+            </slot>
+          </div>
+          
+          <form
+            class="m_modal--sidebar"
+            :class="{ 'is_collapsed' : !show_sidebar }"
+            v-on:submit.prevent="$emit('submit')"
+            v-if="!!this.$slots['sidebar'] && !is_minimized"
+            ref="form"
           >
-            <img src="/images/i_clear.svg"/>
-            <span class="text-cap font-verysmall">
-              <slot name="cancel_button">
-                {{ $t('cancel') }}
-              </slot>
-            </span>
-          </button>
+            <button type="button" 
+              class="m_modal--sidebar--toggle"
+              @click="toggleSidebar"
+              v-if="can_minimize"
+            > 
+              &#x2630;
+            </button>
 
-          <button
-            type="submit"
-            :disabled="read_only"
-            class="button button-bg_rounded bg-bleuvert"
+            <template v-if="!!this.$slots['sidebar'] && show_sidebar && !is_minimized">
+              <div class="m_modal--header">
+                <h3 class="margin-none">
+                  <slot name="header">
+                      default header
+                  </slot>
+                </h3>
+              </div>
+
+              <div class="m_modal--metaOptions">
+                <slot name="sidebar">
+                  default sidebar
+                </slot>
+              </div>
+
+              <div 
+                v-if="!!this.$slots['submit_button']"
+                class="m_modal--buttons"
+              >
+                <button
+                  type="submit"
+                  :disabled="read_only"
+                  class="button button-bg_rounded bg-bleuvert"
+                >
+                  <img src="/images/i_enregistre.svg"/>
+                  <span class="text-cap font-verysmall">
+                    <slot name="submit_button">
+                      {{ $t('save') }}
+                    </slot>
+                  </span>
+                </button>
+              </div>
+            </template>
+          </form>
+
+          <form 
+            v-if="!!this.$slots['buttons']" 
+            class="m_modal--buttons"
+            v-on:submit.prevent="$emit('submit')"
+            ref="form"
           >
-            <img src="/images/i_enregistre.svg"/>
-            <span class="text-cap font-verysmall">
-              <slot name="submit_button">
-                {{ $t('save') }}
-              </slot>
-            </span>
-          </button>
 
-        </form>
+            <button
+              type="button"
+              @click="closeModal"
+              class="button button-bg_rounded bg-orange"
+            >
+              <img src="/images/i_clear.svg"/>
+              <span class="text-cap font-verysmall">
+                <slot name="cancel_button">
+                  {{ $t('cancel') }}
+                </slot>
+              </span>
+            </button>
+
+            <button
+              type="submit"
+              :disabled="read_only"
+              class="button button-bg_rounded bg-bleuvert"
+            >
+              <img src="/images/i_enregistre.svg"/>
+              <span class="text-cap font-verysmall">
+                <slot name="submit_button">
+                  {{ $t('save') }}
+                </slot>
+              </span>
+            </button>
+
+          </form>
+
+        </div>
 
       </div>
 
+      <transition name="fade" :duration="600">
+        <button
+          class="button-round bg-transparent m_modal--close_button padding-verysmall"
+          @click="closeModal"
+          v-if="showModal && !is_minimized"
+        >
+          <img src="/images/i_close_sansfond.svg">
+        </button>
+      </transition>
+
+      <transition name="fade" :duration="600">
+        <button
+          class="button-round bg-transparent m_modal--minimize_button padding-verysmall"
+          @click="toggleMinimize"
+          v-if="showModal && can_minimize"
+          :class="{ 'is_minimized' : is_minimized }"
+        >
+          <img src="/images/i_minimize.svg">
+        </button>
+      </transition>
+
+      <transition name="fade" :duration="600">
+        <button
+          class="button-round bg-transparent m_modal--nav_left padding-verysmall"
+          @click="$eventHub.$emit('modal.prev_media')"
+          v-if="showModal && media_navigation && !is_minimized"
+        >
+          <img src="/images/i_arrow_left.svg">
+        </button>
+      </transition>
+
+      <transition name="fade" :duration="600">
+        <button
+          class="button-round bg-transparent m_modal--nav_right padding-verysmall"
+          @click="$eventHub.$emit('modal.next_media')"
+          v-if="showModal && media_navigation && !is_minimized"
+        >
+          <img src="/images/i_arrow_right.svg">
+        </button>
+      </transition>
+
     </div>
-
-    <transition name="fade" :duration="600">
-      <button
-        class="button-round bg-transparent m_modal--close_button padding-verysmall"
-        @click="closeModal"
-        v-if="showModal && !is_minimized"
-      >
-        <img src="/images/i_close_sansfond.svg">
-      </button>
-    </transition>
-
-    <transition name="fade" :duration="600">
-      <button
-        class="button-round bg-transparent m_modal--minimize_button padding-verysmall"
-        @click="toggleMinimize"
-        v-if="showModal && can_minimize"
-        :class="{ 'is_minimized' : is_minimized }"
-      >
-        <img src="/images/i_minimize.svg">
-      </button>
-    </transition>
-
-    <transition name="fade" :duration="600">
-      <button
-        class="button-round bg-transparent m_modal--nav_left padding-verysmall"
-        @click="$eventHub.$emit('modal.prev_media')"
-        v-if="showModal && media_navigation && !is_minimized"
-      >
-        <img src="/images/i_arrow_left.svg">
-      </button>
-    </transition>
-
-    <transition name="fade" :duration="600">
-      <button
-        class="button-round bg-transparent m_modal--nav_right padding-verysmall"
-        @click="$eventHub.$emit('modal.next_media')"
-        v-if="showModal && media_navigation && !is_minimized"
-      >
-        <img src="/images/i_arrow_right.svg">
-      </button>
-    </transition>
-
-  </div>
+  </portal>
 </template>
 
 <script>
