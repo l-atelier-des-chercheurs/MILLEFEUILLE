@@ -4,7 +4,6 @@
     @close="$emit('close')"
     @submit="editThisMedia"
     :read_only="read_only"
-    :typeOfModal="media.type !== 'text' ? 'LargeAndNoScroll' : 'LargeAndScroll'"
     :askBeforeClosingModal="askBeforeClosingModal"
     :show_sidebar="$root.media_modal.show_sidebar"
     :is_minimized="$root.media_modal.minimized"
@@ -69,7 +68,6 @@
           </div>
           <div>
             {{ media.type }}
-            <!-- <img class="mediaTypeIcon" :src="mediaTypeIcon[media.type]" /> -->
           </div>
         </div>
         <!-- <div class="m_metaField" v-if="!!media.authors">
@@ -80,33 +78,6 @@
             {{ media.authors }}
           </div>
         </div> -->
-        <div class="m_metaField">
-          <div>
-            {{ $t('created') }}
-          </div>
-          <div :title="media.date_created">
-            {{ $root.formatDateToHuman(media.date_created) }}
-          </div>
-        </div>
-        <div 
-          class="m_metaField"
-          v-if="media.hasOwnProperty('date_uploaded') && $root.formatDateToHuman(media.date_created) !== $root.formatDateToHuman(media.date_uploaded)"
-        >
-          <div>
-            {{ $t('uploaded') }}
-          </div>
-          <div :title="media.date_uploaded">
-            {{ $root.formatDateToHuman(media.date_uploaded) }}
-          </div>
-        </div>
-        <div class="m_metaField">
-          <div>
-            {{ $t('edited') }}
-          </div>
-          <div :title="media.date_modified">
-            {{ $root.formatDateToHuman(media.date_modified) }}
-          </div>
-        </div>
 
   <!-- Caption -->
         <div 
@@ -127,7 +98,7 @@
     <template slot="preview">
       <MediaContent
         :context="'edit'"
-        :slugFolderName="slugProjectName"
+        :slugFolderName="slugLayerName"
         :media="media"
         :read_only="read_only"
         v-model="mediadata.content"
@@ -145,7 +116,7 @@ import TagsInput from '../subcomponents/TagsInput.vue';
 
 export default {
   props: {
-    slugProjectName: String,
+    slugLayerName: String,
     slugMediaName: String,
     media: Object,
     read_only: {
@@ -171,7 +142,7 @@ export default {
         fav: this.media.fav,
         content: this.media.content
       },
-      mediaURL: `/${this.slugProjectName}/${this.media.media_filename}`,
+      mediaURL: `/${this.slugLayerName}/${this.media.media_filename}`,
       askBeforeClosingModal: false
     };
   },
@@ -201,8 +172,8 @@ export default {
     removeMedia: function() {
       if (window.confirm(this.$t('sureToRemoveMedia'))) {
         this.$root.removeMedia({
-          type: 'projects',
-          slugFolderName: this.slugProjectName, 
+          type: 'layers',
+          slugFolderName: this.slugLayerName, 
           slugMediaName: this.slugMediaName
         });
         // then close that popover
@@ -212,8 +183,8 @@ export default {
     editThisMedia: function(event) {
       console.log('editThisMedia');
       this.$root.editMedia({ 
-        type: 'projects',
-        slugFolderName: this.slugProjectName, 
+        type: 'layers',
+        slugFolderName: this.slugLayerName, 
         slugMediaName: this.slugMediaName,
         data: this.mediadata
       });

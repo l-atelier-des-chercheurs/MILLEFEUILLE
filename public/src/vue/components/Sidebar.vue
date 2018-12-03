@@ -3,6 +3,18 @@
     <h1>cartographie sensible</h1>
     <button type="button" @click="$root.setPersp()" v-html="'Perspective'"/>
 
+
+    <h2>Liste des calques</h2>
+    <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
+      <Draggable v-for="layer in layers" :key="layer.slugFolderName">
+        <SidebarLayer 
+          :layer="layer"
+          :slugLayerName="layer.slugFolderName"
+        />
+      </Draggable>
+    </Container>
+
+
     <button
       class="barButton barButton_createLayer"
       @click="showCreateLayerModal = true"
@@ -14,15 +26,6 @@
       </span>
     </button>
 
-
-    <h2>Liste des calques</h2>
-    <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
-      <Draggable v-for="layer in layers" :key="layer.slugFolderName">
-        <SidebarLayer 
-          :layer="layer"
-        />
-      </Draggable>
-    </Container>
 
     <CreateLayer
       v-if="showCreateLayerModal"
@@ -97,27 +100,24 @@ export default {
 }
 
 .draggable-item {
-    height: 3em;
-    text-align: left;
-    width: 100%;
-    display: block;
-    background-color: #fff;
-    outline: 0;
+  height: auto;
+  text-align: left;
+  width: 100%;
+  display: block;
+  background-color: #fff;
+  outline: 0;
 
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    overflow: hidden;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
 
-    margin-bottom: 4px;
-    margin-top: 2px;
-    cursor: default;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
+  margin-bottom: 4px;
+  margin-top: 2px;
+  cursor: default;
+  -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 .column-drag-handle {

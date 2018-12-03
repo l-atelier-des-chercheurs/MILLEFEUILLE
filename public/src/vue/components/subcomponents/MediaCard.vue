@@ -23,7 +23,7 @@
           <MediaContent
             v-model="media.content"
             :context="'preview'"
-            :slugFolderName="slugProjectName"
+            :slugFolderName="slugLayerName"
             :media="media"
             :preview_size="preview_size"
           ></MediaContent>
@@ -98,7 +98,7 @@ import { setTimeout } from 'timers';
 export default {
   props: {
     media: Object,
-    slugProjectName: String,
+    slugLayerName: String,
     metaFileName: String,
     preview_size: Number
   },
@@ -163,21 +163,7 @@ export default {
       if (this.$root.state.dev_mode === 'debug') {
         console.log(`METHODS • MediaCard: openMediaModal = ${this.metaFileName}`);
       }
-      this.$root.openMedia({ slugProjectName: this.slugProjectName, metaFileName: this.metaFileName });
-    },
-    removeMedia() {
-      if (this.$root.state.dev_mode === 'debug') {
-        console.log('METHODS • MediaCard: removeMedia');
-      }
-      if (window.confirm(this.$t('sureToRemoveMedia'))) {
-        this.$root.removeMedia(this.slugProjectName, this.metaFileName);
-      }
-    },
-    addToCurrentPubli() {
-      if (this.$root.state.dev_mode === 'debug') {
-        console.log('METHODS • MediaCard: addToPubli');
-      }
-      this.$eventHub.$emit('publication.addMedia', { slugProjectName: this.slugProjectName, metaFileName: this.metaFileName });
+      this.$root.openMedia({ slugLayerName: this.slugLayerName, metaFileName: this.metaFileName });
     }
   }
 }

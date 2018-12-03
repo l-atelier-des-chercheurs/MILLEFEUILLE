@@ -11,8 +11,8 @@
     <EditMedia
       v-if="$root.media_modal.open"
       :slugMediaName="$root.media_modal.current_metaFileName"
-      :slugProjectName="$root.media_modal.current_slugProjectName"
-      :media="$root.store.projects[$root.media_modal.current_slugProjectName].medias[$root.media_modal.current_metaFileName]"
+      :slugLayerName="$root.media_modal.current_slugLayerName"
+      :media="$root.store.layers[$root.media_modal.current_slugLayerName].medias[$root.media_modal.current_metaFileName]"
       @close="$root.closeMedia()"
       :read_only="!$root.state.connected"
     />

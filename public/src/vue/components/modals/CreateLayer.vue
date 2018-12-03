@@ -1,6 +1,5 @@
 <template>
-  <Modal
-    @close="$emit('close')"
+  <div
     @submit="newLayer"
     :read_only="read_only"
     :typeOfModal="'EditMeta'"

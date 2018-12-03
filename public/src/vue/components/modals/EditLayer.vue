@@ -63,7 +63,6 @@
 </template>
 <script>
 import Modal from './BaseModal.vue';
-import slug from 'slugg';
 import ImageSelect from '../subcomponents/ImageSelect.vue';
 import TagsInput from '../subcomponents/TagsInput.vue';
 
