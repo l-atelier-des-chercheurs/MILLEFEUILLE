@@ -3,8 +3,9 @@
     :class="{ 'is_persp' : $root.is_persp }"
   >
     <Calque 
-      v-for="layer in layers_in_order" 
+      v-for="(layer, slugFolderName, index) in layers" 
       :key="layer.slugFolderName"
+      :index="index"
       :layer="layer"
     />
   </div>
@@ -32,9 +33,6 @@ export default {
   watch: {
   },
   computed: {
-    layers_in_order() {
-      return this.layers;      
-    },
   },
   methods: {
   }
@@ -89,7 +87,7 @@ export default {
     position: absolute;
     top: 0;
     width: 100%;
-    border: 1px solid #ccc;
+    // border: 1px solid #ccc;
     transform: rotateX(0) rotateZ(0) scale(1);
     transition: all 0.6s ease-in-out;      
   }
@@ -153,5 +151,4 @@ export default {
   //   transform: rotateY(90deg) translateX(@thickness / 2);
   // }
 }
-
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box" :style="layerStyles">
     <div class="face" v-if="previewURL"
       :style="boxStyle(0)"
     >
@@ -14,7 +14,7 @@
 
 
 export default {
-  props: ['layer'],
+  props: ['layer', 'index'],
   components: {
   },
   data() {
@@ -39,6 +39,10 @@ export default {
       const thumb = this.layer.preview.filter(p => p.size === 800);
       if(thumb.length > 0) { return `${thumb[0].path}?${(new Date()).getTime()}` }
       return false;
+    },
+    layerStyles() {
+      debugger;
+      return `transform: translate3d(${this.index * 10}px, ${this.index * 10}px, 0px)`;   
     }
   },
   methods: {
@@ -54,6 +58,3 @@ export default {
   }
 }
 </script>
-<style>
-
-</style>
