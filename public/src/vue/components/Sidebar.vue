@@ -73,7 +73,7 @@
 
     <div class="m_controller--bottomBar">
 
-      <transition name="slideFromBottom" mode="out-in">
+      <transition name="slideFromBottom" mode="out-in" :duration="500">
         <div v-if="$root.settings.sidebar.view === 'Layers'"
           :key="'layers_options'"
         >

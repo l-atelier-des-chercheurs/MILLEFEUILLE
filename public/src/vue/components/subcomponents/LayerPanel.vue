@@ -20,17 +20,9 @@
       </template>
     </div>
 
-    <button
-      class="barButton barButton_createLayer"
-      type="button"
-      @click="showEditLayerModal = true"
-      :disabled="!$root.state.connected"
-    >
-      <span>
-        {{ $t('edit_layer') }}
-      </span>
+    <button type="button" class="buttonLink" @click="showEditLayerModal = true" :disabled="!$root.state.connected">
+      {{ $t('edit_layer') }}
     </button>
-
     <button type="button" class="buttonLink" @click="removeLayer()" :disabled="!$root.state.connected">
       {{ $t('remove') }}
     </button>

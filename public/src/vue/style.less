@@ -93,10 +93,10 @@ html,body {
   @dot-spacing: 60px;
 
 
-  background: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, @bg-color @dot-size+1px);
-  background-repeat: repeat;
-  background-size: @dot-spacing @dot-spacing;
-  background-position: -@dot-spacing/2 + @t-background_offset -@dot-spacing/2 + @t-background_offset;
+  // background: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, @bg-color @dot-size+1px);
+  // background-repeat: repeat;
+  // background-size: @dot-spacing @dot-spacing;
+  // background-position: -@dot-spacing/2 + @t-background_offset -@dot-spacing/2 + @t-background_offset;
 }
 
 * {
@@ -358,6 +358,7 @@ a {
   position:relative;
   z-index:1;
 
+
   left:0;
   top: 0;
   overflow: hidden;
@@ -367,7 +368,22 @@ a {
   flex-flow: column nowrap;
 
   justify-content: space-between;
+  transition: background-color .4s;
 
+
+  @bg-color: rgba(255,255,255,.80);
+  @dot-color: @c-gris_clair;
+  @dot-size: 1px;
+  @dot-spacing: 15px;
+
+  // background: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, @bg-color @dot-size+1px);
+  // background-repeat: repeat;
+  // background-size: @dot-spacing @dot-spacing;
+  // background-position: -@dot-spacing/2 + @t-background_offset -@dot-spacing/2 + @t-background_offset;
+
+  &:hover {
+    background-color: @bg-color;
+  }
 
   > * {
     flex: 1 1 auto;
@@ -629,7 +645,7 @@ a {
 
 
 .slideFromBottom-enter-active, .slideFromBottom-leave-active {
-  transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: transform .5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 .slideFromBottom-enter-active {
   transform: translate3d(0, 0, 0);
