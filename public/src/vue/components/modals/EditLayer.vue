@@ -30,7 +30,7 @@
       <div class="margin-bottom-small">
         <label>{{ $t('background_map') }}</label><br>
         <ImageSelect 
-          :previewURL="$root.previewURL(layer,800)"
+          :previewURL="$root.previewURL(layer,400)"
           @newPreview="value => { preview = value }"
         >
         </ImageSelect>
