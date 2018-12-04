@@ -5,6 +5,8 @@
       y="0" 
       :width="width" 
       :height="height" 
+      stroke="#000"
+      fill="#fff"
     />
     <image 
       :xlink:href="$root.previewURL(layer, 1600)" 
@@ -51,12 +53,6 @@ export default {
     }
   },
   methods: {
-    boxStyle(index) {
-      if(this.$root.is_persp) {
-        return { transform: `translate3d( 0, -${0 + 40 * index}px, 0) scale(0.8)` };
-      }
-      return '';
-    },
     imgStyle(layer) {
       return { opacity: layer.opacity }
     }

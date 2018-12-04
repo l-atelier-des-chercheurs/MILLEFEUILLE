@@ -1,6 +1,5 @@
 <template>
   <div class="m_pattern"
-    :class="{ 'is_persp' : $root.is_persp }"
   >
     <div class="m_svgpattern" ref="patternContainer">
       <svg
@@ -9,12 +8,13 @@
         :height="900"
         ref="pattern"
         class=""
-        :class="{ 'has--grid' : grid.enabled }"
+        :class="{ 'has--grid' : grid.enabled && !$root.settings.mode_perspective }"
       >      
-        <g id="shapes" ref="shapes">
+        <g id="shapes" ref="shapes"
+        >
           <g
-            class="calques"
-            :style="layerStyle(0)"
+            :style="moveUpLayers(0)"
+            class="m_svgpattern--layer m_svgpattern--layer_persp"
           >
             <rect 
               x="0"
@@ -28,13 +28,13 @@
           <Calque 
             v-for="(layer, slugLayerName, index) in layers" 
             v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && slugLayerName === $root.settings.sidebar.layer_viewed)"
-            class="calques"
             :key="slugLayerName"
             :index="index"
             :layer="layer"
             :width="width"
             :height="height"
-            :style="layerStyle(index + 1)"
+            :style="moveUpLayers(index+1)"
+            class="m_svgpattern--layer m_svgpattern--layer_persp"
           />
         </g>
       </svg>
@@ -67,8 +67,8 @@ export default {
         enabled: false
       },
 
-      width: 100 * 14,
-      height: 70.7 * 14,
+      width: 1400,
+      height: 990,
       globalCanvasSize: {
         width: 900,
         height: 900
@@ -92,13 +92,13 @@ export default {
   },
 
   computed: {
-    shown_layers() {
-      if(this.$root.settings.sidebar.view === 'Layers') {
-        return this.layers;
-      }
-      if(this.$root.settings.sidebar.view === 'Layer') {
-        const slugLayerName = Object.keys(this.layers).filter(slugLayerName => slugLayerName === this.$root.settings.sidebar.layer_viewed);
-        return { slugLayerName: this.layers[slugLayerName] };
+    perspStyle() {
+      if(this.$root.settings.mode_perspective) {
+        return {
+          'transform': `rotateX(45deg) rotate(-45deg) scale(1)`
+        };
+      } else if(this.$root.settings.mode_perspective) {
+        return {};
       }
     }
   },
@@ -107,14 +107,17 @@ export default {
       this.globalCanvasSize.width = this.$refs.patternContainer.offsetWidth;
       this.globalCanvasSize.height = this.$refs.patternContainer.offsetHeight;
     },
-    layerStyle(index) {
+    moveUpLayers(index) {
       console.log('PatternSvg / layerStyle');      
       if(this.$root.settings.mode_perspective) {
         return {
-          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${index * 80}px)`
+          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${index * 80}px)`,
+          'transform-origin': `${this.width/2}px ${this.height/2}px`
         };
       } else if(this.$root.settings.mode_perspective) {
-        return {};
+        return {
+          'transform-origin': `${this.width/2}px ${this.height/2}px`
+        };
       }
     },
     setupPanZoom() {
@@ -224,116 +227,5 @@ export default {
 }
 </script>
 <style lang="less">
-.calques {
-  margin: auto;
 
-  position: relative;
-  overflow: visible;
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  // margin-top: 10em;
-
-  &.is_persp {
-    .face, .shadow {
-      transform: rotateX(45deg) rotateZ(-45deg);
-      transform-style: preserve-3d;  
-      z-index: -1;
-      // box-shadow: -60px 60px 15px #eee;    
-    }
-
-  }  
-
-}
-
-.box {
-  position: absolute;
-  width: 90%;
-
-  transform-origin: center 100%;
-  transform: translate3d(0,0px,0) scale(1);
-  transition: all 0.6s ease-in-out;
-
-  // opacity: .4;
-
-  &::before {
-    content: '';
-    display: block;
-    position: relative;
-    width: 100%;
-    padding-bottom: 70.7%;
-  }
-
-  .face,
-  .shadow {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    // border: 1px solid #ccc;
-    transform: rotateX(0) rotateZ(0) scale(1);
-    transition: all 0.6s ease-in-out;      
-  }
-
-  img {
-    width: 100%;
-  }
-  
-  .shadow {
-    box-shadow: 0 0 15px #ccc;    
-  }
-  
-}
-
-.shadow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-}
-
-.face {
-  
-  @thickness: 5px;
-  @color: #ff0000;
-  
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  // background-color: #ccc;
-  background-color: rgba(255,255,255,.2);
-  margin: 0 auto;  
-
-  img {
-    object-fit: contain;
-  }
-  
-  // &:before {
-  //   content: "";
-  //   position: absolute;
-  //   bottom: -@thickness / 2;
-  //   left: 0;
-  //   background-color: @color;
-  //   width: 100%;
-  //   height: @thickness;
-  //   display: block;
-  //   transform: rotateX(90deg) translateY(-@thickness / 2);
-  // }
-  
-  // &:after {
-  //   content: "";
-  //   position: absolute;
-  //   top: 0;
-  //   left: -@thickness / 2;
-  //   width: @thickness;
-  //   height: 100%;
-  //   background-color: darken(@color, 10%);
-  //   transform: rotateY(90deg) translateX(@thickness / 2);
-  // }
-}
 </style>

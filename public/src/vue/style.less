@@ -800,6 +800,10 @@ a {
 
 }
 .m_svgpattern svg {
+  transform-origin: center center;
+  transition-property: all;
+  transition-duration: 1s;
+
   .grid {
     line {
       stroke: #c9c9c9;    
@@ -815,12 +819,24 @@ a {
       transform: translate(5px,0px);
     }
   }
-  
-  .calques { 
-    transform-origin: center center;
+
+  .m_svgpattern--layer_persp {
+    transform-box:fill-box;
+    transform-origin: center;
     transition-property: all;
-    transition-duration: 1s;
+    transition-duration: 1s;  
+
+    backface-visibility: hidden;
   }
+
+  .m_svgpattern--layer {
+
+  }
+
+  .grid {
+    // transform: rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, 0px);    
+  }
+  
 }
 
 
