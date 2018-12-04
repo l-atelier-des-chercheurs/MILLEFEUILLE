@@ -87,7 +87,17 @@ export default {
       if(!this.map_projection) {
         return '';
       }
-      return `translate(${this.map_projection([media.longitude, media.latitude])})`
+      const [x,y] = this.map_projection([media.longitude, media.latitude]);
+
+      if(x < 0 || x > this.width || y < 0 || y > this.height) {
+        this.$alertify
+          .closeLogOnClick(true)
+          .delay(4000)
+          .error(this.$t('notifications.data_position_outside_map'));
+        return;
+      }
+
+      return `translate(${x}, ${y})`
     },
     mercator(x, y) {
         return [x, Math.log(Math.tan(Math.PI / 4 + y / 2))];

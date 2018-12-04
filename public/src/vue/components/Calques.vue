@@ -122,6 +122,13 @@ export default {
       const [x,y] = this.map_projection([this.current_position.longitude, this.current_position.latitude]);
       const index = Object.keys(this.layers).length;
 
+      if(x < 0 || x > this.width || y < 0 || y > this.height) {
+        this.$alertify
+          .closeLogOnClick(true)
+          .delay(4000)
+          .error(this.$t('notifications.your_position_outside_map'));
+      }
+
       if(this.$root.settings.mode_perspective) {
         return {
           'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(${x}px, ${y}px, ${index * 80}px)`,
@@ -139,10 +146,16 @@ export default {
   methods: {
     localizeMe() {
       if(navigator.geolocation) {
+        this.current_position.latitude = false;
+        this.current_position.longitude = false;
         navigator.geolocation.getCurrentPosition(this.onGeoSuccess, this.onGeoError);  
         this.current_position.location_is_loading = true;
       } else {
-        alert("Your browser or device doesn't support Geolocation");
+        this.$alertify
+          .closeLogOnClick(true)
+          .delay(4000)
+          .error(this.$t('notifications.your_device_cant_geoloc'));
+
       }
     },
     onGeoSuccess(event) {
@@ -155,7 +168,11 @@ export default {
     },
     onGeoError(event) {
       this.current_position.location_is_loading = false;
-      alert("La localisation n’a pas pu avoir lieu. Error code " + event.code + ". " + event.message);
+      this.$alertify
+        .closeLogOnClick(true)
+        .delay(4000)
+        .error(this.$t('notifications.geoloc_failed') + ' ' + this.$t('error_code') + event.code + ". " + event.message);
+    
     },
     handleResize() {
       this.globalCanvasSize.width = this.$refs.patternContainer.offsetWidth;

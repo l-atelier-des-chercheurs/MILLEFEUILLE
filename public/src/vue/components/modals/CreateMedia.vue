@@ -199,7 +199,10 @@ export default {
         navigator.geolocation.getCurrentPosition(this.onGeoSuccess, this.onGeoError);  
         this.location_is_loading = true;
       } else {
-        alert("Your browser or device doesn't support Geolocation");
+        this.$alertify
+          .closeLogOnClick(true)
+          .delay(4000)
+          .error(this.$t('notifications.your_device_cant_geoloc'));
       }
     },
     onGeoSuccess(event) {
@@ -208,7 +211,10 @@ export default {
     },
     onGeoError(event) {
       this.location_is_loading = false;
-      alert("La localisation n’a pas pu avoir lieu. Error code " + event.code + ". " + event.message);
+      this.$alertify
+        .closeLogOnClick(true)
+        .delay(4000)
+        .error(this.$t('notifications.geoloc_failed') + ' ' + this.$t('error_code') + event.code + ". " + event.message);
     },
     sendThisFile(f) {
       return new Promise((resolve, reject) => {
