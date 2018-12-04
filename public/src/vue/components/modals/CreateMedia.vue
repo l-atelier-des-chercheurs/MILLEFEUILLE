@@ -42,12 +42,10 @@
             </button>
 
             <div class="margin-bottom-small">
-              <label>{{ $t('latitude') }}</label>
-              <input type="text" required v-model="mediadata.latitude" >
-            </div>
-            <div class="margin-bottom-small">
-              <label>{{ $t('longitude') }}</label>
-              <input type="text" required v-model="mediadata.longitude" >
+              <label>{{ $t('latitude') }}, {{ $t('longitude') }}<br>
+                <small>Par exemple 47.216050, -1.513528</small>
+              </label>
+              <input type="text" required v-model="mediadata.latlong" >
             </div>
           </div>
           <div v-else-if="location_is_loading">
@@ -232,8 +230,8 @@ export default {
         formData.append('files', f, filename);
         const meta = {
           fileCreationDate: modified,
-          latitude: this.mediadata.latitude,
-          longitude: this.mediadata.longitude,
+          latitude: this.mediadata.latlong.split(",")[0].trim(),
+          longitude: this.mediadata.latlong.split(",")[1].trim(),
           caption: this.mediadata.caption
         }
         formData.append(filename, JSON.stringify(meta));

@@ -166,7 +166,6 @@ export default {
   },
   data () {
     return {
-      baseUrl: process.env.BASE_URL,
       showCreateLayerModal: false,
       showCreateMediaModal: false
     }
