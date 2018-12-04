@@ -154,8 +154,8 @@ export default {
       this.current_position.longitude = event.coords.longitude;
       this.current_position.location_is_loading = false;
 
-      this.current_position.latitude = 47.216050; 
-      this.current_position.longitude = -1.513528;
+      // this.current_position.latitude = 47.216050; 
+      // this.current_position.longitude = -1.513528;
     },
     onGeoError(event) {
       this.current_position.location_is_loading = false;
