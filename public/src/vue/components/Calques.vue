@@ -53,11 +53,16 @@
         <button type="button" class="btn_small" @click="zoom.zoomOut()">-</button>
         <button type="button" class="btn_small" @click="zoom.zoomIn()">+</button>
         <button type="button" class="btn_small" @click="zoom.resetZoom()">RESET</button>
-        <button type="button" class="btn_small" @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">perspective</button>
+        <button type="button" class="btn_small" :class="{ 'active' : $root.settings.mode_perspective }"  @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">perspective</button>
         <button type="button" class="btn_small" :disabled="$root.settings.mode_perspective" :class="{ 'active' : grid.enabled && !$root.settings.mode_perspective }" @click="grid.enabled = !grid.enabled">GRILLE</button>
-        <button type="button" class="btn_small" @click="localizeMe()" v-if="!$root.state.is_electron">MA POSITION
+        <button type="button" class="btn_small" @click="localizeMe()" v-if="!$root.state.is_electron">
+          MA POSITION
           <span class="loader loader-small" v-if="current_position.location_is_loading" />
         </button>
+        <div v-if="$root.settings.mode_perspective" class="popup_perspective">
+          <input type="range" min="0" max="250" v-model="$root.settings.perspective_stretch" />
+        </div>
+
       </div>
     </div>
   </div>
@@ -112,17 +117,8 @@ export default {
   },
 
   computed: {
-    perspStyle() {
-      if(this.$root.settings.mode_perspective) {
-        return {
-          'transform': `rotateX(45deg) rotate(-45deg) scale(1)`
-        };
-      } else if(this.$root.settings.mode_perspective) {
-        return {};
-      }
-    },
     placeMyPosition() {
-      console.log('PatternSvg / layerStyle');      
+      console.log('PatternSvg / placeMyPosition');      
       const [x,y] = this.map_projection([this.current_position.longitude, this.current_position.latitude]);
       const index = Object.keys(this.layers).length;
 
@@ -166,10 +162,10 @@ export default {
       this.globalCanvasSize.height = this.$refs.patternContainer.offsetHeight;
     },
     moveUpLayers(index) {
-      console.log('PatternSvg / layerStyle');      
+      console.log('PatternSvg / moveUpLayers');      
       if(this.$root.settings.mode_perspective) {
         return {
-          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${index * 80}px)`,
+          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${index * this.$root.settings.perspective_stretch}px)`,
           'transform-origin': `${this.width/2}px ${this.height/2}px`
         };
       } else {

@@ -6,7 +6,7 @@
       :width="width" 
       :height="height" 
       stroke="#000"
-      fill="#fff"
+      fill="transparent"
     />
     <image 
       v-if="$root.previewURL(layer, 2200)"
@@ -16,7 +16,8 @@
       :width="width" 
       :height="height" />
 
-    <g v-for="(media, key) in layer.medias"
+
+    <transition-group tag="g" v-for="(media, key) in layer.medias"
       v-if="media.hasOwnProperty('latitude') && media.hasOwnProperty('longitude')"
       :transform="getCoordinates(media)"
       :key="key"
@@ -38,7 +39,7 @@
         >
         </div>
       </foreignObject>
-    </g>
+    </transition-group>
 
   </g>
   <!-- <div class="box" :style="layerStyles">
@@ -75,7 +76,7 @@ export default {
   },
   computed: {
     layerStyles() {
-      return `transform: translate3d(${this.index * 10}px, ${this.index * 10}px, 0px)`;   
+      // return `transform: translate3d(${this.index * this.$root.settings.perspective_stretch}px, ${this.index * this.$root.settings.perspective_stretch}px, 0px)`;   
     }
   },
   methods: {

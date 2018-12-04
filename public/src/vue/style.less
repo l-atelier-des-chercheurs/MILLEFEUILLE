@@ -21,6 +21,10 @@
   background: rgba(151, 151, 151,0.25);
 }
 
+:root {  
+  --color-primary: @c-bleumarine;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -504,7 +508,8 @@ a {
 
   .m_modal--mask {
     pointer-events: auto;
-    .padding-small;
+    .padding-verysmall;
+    background-color: white;
   }
   
   .m_modal--close_button {
@@ -812,6 +817,7 @@ a {
     right: 1.5rem;
     background-color: #fff;
     box-shadow: 0px 2px 7px 0px #c3c3c3;
+    user-select: none;
 
     button {
       min-width: 1rem;
@@ -1176,6 +1182,15 @@ a {
 
 .flash {
   animation-name: flash;
+}
+
+.barButton {
+  color: white;
+  font-weight: 700;
+
+  &.barButton_addData {
+    .bg-bleumarine;
+  }
 }
 
 
