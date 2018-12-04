@@ -5,7 +5,7 @@
   "userDirPath": "documents",
   "userDirname": "millefeuille",
 
-  "process": "electron",
+  "process": "node",
 
   "contentDirname" : "user",
   "cacheDirname" : "cache",

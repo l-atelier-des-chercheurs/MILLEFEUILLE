@@ -16,28 +16,6 @@ global.appInfos = {
   version: packagejson.version
 };
 
-let win;
-const electron = require('electron');
-const { app, BrowserWindow, Menu } = electron;
-const PDFWindow = require('electron-pdf-window');
-
-const {
-  default: installExtension,
-  VUEJS_DEVTOOLS
-} = require('electron-devtools-installer');
-
-const { dialog } = require('electron');
-const JSONStorage = require('node-localstorage').JSONStorage;
-
-require('electron-context-menu')({
-  prepend: (params, BrowserWindow) => [
-    {
-      // Only show it when right-clicking images
-      visible: params.mediaType === 'image'
-    }
-  ]
-});
-
 if (settings.process === 'electron') {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
