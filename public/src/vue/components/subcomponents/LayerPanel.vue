@@ -38,9 +38,10 @@
     <div
       v-for="media in layer.medias"
       :key="media.metaFileName"
-      class="margin-small flex-nowrap"
+      class="margin-verysmall flex-nowrap flex-vertically-centered"
     >
       <MediaContent
+        class="padding-verysmall"
         :context="'preview'"
         :slugFolderName="layer.slugFolderName"
         :media="media"
@@ -49,16 +50,20 @@
         v-model="media.content"
       >
       </MediaContent>
-      {{ media.media_filename }}
+      <span 
+        class="t-ellipse padding-verysmall"
+      >
+        {{ media.media_filename }}
+      </span>
       <button
-        class="barButton barButton_createLayer"
+        class="barButton barButton_createLayer padding-verysmall"
         v-if="!showCreateLayerModal"
         @click="showCreateLayerModal = true"
         :disabled="!$root.state.connected"
         :key="'createButton'"
       >
         <span>
-          {{ $t('edit_data') }}
+          {{ $t('open') }}
         </span>
       </button>
 

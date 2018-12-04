@@ -550,7 +550,7 @@ module.exports = (function() {
     createMediaMeta: ({ type, slugFolderName, additionalMeta }) => {
       return new Promise(function(resolve, reject) {
         dev.logfunction(
-          `COMMON — createMediaMeta : will create a new meta file 
+          `COMMON — createMediaMeta : will create a new meta file for type ${type}
           in folder ${slugFolderName}
           `
         );

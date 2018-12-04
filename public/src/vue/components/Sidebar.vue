@@ -115,6 +115,7 @@
           <CreateMedia
             v-if="showCreateMediaModal"
             @close="showCreateMediaModal = false"
+            :slugLayerName="$root.settings.sidebar.layer_viewed"
             :read_only="!$root.state.connected"
           />
         </div>

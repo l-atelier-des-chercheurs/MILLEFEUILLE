@@ -16,13 +16,13 @@ module.exports = function(app, io, m) {
    * routing event
    */
   app.get('/', showIndex);
-  app.get('/:project', loadFolderOrMedia);
-  app.get('/:project/media/:metaFileName', loadFolderOrMedia);
+  app.get('/:folder', loadFolderOrMedia);
+  app.get('/:folder/media/:metaFileName', loadFolderOrMedia);
   app.get('/publication/:publication', printPublication);
   app.get('/publication/web/:publication', exportPublication);
   app.get('/publication/print/:pdfName', showPDF);
   app.get('/publication/video/:videoName', showVideo);
-  app.post('/:project/file-upload', postFile2);
+  app.post('/:folder/file-upload', postFile2);
 
   /**
    * routing functions
@@ -37,7 +37,7 @@ module.exports = function(app, io, m) {
       pageData.pageTitle = 'millefeuille';
       // full path on the storage space, as displayed in the footer
       pageData.folderPath = api.getFolderPath();
-      pageData.slugProjectName = '';
+      pageData.slugFolderName = '';
       pageData.url = req.path;
       pageData.protocol = req.protocol;
       pageData.structure = settings.structure;
@@ -67,17 +67,17 @@ module.exports = function(app, io, m) {
   }
 
   function loadFolderOrMedia(req, res) {
-    let slugProjectName = req.param('project');
+    let slugFolderName = req.param('folder');
     let metaFileName = req.param('metaFileName');
 
     generatePageData(req).then(
       pageData => {
         // let’s make sure that folder exists first and return some meta
         file
-          .getFolder({ type: 'projects', slugFolderName: slugProjectName })
+          .getFolder({ type: 'layers', slugFolderName })
           .then(
             foldersData => {
-              pageData.slugProjectName = slugProjectName;
+              pageData.slugFolderName = slugFolderName;
               pageData.folderAndMediaData = foldersData;
               if (metaFileName) {
                 pageData.metaFileName = metaFileName;
@@ -187,8 +187,8 @@ module.exports = function(app, io, m) {
   }
 
   function postFile2(req, res) {
-    let slugProjectName = req.param('project');
-    dev.logverbose(`Will add new media for folder ${slugProjectName}`);
+    let slugFolderName = req.param('folder');
+    dev.logverbose(`Will add new media for folder ${slugFolderName}`);
 
     // create an incoming form object
     var form = new formidable.IncomingForm();
@@ -199,7 +199,7 @@ module.exports = function(app, io, m) {
     let socketid = '';
 
     // store all uploads in the folder directory
-    form.uploadDir = api.getFolderPath(slugProjectName);
+    form.uploadDir = api.getFolderPath(slugFolderName);
 
     let allFilesMeta = [];
 
@@ -260,7 +260,7 @@ module.exports = function(app, io, m) {
           m.push(
             renameAndConvertMediaAndCreateMeta(
               form.uploadDir,
-              slugProjectName,
+              slugFolderName,
               allFilesMeta[i],
               socketid
             )
@@ -276,7 +276,7 @@ module.exports = function(app, io, m) {
 
   function renameAndConvertMediaAndCreateMeta(
     uploadDir,
-    slugProjectName,
+    slugFolderName,
     fileMeta,
     socketid
   ) {
@@ -308,8 +308,8 @@ module.exports = function(app, io, m) {
             .then(newFileName => {
               fileMeta.additionalMeta.media_filename = newFileName;
               sockets.createMediaMeta({
-                type: 'projects',
-                slugFolderName: slugProjectName,
+                type: 'layers',
+                slugFolderName: slugFolderName,
                 additionalMeta: fileMeta.additionalMeta
               });
               resolve();
@@ -318,8 +318,8 @@ module.exports = function(app, io, m) {
               dev.error(err);
               fileMeta.additionalMeta.media_filename = newFileName;
               sockets.createMediaMeta({
-                type: 'projects',
-                slugFolderName: slugProjectName,
+                type: 'layers',
+                slugFolderName: slugFolderName,
                 additionalMeta: fileMeta.additionalMeta
               });
               resolve();
