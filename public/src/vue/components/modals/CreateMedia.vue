@@ -2,7 +2,6 @@
   <Modal
     @close="$emit('close')"
     @submit="createMedia"
-    :backgroundColor="mediadata.color"
     :read_only="read_only"
   >
     <template slot="header">
@@ -10,14 +9,7 @@
     </template>
 
     <template slot="sidebar">
-      <div 
-        v-if="(!read_only || !!mediadata.caption) && mediadata.type !== 'text'"
-        class="margin-bottom-small" 
-      >
-        <label>{{ $t('caption') }}</label><br>
-        <textarea v-model="mediadata.caption" :readonly="read_only">
-        </textarea>
-      </div>
+      PLOP
     </template>
 
     <template slot="submit_button">
@@ -37,9 +29,7 @@ export default {
     }
   },
   components: {
-    Modal,
-    MediaContent,
-    TagsInput
+    Modal
   },
   data() {
     return {
@@ -76,6 +66,3 @@ export default {
   },
 };
 </script>
-<style>
-
-</style>

@@ -12,22 +12,29 @@
         :class="{ 'has--grid' : grid.enabled }"
       >      
         <g id="shapes" ref="shapes">
-          <rect 
-            id="background_rect"
-            x="0"
-            y="0"
-            :width="width"
-            :height="height"
-            fill="white"
-            stroke="#333"
-          ></rect>
+          <g
+            class="calques"
+            :style="layerStyle(0)"
+          >
+            <rect 
+              x="0"
+              y="0"
+              :width="width"
+              :height="height"
+              fill="white"
+              stroke="#333"
+            ></rect>
+          </g>
           <Calque 
-            v-for="(layer, slugFolderName, index) in layers" 
-            :key="slugFolderName"
+            v-for="(layer, slugLayerName, index) in layers" 
+            v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && slugLayerName === $root.settings.sidebar.layer_viewed)"
+            class="calques"
+            :key="slugLayerName"
             :index="index"
             :layer="layer"
             :width="width"
             :height="height"
+            :style="layerStyle(index + 1)"
           />
         </g>
       </svg>
@@ -84,14 +91,31 @@ export default {
     window.removeEventListener('resize', this.handleResize)
   },
 
-  watch: {
-  },
   computed: {
+    shown_layers() {
+      if(this.$root.settings.sidebar.view === 'Layers') {
+        return this.layers;
+      }
+      if(this.$root.settings.sidebar.view === 'Layer') {
+        const slugLayerName = Object.keys(this.layers).filter(slugLayerName => slugLayerName === this.$root.settings.sidebar.layer_viewed);
+        return { slugLayerName: this.layers[slugLayerName] };
+      }
+    }
   },
   methods: {
     handleResize() {
       this.globalCanvasSize.width = this.$refs.patternContainer.offsetWidth;
       this.globalCanvasSize.height = this.$refs.patternContainer.offsetHeight;
+    },
+    layerStyle(index) {
+      console.log('PatternSvg / layerStyle');      
+      if(this.$root.settings.mode_perspective) {
+        return {
+          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${index * 80}px)`
+        };
+      } else if(this.$root.settings.mode_perspective) {
+        return {};
+      }
     },
     setupPanZoom() {
       // this.d3svg exists to make sure we don’t reload d3 for each change
@@ -161,7 +185,8 @@ export default {
       );
 
       function zoomed() {
-        shapes.attr("transform", d3.event.transform);
+        shapes.attr("transform", [d3.event.transform]);
+        // shapes.attr("transform", " rotate(-45)");
         gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
         gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
       }

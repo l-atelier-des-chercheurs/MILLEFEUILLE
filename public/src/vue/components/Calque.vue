@@ -1,5 +1,18 @@
 <template>
-  <image :xlink:href="$root.previewURL(layer, 1600)" :x="0" :y="0" :width="width" :height="height" />
+  <g>
+    <rect 
+      x="0" 
+      y="0" 
+      :width="width" 
+      :height="height" 
+    />
+    <image 
+      :xlink:href="$root.previewURL(layer, 1600)" 
+      x="0" 
+      y="0" 
+      :width="width" 
+      :height="height" />
+  </g>
   <!-- <div class="box" :style="layerStyles">
     <div class="face" v-if="previewURL"
       :style="boxStyle(0)"

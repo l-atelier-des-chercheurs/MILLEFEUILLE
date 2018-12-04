@@ -2,7 +2,7 @@
   <div class="m_controller" style="">
     <div class="m_controller--topBar">
       <div class="padding-vert-medium">
-        <h1 class="margin-none padding-sides-medium">Cartographie Sensible</h1>
+        <h1 class="margin-none padding-sides-medium">Millefeuille</h1>
         <span class="margin-none padding-sides-medium">workshop Stéréolux</span>
         <!-- <button type="button" @click="$root.setPersp()" v-html="'Perspective'"/> -->
       </div>
@@ -16,6 +16,10 @@
           <span>2. Design</span>
         </label>
       </div> -->
+
+      <button type="button" @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">
+        mode_perspective
+      </button>
     </div>      
 
     <div class="m_controller--content">
