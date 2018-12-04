@@ -17,9 +17,6 @@
         </label>
       </div> -->
 
-      <button type="button" class="buttonLink" @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">
-        mode_perspective
-      </button>
     </div>      
 
     <div class="m_controller--content">

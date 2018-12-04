@@ -37,13 +37,27 @@
             class="m_svgpattern--layer m_svgpattern--layer_persp"
             :map_projection="map_projection"
           />
+
+          <g
+            v-if="!!current_position.latitude"
+            :style="placeMyPosition"
+            class="m_svgpattern--layer m_svgpattern--layer_persp"
+          >
+            <circle cx="0" cy="0" r="15" 
+              fill="#ff00ff"
+            />
+          </g>
         </g>
       </svg>
       <div class="m_svgpattern--buttons padding-sides-small">  
         <button type="button" class="btn_small" @click="zoom.zoomOut()">-</button>
         <button type="button" class="btn_small" @click="zoom.zoomIn()">+</button>
         <button type="button" class="btn_small" @click="zoom.resetZoom()">RESET</button>
-        <button type="button" class="btn_small" :disabled="$root.settings.mode_perspective" :class="{ 'active' : grid.enabled && !$root.settings.mode_perspective }" @click="grid.enabled = !grid.enabled">GRID</button>
+        <button type="button" class="btn_small" @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">perspective</button>
+        <button type="button" class="btn_small" :disabled="$root.settings.mode_perspective" :class="{ 'active' : grid.enabled && !$root.settings.mode_perspective }" @click="grid.enabled = !grid.enabled">GRILLE</button>
+        <button type="button" class="btn_small" @click="localizeMe()">MA POSITION
+          <span class="loader loader-small" v-if="current_position.location_is_loading" />
+        </button>
       </div>
     </div>
   </div>
@@ -65,6 +79,12 @@ export default {
       grid: {
         increment: 25,
         enabled: false
+      },
+
+      current_position: {
+        latitude: false,
+        longitude: false,
+        location_is_loading: false
       },
 
       width: 1400,
@@ -100,9 +120,47 @@ export default {
       } else if(this.$root.settings.mode_perspective) {
         return {};
       }
+    },
+    placeMyPosition() {
+      console.log('PatternSvg / layerStyle');      
+      const [x,y] = this.map_projection([this.current_position.longitude, this.current_position.latitude]);
+      const index = Object.keys(this.layers).length;
+
+      if(this.$root.settings.mode_perspective) {
+        return {
+          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(${x}px, ${y}px, ${index * 80}px)`,
+          'transform-origin': `${this.width/2}px ${this.height/2}px`
+        };
+      } else {
+        return {
+          'transform': `translate3d(${x}px, ${y}px, 0px)`,
+          'transform-origin': `${this.width/2}px ${this.height/2}px`
+        };
+      }
+
     }
   },
   methods: {
+    localizeMe() {
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(this.onGeoSuccess, this.onGeoError);  
+        this.current_position.location_is_loading = true;
+      } else {
+        alert("Your browser or device doesn't support Geolocation");
+      }
+    },
+    onGeoSuccess(event) {
+      this.current_position.latitude = event.coords.latitude; 
+      this.current_position.longitude = event.coords.longitude;
+      this.current_position.location_is_loading = false;
+
+      this.current_position.latitude = 47.216050; 
+      this.current_position.longitude = -1.513528;
+    },
+    onGeoError(event) {
+      this.current_position.location_is_loading = false;
+      alert("La localisation n’a pas pu avoir lieu. Error code " + event.code + ". " + event.message);
+    },
     handleResize() {
       this.globalCanvasSize.width = this.$refs.patternContainer.offsetWidth;
       this.globalCanvasSize.height = this.$refs.patternContainer.offsetHeight;
@@ -137,29 +195,29 @@ export default {
  
       this.map_projection = d3.geoMercator()
         // .scale(width / 2 / Math.PI)
-        .scale(1180000)
-        .center([-1.544230, 47.2059287])
+        .scale(1189000)
+        .center([-1.544730, 47.2057287])
         .translate([this.width / 2, this.height / 2])
 
-    //   // rouge
-    //   var bottomleft_ref = [-1.574420, 47.199467];
-    //   // bleu
-    //   var topright_ref = [-1.514057, 47.215823];
+      // rouge
+      var bottomleft_ref = [-1.574420, 47.199467];
+      // bleu
+      var topright_ref = [-1.514057, 47.215823];
 
-    //   var middle_ref = [-1.546236, 47.204049];
-    //   var stereolux = [-1.563454, 47.205163];
-    //   var lu = [-1.545169, 47.215575];
+      var middle_ref = [-1.546236, 47.204049];
+      var stereolux = [-1.563454, 47.205163];
+      var lu = [-1.545169, 47.215575];
 
-    // // add circles to svg
-    // shapes.selectAll("circle")
-    //   .data([bottomleft_ref, topright_ref, middle_ref, stereolux, lu]).enter()
-    //   .append("g")
-    //   .attr("transform", (d) => `translate(${map_projection(d)})`)
-    //   .append("circle")
-    //   .attr("r", "8px")
-    //   .attr("fill", (d, index) => { 
-    //     return ['#ff0000', '#0000ff', '#00ff00', '#09606F', '#999'][index]
-    //   })
+      // add circles to svg
+      // shapes.selectAll("circle")
+      //   .data([bottomleft_ref, topright_ref, middle_ref, stereolux, lu]).enter()
+      //   .append("g")
+      //   .attr("transform", (d) => `translate(${this.map_projection(d)})`)
+      //   .append("circle")
+      //   .attr("r", "8px")
+      //   .attr("fill", (d, index) => { 
+      //     return ['#ff0000', '#0000ff', '#00ff00', '#09606F', '#999'][index]
+      //   })
 
       var x = d3.scaleLinear()
           .domain([-1, this.globalCanvasSize.width + 1])

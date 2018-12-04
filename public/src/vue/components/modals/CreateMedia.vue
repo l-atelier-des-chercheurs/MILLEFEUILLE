@@ -49,7 +49,7 @@
             </div>
           </div>
           <div v-else-if="location_is_loading">
-            <span class="loader loader-xs" />
+            <span class="loader loader-small" />
             <small>recherche en cours…</small>
           </div>
         </div>
@@ -152,8 +152,7 @@ export default {
   data() {
     return {
       mediadata: {
-        latitude: '',
-        longitude: '',
+        latlong: '',
         caption: ''
         // type: ''
       },
@@ -204,8 +203,7 @@ export default {
       }
     },
     onGeoSuccess(event) {
-      this.mediadata.latitude = event.coords.latitude; 
-      this.mediadata.longitude = event.coords.longitude;
+      this.mediadata.latlong = event.coords.latitude + ', ' + event.coords.longitude; 
       this.location_is_loading = false;
     },
     onGeoError(event) {
@@ -221,6 +219,13 @@ export default {
         const filename = f.name;
         const modified = f.lastModified;
 
+        const meta = {
+          fileCreationDate: modified,
+          latitude: this.mediadata.latlong.split(",")[0].trim(),
+          longitude: this.mediadata.latlong.split(",")[1].trim(),
+          caption: this.mediadata.caption
+        }
+
         this.$set(this.selected_files_meta, filename, {
           upload_percentages: 0,
           status: 'sending'
@@ -228,12 +233,6 @@ export default {
 
         let formData = new FormData();
         formData.append('files', f, filename);
-        const meta = {
-          fileCreationDate: modified,
-          latitude: this.mediadata.latlong.split(",")[0].trim(),
-          longitude: this.mediadata.latlong.split(",")[1].trim(),
-          caption: this.mediadata.caption
-        }
         formData.append(filename, JSON.stringify(meta));
 
         const socketid = this.$socketio.socket.id;
