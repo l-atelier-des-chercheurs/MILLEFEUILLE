@@ -38,7 +38,7 @@ html {
 }
 
 body {
-  font-family: 'Fira Sans', sans-serif;
+  // font-family: 'Fira Sans', sans-serif;
   font-weight: 400;
   font-size: var(--font-size);
   line-height: var(--line-height);
@@ -270,6 +270,10 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+label, .label {
+  font-family: inherit;
+}
+
 h1,h2,h3,h4,h5,h6 {
   font-family: inherit;
   font-weight: 600;
@@ -371,7 +375,7 @@ a {
   transition: all .4s;
 
   @bg-color: rgba(255,255,255,0);
-  @bg-color-hover: rgba(255,255,255,.80);
+  @bg-color-hover: rgba(255,255,255,.90);
   @dot-color: @c-gris_clair;
   @dot-size: 1px;
   @dot-spacing: 30px;
@@ -788,6 +792,13 @@ a {
       .grid {
         display: block;
       }
+    }
+
+    div {
+      width: var(--main-value);
+      height: var(--main-value);
+      background-color: red;
+      border-radius: 20px;
     }
   }
 

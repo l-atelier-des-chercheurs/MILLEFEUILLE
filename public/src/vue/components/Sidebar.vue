@@ -1,10 +1,12 @@
 <template>
   <div class="m_controller" style="">
     <div class="m_controller--topBar">
-      <div class="padding-vert-medium">
-        <h1 class="margin-none padding-sides-medium">Millefeuille</h1>
-        <span class="margin-none padding-sides-medium">workshop Stéréolux</span>
-        <!-- <button type="button" @click="$root.setPersp()" v-html="'Perspective'"/> -->
+      <div class="padding-vert-medium padding-sides-medium">
+        <h1 class="margin-none">millefeuille</h1>
+        <small class="margin-none">
+          • workshop «&nbsp;données situées et cartographie sensible&nbsp;»<br>
+          ~ version v0.1
+        </small>       
       </div>
       <!-- <div class="mode_switcher border-bottom">
         <label for="image" class="padding-vert-small padding-sides-medium">
