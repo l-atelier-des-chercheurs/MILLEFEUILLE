@@ -55,7 +55,7 @@
         <button type="button" class="btn_small" @click="zoom.resetZoom()">RESET</button>
         <button type="button" class="btn_small" @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">perspective</button>
         <button type="button" class="btn_small" :disabled="$root.settings.mode_perspective" :class="{ 'active' : grid.enabled && !$root.settings.mode_perspective }" @click="grid.enabled = !grid.enabled">GRILLE</button>
-        <button type="button" class="btn_small" @click="localizeMe()">MA POSITION
+        <button type="button" class="btn_small" @click="localizeMe()" v-if="!$root.state.is_electron">MA POSITION
           <span class="loader loader-small" v-if="current_position.location_is_loading" />
         </button>
       </div>

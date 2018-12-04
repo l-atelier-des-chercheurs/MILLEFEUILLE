@@ -38,10 +38,7 @@
           {{ $t('remove') }}
         </button>
       </div>
-    </div>
-  
-    
-    <div class="card--body">
+
 
       <EditLayer
         v-if="showEditLayerModal"
@@ -50,6 +47,11 @@
         :layer="layer"
         :read_only="!$root.state.connected"
       />
+
+    </div>
+  
+    
+    <div class="card--body">
 
       <div
         v-for="media in layer.medias"
@@ -73,8 +75,7 @@
         </span>
         <button
           class="barButton barButton_createLayer padding-verysmall"
-          v-if="!showCreateLayerModal"
-          @click="showCreateLayerModal = true"
+          @click="$root.openMedia({ slugLayerName: layer.slugFolderName, metaFileName: media.media_filename })"
           :disabled="!$root.state.connected"
           :key="'createButton'"
         >
@@ -82,6 +83,15 @@
             {{ $t('open') }}
           </span>
         </button>
+
+        <EditMedia
+          v-if="$root.media_modal.open"
+          :slugMediaName="$root.media_modal.current_metaFileName"
+          :slugLayerName="$root.media_modal.current_slugLayerName"
+          :media="$root.store.layers[$root.media_modal.current_slugLayerName].medias[$root.media_modal.current_metaFileName]"
+          @close="$root.closeMedia()"
+          :read_only="!$root.state.connected"
+        />
 
       </div>
     </div>
@@ -92,12 +102,14 @@
 <script>
 import EditLayer from '../modals/EditLayer.vue';
 import MediaContent from './MediaContent.vue';
+import EditMedia from '../modals/EditMedia.vue'
 
 
 export default {
   props: ['layer'],
   components: {
     EditLayer,
+    EditMedia,
     MediaContent
   },
   data() {
