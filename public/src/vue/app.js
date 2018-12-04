@@ -450,7 +450,7 @@ let vm = new Vue({
         view: 'Layers',
         layer_viewed: false
       },
-      mode_perspective: true,
+      mode_perspective: false,
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth
     },

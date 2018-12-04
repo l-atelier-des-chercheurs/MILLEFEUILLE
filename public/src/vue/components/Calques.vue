@@ -59,7 +59,6 @@ export default {
   data() {
     return {
       baseUrl: process.env.BASE_URL,
-      current_shapes: [],
       d3svg: '',
       custom_path: undefined,
       grid: {
@@ -134,6 +133,32 @@ export default {
 
       svg.select('.axis--x').remove();
       svg.select('.axis--y').remove();
+ 
+      var projection = d3.geoMercator()
+        // .scale(width / 2 / Math.PI)
+        .scale(1180000)
+        .center([-1.544230, 47.2059287])
+        .translate([this.width / 2, this.height / 2])
+
+      // rouge
+      var bottomleft_ref = [-1.574420, 47.199467];
+      // bleu
+      var topright_ref = [-1.514057, 47.215823];
+
+      var middle_ref = [-1.546236, 47.204049];
+      var stereolux = [-1.563454, 47.205163];
+      var lu = [-1.545169, 47.215575];
+
+    // add circles to svg
+    shapes.selectAll("circle")
+      .data([bottomleft_ref, topright_ref, middle_ref, stereolux, lu]).enter()
+      .append("g")
+      .attr("transform", (d) => `translate(${projection(d)})`)
+      .append("circle")
+      .attr("r", "8px")
+      .attr("fill", (d, index) => { 
+        return ['#ff0000', '#0000ff', '#00ff00', '#09606F', '#999'][index]
+      })
 
       var x = d3.scaleLinear()
           .domain([-1, this.globalCanvasSize.width + 1])
@@ -173,10 +198,9 @@ export default {
             
       // shapes_and_palette.style("transform-origin", "50% 50% 0");
 
-      
+  
 
       // calculate necessary scale
-
       let margins = 200;
       let minimumScale = Math.min(this.globalCanvasSize.height / (this.height + margins*2), this.globalCanvasSize.width / (this.width + margins*2));
 
@@ -207,17 +231,17 @@ export default {
         );
       };
 
-      let moveToX = (this.globalCanvasSize.width - this.width * minimumScale)/2;
-      let moveToY = (this.globalCanvasSize.height - this.height * minimumScale)/2;
+      // let moveToX = (this.globalCanvasSize.width - this.width * minimumScale)/2;
+      // let moveToY = (this.globalCanvasSize.height - this.height * minimumScale)/2;
 
-      this.zoom.resetZoom = () => {
-        svg.transition().duration(250).call(
-          _zoom.transform, 
-          d3.zoomIdentity.translate(moveToX, moveToY).scale(minimumScale)
-        );
-      }
+      // this.zoom.resetZoom = () => {
+      //   svg.transition().duration(250).call(
+      //     _zoom.transform, 
+      //     d3.zoomIdentity.translate(moveToX, moveToY).scale(minimumScale)
+      //   );
+      // }
 
-      this.zoom.resetZoom();
+      // this.zoom.resetZoom();
     },
     zoomIn() {
     },
