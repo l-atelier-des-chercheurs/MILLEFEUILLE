@@ -24,7 +24,7 @@
     <div class="m_controller--content">
       <transition name="slideToLeft">
         <div class="panel panel_image" v-show="$root.settings.sidebar.view === 'Layers'">
-          <label class="margin-vert-verysmall margin-sides-medium">Liste des couches</label>
+          <label class="margin-vert-verysmall margin-sides-medium">{{ $t('layer_list') }}</label>
 
           <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
             <Draggable v-for="layer in layers" :key="layer.slugFolderName">
@@ -65,7 +65,7 @@
           class="panel panel_pattern padding-sides-medium"
           v-if="$root.settings.sidebar.view === 'Layer'"
         >
-          <label class="margin-vert-verysmall">Couche</label>
+          <label class="margin-vert-verysmall">{{ $t('layer') }}</label>
           <LayerPanel
             :layer="current_layer"
           />
@@ -102,7 +102,7 @@
         >
           <button
             class="barButton barButton_addData"
-            v-if="$root.settings.sidebar.view === 'Layer' && !showCreateMediaModal"
+            v-if="$root.settings.sidebar.view === 'Layer'"
             @click="showCreateMediaModal = true"
             :disabled="!$root.state.connected"
             :key="'createButton'"

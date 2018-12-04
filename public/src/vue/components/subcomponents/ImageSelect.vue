@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     _instructions() {
-      return this.instructions !== undefined ? this.instructions : this.$t('select_cover_image');
+      return this.instructions !== undefined ? this.instructions : this.$t('select_image');
     }
   },
   methods: {

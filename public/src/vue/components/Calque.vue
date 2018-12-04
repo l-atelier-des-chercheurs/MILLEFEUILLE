@@ -9,8 +9,8 @@
       fill="#fff"
     />
     <image 
-      v-if="$root.previewURL(layer, 1600)"
-      :xlink:href="$root.previewURL(layer, 1600)" 
+      v-if="$root.previewURL(layer, 2200)"
+      :xlink:href="$root.previewURL(layer, 2200)" 
       x="0" 
       y="0" 
       :width="width" 

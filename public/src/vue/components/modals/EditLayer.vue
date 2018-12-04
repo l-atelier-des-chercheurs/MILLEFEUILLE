@@ -13,13 +13,22 @@
     <template slot="sidebar">
 <!-- Human name -->
       <div class="margin-bottom-small">
-        <label>{{ $t('layer_name') }}</label>
+        <label>{{ $t('name') }}</label>
         <input class="input-big" type="text" v-model="layerdata.name" required :readonly="read_only">
+      </div>
+
+<!-- Description -->
+      <div 
+        class="margin-bottom-small" 
+      >
+        <label>{{ $t('description') }}</label><br>
+        <textarea v-model="layerdata.description" :readonly="read_only">
+        </textarea>
       </div>
 
 <!-- Preview -->
       <div class="margin-bottom-small">
-        <label>{{ $t('preview') }}</label><br>
+        <label>{{ $t('background_map') }}</label><br>
         <ImageSelect 
           :previewURL="$root.previewURL(layer,800)"
           @newPreview="value => { preview = value }"
@@ -79,7 +88,8 @@ export default {
     return {
       layerdata: {
         name: this.layer.name,
-        keywords: this.layer.keywords
+        // keywords: this.layer.keywords
+        description: this.layer.description
       },
       tag: '',
       preview: undefined,

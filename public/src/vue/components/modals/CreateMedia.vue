@@ -7,7 +7,7 @@
     :isFile="true"
   >
     <template slot="header">
-      <div class="">{{ $t('create_data') }}</div>
+      <div class="">{{ $t('add_data') }}</div>
     </template>
 
     <template slot="sidebar">

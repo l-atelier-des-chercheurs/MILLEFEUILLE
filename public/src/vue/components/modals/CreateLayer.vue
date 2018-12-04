@@ -13,16 +13,27 @@
 
 <!-- Human name -->
       <div class="margin-bottom-small">
-        <label>{{ $t('layer_name') }}</label>
+        <label>{{ $t('name') }}</label>
         <input type="text" v-model="layerdata.name" required autofocus>
       </div>
 
 <!-- Preview -->
       <div class="margin-bottom-small">
-        <label>{{ $t('preview') }}</label><br>
+        <label>{{ $t('background_map') }}</label><br>
         <ImageSelect @newPreview="value => { preview = value }">
         </ImageSelect>
       </div>
+
+
+<!-- Description -->
+      <div 
+        class="margin-bottom-small" 
+      >
+        <label>{{ $t('description') }}</label><br>
+        <textarea v-model="layerdata.description" :readonly="read_only">
+        </textarea>
+      </div>
+
 
 <!-- Password -->
       <!-- <div class="margin-bottom-small">
@@ -64,7 +75,8 @@ export default {
     return {
       layerdata: {
         name: '',
-        password: ''
+        password: '',
+        description: ''
       },
       preview: undefined,
       askBeforeClosingModal: false

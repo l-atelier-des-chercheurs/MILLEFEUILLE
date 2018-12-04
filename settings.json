@@ -31,10 +31,10 @@
     "layers": {
       "path": "",
       "preview": {
-        "width": 2200,
-        "height": 2200,
+        "width": 3000,
+        "height": 3000,
         "thumbs": {
-          "resolutions": [50, 800, 1600]          
+          "resolutions": [50, 400, 1400, 2200]          
         }
       },
       "fields": {

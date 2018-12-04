@@ -28,6 +28,12 @@ module.exports = (function() {
       input_password: 'Renseignez le mot de passe ci-dessous :',
       validate_with_enter: 'valider avec la touche ENTRÉE',
 
+      create_a_layer: 'Créer un calque',
+      layer_list: 'Liste des calques',
+      background_map: 'Fond de carte',
+      no_background_map: 'Aucun fond de carte sélectionné',
+      add_data: 'Ajouter une donnée',
+
       bytes: 'octets',
       kb: 'ko',
       mb: 'Mo',
@@ -67,6 +73,7 @@ module.exports = (function() {
       import_medias: 'Importer des médias',
       select_files_to_import: 'Sélectionnez les fichiers à importer',
       select_cover_image: 'Sélectionnez une image de couverture',
+      select_image: 'Sélectionnez une image',
       select_portrait_image: 'Sélectionnez une image de portrait',
       add_to_publication: 'Ajouter à la publication',
       add_a_page: 'Ajouter une page',
@@ -125,6 +132,8 @@ module.exports = (function() {
 
       edit_the_media: 'Éditer le média',
       edit_project: 'Éditer le projet',
+      edit_layer: 'Éditer le calque',
+      layer: 'Calque',
 
       capture: 'Enregistrer',
       current: 'Actuellement',
@@ -269,6 +278,12 @@ module.exports = (function() {
       input_password: 'Input the password here:',
       validate_with_enter: 'validate with the ENTER key',
 
+      create_a_layer: 'Create a layer',
+      layer_list: 'Layer’s list',
+      background_map: 'Background map',
+      no_background_map: 'No background map selected',
+      add_data: 'Add a data',
+
       bytes: 'bytes',
       kb: 'KB',
       mb: 'MB',
@@ -305,6 +320,7 @@ module.exports = (function() {
       import_all_files: 'Import all files',
       select_files_to_import: 'Select files to import',
       select_cover_image: 'Select a cover image',
+      select_image: 'Select an image file',
       select_portrait_image: 'Select a portrait',
       add_to_publication: 'Add to publication',
       add_a_page: 'Add a page',
@@ -370,6 +386,8 @@ module.exports = (function() {
       publication: 'Publication',
       edit_the_media: 'Edit media',
       edit_project: 'Edit project',
+      edit_layer: 'Edit layer',
+      layer: 'Layer',
 
       capture: 'Capture',
       current: 'Current',
