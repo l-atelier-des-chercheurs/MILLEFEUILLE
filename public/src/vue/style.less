@@ -51,7 +51,7 @@ body {
 
 body {
   &.has_modal_opened {
-    overflow-y: auto;
+    // overflow-y: auto;
   }
 }
 
@@ -368,21 +368,23 @@ a {
   flex-flow: column nowrap;
 
   justify-content: space-between;
-  transition: background-color .4s;
+  transition: all .4s;
 
-
-  @bg-color: rgba(255,255,255,.80);
+  @bg-color: rgba(255,255,255,0);
+  @bg-color-hover: rgba(255,255,255,.80);
   @dot-color: @c-gris_clair;
   @dot-size: 1px;
-  @dot-spacing: 15px;
+  @dot-spacing: 30px;
 
-  // background: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, @bg-color @dot-size+1px);
-  // background-repeat: repeat;
-  // background-size: @dot-spacing @dot-spacing;
-  // background-position: -@dot-spacing/2 + @t-background_offset -@dot-spacing/2 + @t-background_offset;
+  background-color: @bg-color;
+  background-image: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, transparent @dot-size+1px);
+  background-repeat: repeat;
+  background-size: @dot-spacing @dot-spacing;
+  background-position: -@dot-spacing/2 + @t-background_offset -@dot-spacing/2 + @t-background_offset;
 
   &:hover {
-    background-color: @bg-color;
+    background-color: @bg-color-hover;
+    background-image: radial-gradient(ellipse at center, @dot-color 0%, @dot-color @dot-size, transparent @dot-size+1px);
   }
 
   > * {
@@ -541,6 +543,21 @@ a {
     > span {
       padding-left: 0.2em;
     }
+  }
+
+  button {
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+
+  }
+
+  &.mode_switcher_media {
+    margin: 0;
+    .margin-small;
+    width: auto;
+    border: 1px solid @c-gris;
   }
 }
 

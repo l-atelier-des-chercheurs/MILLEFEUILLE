@@ -42,7 +42,7 @@
         <button type="button" class="btn_small" @click="zoom.zoomOut()">-</button>
         <button type="button" class="btn_small" @click="zoom.zoomIn()">+</button>
         <button type="button" class="btn_small" @click="zoom.resetZoom()">RESET</button>
-        <button type="button" class="btn_small" :class="{ 'active' : grid.enabled }" @click="grid.enabled = !grid.enabled">GRID</button>
+        <button type="button" class="btn_small" :disabled="$root.settings.mode_perspective" :class="{ 'active' : grid.enabled && !$root.settings.mode_perspective }" @click="grid.enabled = !grid.enabled">GRID</button>
       </div>
     </div>
   </div>

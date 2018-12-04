@@ -17,7 +17,7 @@
         </label>
       </div> -->
 
-      <button type="button" @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">
+      <button type="button" class="buttonLink" @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">
         mode_perspective
       </button>
     </div>      
@@ -30,7 +30,7 @@
           <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
             <Draggable v-for="layer in layers" :key="layer.slugFolderName">
               <div class="card draggable-item margin-vert-verysmall margin-sides-medium padding-verysmall">
-                <div class="card--header card--header_layer"
+                <div class="card--header card--header_layer cursor-pointer"
                   @click="$root.openLayer(layer.slugFolderName)"
                 >
                   <span class="column-drag-handle" @mouseup.stop="">

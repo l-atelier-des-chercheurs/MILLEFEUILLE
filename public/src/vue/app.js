@@ -604,15 +604,6 @@ let vm = new Vue({
           .toString(36)
           .substring(2, 15);
 
-      if (this.settings.current_author.hasOwnProperty('name')) {
-        if (!mdata.hasOwnProperty('additionalMeta')) {
-          mdata.additionalMeta = {};
-        }
-        mdata.additionalMeta.authors = [
-          { name: this.$root.settings.current_author.name }
-        ];
-      }
-
       this.$nextTick(() => {
         this.$socketio.createMedia(mdata);
       });
