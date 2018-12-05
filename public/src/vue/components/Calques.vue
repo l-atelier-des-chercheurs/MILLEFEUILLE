@@ -28,10 +28,10 @@
             ></rect>
           </g>
 
-          <!-- <transition-group name="fade"> -->
+          <transition-group name="fade" tag="g">
             <Calque 
               v-for="(layer, slugLayerName, index) in layers" 
-              v-show="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && slugLayerName === $root.settings.sidebar.layer_viewed)"
+              v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && slugLayerName === $root.settings.sidebar.layer_viewed)"
               :key="slugLayerName"
               :index="index"
               :layer="layer"
@@ -41,7 +41,7 @@
               class="m_svgpattern--layer m_svgpattern--layer_persp"
               :map_projection="map_projection"
             />
-          <!-- </transition-group> -->
+          </transition-group>
 
           <g
             v-if="!!current_position.latitude"
@@ -184,7 +184,13 @@ export default {
       this.globalCanvasSize.height = this.$refs.patternContainer.offsetHeight;
     },
     moveUpLayers(index) {
-      console.log('PatternSvg / moveUpLayers');      
+      console.log('PatternSvg / moveUpLayers');   
+      if(this.$root.settings.sidebar.view === 'Layer') {
+        return {
+          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${1 * this.$root.settings.perspective_stretch}px)`,
+          'transform-origin': `${this.width/2}px ${this.height/2}px`
+        };        
+      } else 
       if(this.$root.settings.mode_perspective) {
         return {
           'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${index * this.$root.settings.perspective_stretch}px)`,
