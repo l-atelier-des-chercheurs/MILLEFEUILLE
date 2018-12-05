@@ -15,7 +15,7 @@
     <div class="padding-small padding-top-none">
       <div class="" v-if="layer.description">
         <label class="">description</label>
-        <p class="margin-top-none padding-left-small padding-right-none" style="border-left: 1px solid #353535;">
+        <p class="margin-top-none padding-left-small padding-right-none" style="border-left: 1px solid #b9b9b9;">
           {{ layer.description }}
         </p>
       </div>
@@ -29,7 +29,7 @@
         </template>
       </div>
     </div>
-    <div class="padding-sides-small" style="border-bottom: 1px solid #353535">
+    <div class="padding-sides-small" style="border-bottom: 1px solid #b9b9b9">
       <div>
         <button type="button" class="buttonLink " @click="showEditLayerModal = true" :disabled="!$root.state.connected">
           {{ $t('edit') }}
@@ -56,10 +56,10 @@
       <div
         v-for="media in layer.medias"
         :key="media.metaFileName"
-        class="margin-verysmall flex-nowrap flex-vertically-centered"
+        class="m_sidebarmedia"
       >
         <MediaContent
-          class="padding-verysmall"
+          class="m_sidebarmedia--preview"
           :context="'preview'"
           :slugFolderName="layer.slugFolderName"
           :media="media"
@@ -68,30 +68,23 @@
           v-model="media.content"
         >
         </MediaContent>
-        <span 
-          class="t-ellipse padding-verysmall"
+        <div 
+          class="m_sidebarmedia--title"
         >
-          {{ media.media_filename }}
-        </span>
-        <button
-          class="barButton barButton_createLayer padding-verysmall"
-          @click="$root.openMedia({ slugLayerName: layer.slugFolderName, metaFileName: media.media_filename })"
-          :disabled="!$root.state.connected"
-          :key="'createButton'"
-        >
-          <span>
-            {{ $t('open') }}
-          </span>
-        </button>
-
-        <EditMedia
-          v-if="$root.media_modal.open"
-          :slugMediaName="$root.media_modal.current_metaFileName"
-          :slugLayerName="$root.media_modal.current_slugLayerName"
-          :media="$root.store.layers[$root.media_modal.current_slugLayerName].medias[$root.media_modal.current_metaFileName]"
-          @close="$root.closeMedia()"
-          :read_only="!$root.state.connected"
-        />
+          {{ media.caption }}
+        </div>
+        <div class="m_sidebarmedia--button">
+          <button
+            class="buttonLink padding-verysmall"
+            @click="$root.openMedia({ slugLayerName: layer.slugFolderName, metaFileName: media.metaFileName })"
+            :disabled="!$root.state.connected"
+            :key="'createButton'"
+          >
+            <span>
+              {{ $t('open') }}
+            </span>
+          </button>
+        </div>
 
       </div>
     </div>
@@ -102,14 +95,12 @@
 <script>
 import EditLayer from '../modals/EditLayer.vue';
 import MediaContent from './MediaContent.vue';
-import EditMedia from '../modals/EditMedia.vue'
 
 
 export default {
   props: ['layer'],
   components: {
     EditLayer,
-    EditMedia,
     MediaContent
   },
   data() {

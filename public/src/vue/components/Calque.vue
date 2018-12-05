@@ -6,7 +6,7 @@
       :width="width" 
       :height="height" 
       stroke="#b9b9b9"
-      stroke-width="2"
+      stroke-width="1"
       fill="transparent"
     />
     <image 
@@ -24,6 +24,7 @@
         v-if="media.hasOwnProperty('latitude') && media.hasOwnProperty('longitude')"
         :transform="getCoordinates(media)"
         :key="key"      
+        class="pins"
       >
         <circle cx="0" cy="-3" r="2" 
           fill="#ff0000"
@@ -37,12 +38,13 @@
                   c0,3.567,6.458,10.764,6.458,10.764s6.458-7.196,6.458-10.764C16.75,3.892,13.859,1,10.292,1z M4.91,7.525
                   c0-3.009,2.41-5.449,5.382-5.449c2.971,0,5.381,2.44,5.381,5.449s-5.381,9.082-5.381,9.082S4.91,10.535,4.91,7.525z" />
           
-        <!-- <foreignObject x="-10" y="-10" width="20" height="20">
+        <foreignObject x="-10" y="-10" width="20" height="20">
           <div xmlns="http://www.w3.org/1999/xhtml"
             :style="`--main-value: ${Math.random() * 10}px`"
           >
+            {{ media.value }}
           </div>
-        </foreignObject> -->
+        </foreignObject>
       </g>
 
     </transition-group>

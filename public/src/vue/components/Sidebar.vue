@@ -120,8 +120,16 @@
         </div>
       </transition>
 
-
     </div>
+
+    <EditMedia
+      v-if="$root.media_modal.open"
+      :slugLayerName="$root.media_modal.current_slugLayerName"
+      :slugMediaName="$root.media_modal.current_metaFileName"
+      :media="$root.store.layers[$root.media_modal.current_slugLayerName].medias[$root.media_modal.current_metaFileName]"
+      @close="$root.closeMedia()"
+      :read_only="!$root.state.connected"
+    />
 
     <portal-target name="modal_container" />
 
@@ -134,6 +142,8 @@ import { Container, Draggable } from 'vue-smooth-dnd'
 import CreateLayer from './modals/CreateLayer.vue';
 import CreateMedia from './modals/CreateMedia.vue';
 import LayerPanel from './subcomponents/LayerPanel.vue';
+import EditMedia from './modals/EditMedia.vue'
+
 
 const applyDrag = (arr, dragResult) => {
   const { removedIndex, addedIndex, payload } = dragResult
@@ -161,7 +171,8 @@ export default {
     CreateLayer,
     LayerPanel,
     Card,
-    CreateMedia
+    CreateMedia,
+    EditMedia
   },
   data () {
     return {

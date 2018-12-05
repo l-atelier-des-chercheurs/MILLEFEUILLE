@@ -1,149 +1,131 @@
 <template>
   <Modal
-    :backgroundColor="mediadata.color"
     @close="$emit('close')"
-    @submit="editThisMedia"
+    @submit="editMedia"
     :read_only="read_only"
     :askBeforeClosingModal="askBeforeClosingModal"
-    :show_sidebar="$root.media_modal.show_sidebar"
-    :is_minimized="$root.media_modal.minimized"
-    :can_minimize="true"
-    :media_navigation="true"
-    >
+    :isFile="true"
+  >
     <template slot="header">
-      <div class="">{{ $t('edit_the_media') }}</div>
+      <div class="">{{ $t('edit_data') }}</div>
     </template>
 
     <template slot="sidebar">
-      <!-- <small>{{ this.$root.allAuthors }}</small> -->
-
-      <div v-if="!read_only" class="m_modal--buttonrow">
-        <!-- CONFLICT WITH QR PRINTING -->
-        <!-- <button type="button"
-          class="buttonLink"
-          @click.prevent="printMedia()"
-          >
-          {{ $t('print') }}
-        </button> -->
-
-        <a 
-          :download="media.media_filename" 
-          :href="mediaURL" 
-          :title="media.media_filename" 
-          target="_blank"
-          class="buttonLink hide_on_print"
-          :disabled="read_only"
-          >
-          {{ $t('download') }}
-        </a>
-        
+      <div class="mode_switcher mode_switcher_media">
         <button type="button"
-          class="buttonLink hide_on_print"
-          @click.prevent="removeMedia()"
-          :disabled="read_only"
-          >
-          {{ $t('remove') }}
-        </button>
-
-        <button type="button" class="buttonLink c-noir" @click="showQRModal = !showQRModal">
-          <svg version="1.1" class="inline-svg"
-            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
-            x="0px" y="0px" width="20px" height="20px" viewBox="0 0 90 90" style="enable-background:new 0 0 90 90;" xml:space="preserve">
-            <path d="M48,0v42h42V0H48z M84,36H54V6h30V36z M13,77h16V61H13V77z M0,90h42V48H0V90z M6,54h30v30H6V54z M63,48H48v13h15V48z M69,54
-              h8v7h-8v12h-8v-8h-9v8h5v9h-9v8h21v-8h13v-9h-5v-8h13V48H69V54z M0,42h42V0H0V42z M6,6h30v30H6V6z M90,90v-8h-8v8H90z M13,29h16V13
-              H13V29z M77,13H61v16h16V13z"/>
-          </svg>
-          <span class>
-            Partage
-          </span>
-        </button>
-
-        <hr class="hide_on_print">
-      </div>
-
-      <div class="hide_on_print">
-        <div class="m_metaField" v-if="!!media.type">
-          <div>
-            {{ $t('type') }}
-          </div>
-          <div>
-            {{ media.type }}
-          </div>
-        </div>
-        <!-- <div class="m_metaField" v-if="!!media.authors">
-          <div>
-            {{ $t('author') }}
-          </div>
-          <div>
-            {{ media.authors }}
-          </div>
-        </div> -->
-
-  <!-- Caption -->
-        <div 
-          v-if="(!read_only || !!mediadata.caption) && mediadata.type !== 'text'"
-          class="margin-bottom-small" 
+          @click="current_addmedia_mode = 'location'"
+          :class="{ 'is--active' : current_addmedia_mode === 'location' }"
         >
-          <label>{{ $t('caption') }}</label><br>
-          <textarea v-model="mediadata.caption" :readonly="read_only">
-          </textarea>
-        </div>
+          Coordonnées 
+        </button>
+        <button type="button"
+          @click="current_addmedia_mode = 'content'"
+          :class="{ 'is--active' : current_addmedia_mode === 'content' }"
+        >
+          Contenu 
+        </button>
       </div>
+
+      <transition name="fade">
+        <div v-if="current_addmedia_mode === 'location'">
+          <div v-if="!location_is_loading">
+            <div class="margin-bottom-small">
+              Indiquez ici l’emplacement de la donnée à ajouter
+            </div>
+
+            <button 
+              type="button" 
+              class="buttonLink"
+              @click="getLocationConstant"
+              v-if="!$root.state.is_electron"
+            >
+              Emplacement actuel
+            </button>
+
+            <div class="margin-bottom-small">
+              <label>{{ $t('latitude') }}, {{ $t('longitude') }}<br>
+                <small>Par exemple 47.216050, -1.513528</small>
+              </label>
+              <input type="text" required v-model="mediadata.latlong" >
+            </div>
+          </div>
+          <div v-else-if="location_is_loading">
+            <span class="loader loader-small" />
+            <small>recherche en cours…</small>
+          </div>
+        </div>
+        <div v-else-if="current_addmedia_mode === 'content'">
+
+          <div class="margin-bottom-small">
+            <label>{{ $t('media') }}</label><br>
+            <MediaContent
+              class="m_sidebarmedia--preview"
+              :context="'preview'"
+              :slugFolderName="slugLayerName"
+              :media="media"
+              v-model="media.content"
+            >
+            </MediaContent>
+          </div>
+
+    <!-- Caption -->
+          <div 
+            class="margin-bottom-small" 
+          >
+            <label>{{ $t('caption') }} / note</label><br>
+            <textarea v-model="mediadata.caption" :readonly="read_only">
+            </textarea>
+          </div>
+
+    <!-- Value -->
+          <div 
+            class="margin-bottom-small" 
+          >
+            <label>{{ $t('value') }}</label><br>
+            <input type="number" v-model="mediadata.value" :readonly="read_only" />
+          </div>
+
+        </div>
+      </transition>
+      
+      
     </template>
 
     <template slot="submit_button">
       {{ $t('save') }}
     </template>
 
-    <template slot="preview">
-      <MediaContent
-        :context="'edit'"
-        :slugFolderName="slugLayerName"
-        :media="media"
-        :read_only="read_only"
-        v-model="mediadata.content"
-      >
-      </MediaContent>
-    </template>
-
   </Modal>
 </template>
 <script>
 import Modal from './BaseModal.vue';
-import MediaContent from '../subcomponents/MediaContent.vue';
 import { setTimeout } from 'timers';
-import TagsInput from '../subcomponents/TagsInput.vue';
+import * as axios from 'axios';
+import MediaContent from '../subcomponents/MediaContent.vue';
 
 export default {
   props: {
-    slugLayerName: String,
-    slugMediaName: String,
-    media: Object,
     read_only: {
-      type: Boolean,
-      default: true
-    }
+      type: Boolean
+    },
+    media: Object,
+    slugLayerName: String,
+    slugMediaName: String
   },
   components: {
     Modal,
-    MediaContent,
-    TagsInput
+    MediaContent
   },
   data() {
     return {
-      showQRModal: false,
-      is_minimized: false,
-
       mediadata: {
-        type: this.media.type,
-        authors: this.media.authors,
+        latlong: !!this.media.latitude ? this.media.latitude + ', ' + this.media.longitude:'',
         caption: this.media.caption,
-        keywords: this.media.keywords,
-        fav: this.media.fav,
-        content: this.media.content
+        value: this.media.value
       },
-      mediaURL: `/${this.slugLayerName}/${this.media.media_filename}`,
-      askBeforeClosingModal: false
+      askBeforeClosingModal: false,
+      current_addmedia_mode: 'location',
+      location_is_loading: false,
     };
   },
   watch: {
@@ -155,45 +137,92 @@ export default {
     }
   },  
   created() {
-    if(typeof this.mediadata.authors === 'string') {
-      if( this.mediadata.authors !== '') {
-        this.mediadata.authors = this.mediadata.authors.split(',').map(a => {return { name: a }} )
-      } else {
-        this.mediadata.authors = [];
-      }
-    }
+    debugger;
   },
   computed: {
+    uriToUploadMedia: function() {
+      return this.slugLayerName + '/file-upload';
+    }
   },
   methods: {
-    printMedia: function() {
-      window.print();
-    },
-    removeMedia: function() {
-      if (window.confirm(this.$t('sureToRemoveMedia'))) {
-        this.$root.removeMedia({
-          type: 'layers',
-          slugFolderName: this.slugLayerName, 
-          slugMediaName: this.slugMediaName
-        });
-        // then close that popover
-        this.$emit('close', '');
+    editMedia(event) {
+      console.log('createMedia');
+
+        // préparer un petit paquet pour upload
+        // peut contenir un média, une note ou une valeur (ou aucun des trois)
+
+      if(!!this.mediadata.latlong && this.mediadata.latlong.indexOf(',')) {
+        this.mediadata.latitude = this.mediadata.latlong.split(",")[0].trim();
+        this.mediadata.longitude = this.mediadata.latlong.split(",")[1].trim();
+        delete this.mediadata.latlong;
+      } else {
+        this.$alertify
+          .closeLogOnClick(true)
+          .delay(4000)
+          .error(this.$t('notifications.missing_location_field'));
+        return;
       }
-    },
-    editThisMedia: function(event) {
-      console.log('editThisMedia');
+      
       this.$root.editMedia({ 
         type: 'layers',
         slugFolderName: this.slugLayerName, 
         slugMediaName: this.slugMediaName,
         data: this.mediadata
       });
-      // then close that popover
-      this.$emit('close', '');
+        
+      this.$emit('close');      
+
+    },
+
+    getLocationConstant() {
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(this.onGeoSuccess, this.onGeoError);  
+        this.location_is_loading = true;
+      } else {
+        this.$alertify
+          .closeLogOnClick(true)
+          .delay(4000)
+          .error(this.$t('notifications.your_device_cant_geoloc'));
+      }
+    },
+    onGeoSuccess(event) {
+      this.mediadata.latlong = event.coords.latitude + ', ' + event.coords.longitude; 
+      this.location_is_loading = false;
+    },
+    onGeoError(event) {
+      this.location_is_loading = false;
+      this.$alertify
+        .closeLogOnClick(true)
+        .delay(4000)
+        .error(this.$t('notifications.geoloc_failed') + ' ' + this.$t('error_code') + event.code + ". " + event.message);
+    },
+
+    formatBytes(a,b) {
+      if(0==a)
+        return `0 ${this.$t('bytes')}`;
+
+      var e=[this.$t('bytes'),this.$t('kb'),this.$t('mb'),this.$t('gb'),"TB","PB","EB","ZB","YB"];
+
+      var c=1024,
+        d=b||2,
+        f=Math.floor(Math.log(a)/Math.log(c));
+      return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]
+    },
+    getImgPreview(file) {
+      return URL.createObjectURL(file);
+    },
+    cssStatus(f) {
+      if(this.selected_files_meta.hasOwnProperty(f.name)) {
+        return 'is--' + this.selected_files_meta[f.name].status;
+      }
+    },
+    updateSelectedFiles($event) {
+      if (this.$root.state.dev_mode === 'debug') {
+        console.log(`METHODS • UploadFile / updateSelectedFiles`);
+      }
+      this.selected_files = Array.from($event.target.files); 
+      this.selected_files_meta = {};
     }
-  },
+  }
 };
 </script>
-<style>
-
-</style>
