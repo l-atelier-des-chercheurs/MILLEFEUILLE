@@ -202,7 +202,7 @@ export default {
   },
   methods: {
     saveSVG() {
-      const fileName = `generateur_graphique-${getFormattedTime()}.svg`;
+      const fileName = `millefeuille_export-${getFormattedTime()}.svg`;
       saveSVGToFile(this.$refs.pattern, fileName);
     },
     localizeMe() {

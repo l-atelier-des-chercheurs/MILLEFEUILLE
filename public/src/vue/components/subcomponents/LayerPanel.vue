@@ -22,7 +22,19 @@
       <div class="">
         <label class="">{{ $t('background_map') }}</label><br>
         <template v-if="layer.hasOwnProperty('preview')">
-          <img :src="$root.previewURL(layer, 400)" class="background_map">
+          <div class="background_map">
+            <img :src="$root.previewURL(layer, 400)" class="">
+            <a 
+              :download="`fond_de_carte-${layer.slugFolderName}.jpeg`" 
+              :href="$root.previewURL(layer, 2200)" 
+              :title="`fond_de_carte-${layer.slugFolderName}.jpeg`" 
+              target="_blank"
+              class="buttonLink"
+              :disabled="read_only"
+              >
+              {{ $t('download') }}
+            </a>
+          </div>
         </template>
         <template v-else>
           <small>{{ $t('no_background_map') }}</small>

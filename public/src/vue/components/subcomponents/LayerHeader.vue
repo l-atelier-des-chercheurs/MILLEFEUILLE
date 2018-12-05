@@ -8,10 +8,10 @@
       </span> -->
       <button type="button" class="visibility_picto"
         @click.stop="is_visible = !is_visible" 
-        :style="`background-image: url('${ $root.previewURL(layer,50) }')`"
-      >
+        :class="{ 'is--active' : layerVisilibity }" 
+      > 
+        <img v-if="$root.previewURL(layer,50)" :src="$root.previewURL(layer,50)" />
         <svg 
-          :class="{ 'is--active' : layerVisilibity }" 
           viewBox="0 0 20 20"
         >
           <path d="M10,12.3c-1.2,0-2.3-1-2.3-2.3s1-2.3,2.3-2.3s2.3,1,2.3,2.3C12.3,11.3,11.3,12.3,10,12.3 M18.4,9.7l-1.6-1.6
@@ -40,7 +40,7 @@
           class="margin-bottom-small" 
         >
           <label>{{ $t('opacity') }}</label><br>
-          <input type="range" v-model.lazy="layer_opacity" :readonly="read_only">
+          <input type="range" min="10" max="100" v-model.lazy="layer_opacity" :readonly="read_only">
         </div>
         
       </template>
