@@ -456,6 +456,12 @@ let vm = new Vue({
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth
     },
+    currentSort: {
+      field: 'date_created',
+      type: 'date',
+      order: 'ascending'
+    },
+
     lang: {
       available: lang_settings.available,
       current: lang_settings.current
@@ -558,6 +564,105 @@ let vm = new Vue({
         return this.store.layers[this.do_navigation.current_slugLayerName];
       }
       return {};
+    },
+    sortedLayers: function() {
+      var sortable = [];
+
+      if (!this.store.layers || this.store.layers.length === 0) {
+        return [];
+      }
+
+      for (let slugLayerName in this.store.layers) {
+        let orderBy;
+
+        if (this.currentSort.type === 'date') {
+          orderBy = +this.$moment(
+            this.store.layers[slugLayerName][this.currentSort.field],
+            'YYYY-MM-DD HH:mm:ss'
+          );
+        } else if (this.currentSort.type === 'alph') {
+          orderBy = this.store.layers[slugLayerName][this.currentSort.field];
+        }
+
+        sortable.push({ slugLayerName, orderBy });
+        // if(this.$root.settings.layer_filter.keyword === false && this.$root.settings.layer_filter.author === false) {
+        //   sortable.push({ slugLayerName, orderBy });
+        //   continue;
+        // }
+
+        // if(this.$root.settings.layer_filter.keyword !== false && this.$root.settings.layer_filter.author !== false) {
+        //   // only add to sorted array if layer has this keyword
+        //   if(this.store.layers[slugLayerName].hasOwnProperty('keywords')
+        //     && typeof this.store.layers[slugLayerName].keywords === 'object'
+        //     && this.store.layers[slugLayerName].keywords.filter(k => k.title === this.$root.settings.layer_filter.keyword).length > 0) {
+
+        //     if(this.store.layers[slugLayerName].hasOwnProperty('authors')
+        //       && typeof this.store.layers[slugLayerName].authors === 'object'
+        //       && this.store.layers[slugLayerName].authors.filter(k => k.name === this.$root.settings.layer_filter.author).length > 0) {
+
+        //       sortable.push({ slugLayerName, orderBy });
+        //     }
+        //   }
+        //   continue;
+        // }
+        // // if a layer keyword filter is set
+        // if(this.$root.settings.layer_filter.keyword !== false) {
+        //   // only add to sorted array if layer has this keyword
+        //   if(this.store.layers[slugLayerName].hasOwnProperty('keywords')
+        //     && typeof this.store.layers[slugLayerName].keywords === 'object'
+        //     && this.store.layers[slugLayerName].keywords.filter(k => k.title === this.$root.settings.layer_filter.keyword).length > 0) {
+        //     sortable.push({ slugLayerName, orderBy });
+        //   }
+        //   continue;
+        // }
+
+        // if(this.$root.settings.layer_filter.author !== false) {
+        //   // only add to sorted array if layer has this keyword
+        //   if(this.store.layers[slugLayerName].hasOwnProperty('authors')
+        //     && typeof this.store.layers[slugLayerName].authors === 'object'
+        //     && this.store.layers[slugLayerName].authors.filter(k => k.name === this.$root.settings.layer_filter.author).length > 0) {
+        //     sortable.push({ slugLayerName, orderBy });
+        //   }
+        //   continue;
+        // }
+      }
+
+      // if there is no layer in sortable, it is probable that filters
+      // were too restrictive
+      if (sortable.length === 0) {
+        // lets remove filters if there are any
+        this.$nextTick(() => {
+          // this.$root.settings.layer_filter.keyword = false;
+        });
+      }
+
+      let sortedSortable = sortable.sort(function(a, b) {
+        let valA = a.orderBy;
+        let valB = b.orderBy;
+        if (typeof a.orderBy === 'string' && typeof b.orderBy === 'string') {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+        }
+        if (valA < valB) {
+          return -1;
+        }
+        if (valA > valB) {
+          return 1;
+        }
+        return 0;
+      });
+
+      if (this.currentSort.order === 'descending') {
+        sortedSortable.reverse();
+      }
+
+      let sortedLayers = sortedSortable.reduce((accumulator, d) => {
+        let sortedMediaObj = this.store.layers[d.slugLayerName];
+        accumulator.push(sortedMediaObj);
+        return accumulator;
+      }, []);
+
+      return sortedLayers;
     }
   },
   methods: {

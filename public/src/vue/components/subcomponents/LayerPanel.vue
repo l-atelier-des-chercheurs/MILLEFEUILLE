@@ -1,8 +1,8 @@
 <template>
   <div class="card">
-    <div class="card--header card--header_layer padding-sides-verysmall">
+    <div class="card--header card--header_layer padding-verysmall">
       <button type="button" 
-        class="bg-transparent font-medium"
+        class="bg-transparent"
         @click="$root.closeLayer()"
       >
         ◄
@@ -22,7 +22,7 @@
       <div class="">
         <label class="">{{ $t('background_map') }}</label><br>
         <template v-if="layer.hasOwnProperty('preview')">
-          <img :src="$root.previewURL(layer, 400)">
+          <img :src="$root.previewURL(layer, 400)" class="background_map">
         </template>
         <template v-else>
           <small>{{ $t('no_background_map') }}</small>

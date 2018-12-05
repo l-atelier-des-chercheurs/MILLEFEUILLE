@@ -367,7 +367,7 @@ a {
   position:relative;
   z-index:1;
   overflow: hidden;
-  max-height: 800px;
+  max-height: 1200px;
 
   display: flex;
   flex-flow: column nowrap;
@@ -934,7 +934,7 @@ a {
   min-height: 40px;
   background-color: #fff;
   color: @c-noir;
-  box-shadow: 0px 2px 7px 0px #c3c3c3;
+  box-shadow: 0px 2px 7px 0px @c-gris;
   // width: 100%;
 
   &:hover {
@@ -991,14 +991,26 @@ a {
       margin: 0;
   }
 
+  .background_map {
+    border: 1px solid @c-gris_clair;
+
+  }
+
   .card--header {
     display: flex;
     flex-flow: row nowrap;
     justify-content: flex-start;
     align-items: center;
+    min-height: 40px;
 
     img {
       background-color: @c-gris_clair;
+    }
+
+    button {
+      min-height: 0;
+      height: 40px;
+      margin: 0;
     }
 
     &.card--header_layer {
@@ -1008,8 +1020,9 @@ a {
       > img {
         flex: 0 0 40px;
         width: 40px;
-        height: 40px;
+        height: auto;
         object-fit: contain;
+        border: 1px solid @c-gris_clair;
       }
       
       > .titre {

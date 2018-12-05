@@ -1,23 +1,23 @@
 <template>
   <g>
+    <image 
+      v-if="$root.previewURL(layer, background_res)"
+      :xlink:href="$root.previewURL(layer, background_res)" 
+      style="image-rendering:pixelated; mix-blend-mode: multiplyyyyyy;"
+      x="0" 
+      y="0" 
+      :width="width" 
+      :height="height" 
+    />
     <rect 
       x="0" 
       y="0" 
       :width="width" 
       :height="height" 
-      stroke="#b9b9b9"
+      stroke="#B9B9B9"
       stroke-width="1"
       fill="transparent"
     />
-    <image 
-      v-if="$root.previewURL(layer, 1400)"
-      :xlink:href="$root.previewURL(layer, 1400)" 
-      x="0" 
-      y="0" 
-      :width="width" 
-      :height="height" />
-
-
     <transition-group name="slideUp" tag="g">
       <g
         v-for="(media, key) in layer.medias"
@@ -83,8 +83,8 @@ export default {
   watch: {
   },
   computed: {
-    layerStyles() {
-      // return `transform: translate3d(${this.index * this.$root.settings.perspective_stretch}px, ${this.index * this.$root.settings.perspective_stretch}px, 0px)`;   
+    background_res() {
+      return this.$root.settings.sidebar.view === 'Layers' ? 1400 : 2200
     }
   },
   methods: {
