@@ -11,6 +11,7 @@
     </template>
 
     <template slot="sidebar">
+      
 <!-- Human name -->
       <div class="margin-bottom-small">
         <label>{{ $t('name') }}</label>

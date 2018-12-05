@@ -5,7 +5,8 @@
       y="0" 
       :width="width" 
       :height="height" 
-      stroke="#000"
+      stroke="#b9b9b9"
+      stroke-width="2"
       fill="transparent"
     />
     <image 

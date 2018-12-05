@@ -15,7 +15,7 @@
     <div class="padding-small padding-top-none">
       <div class="" v-if="layer.description">
         <label class="">description</label>
-        <p class="margin-top-none padding-left-small padding-right-none" style="border-left: 1px solid #333;">
+        <p class="margin-top-none padding-left-small padding-right-none" style="border-left: 1px solid #353535;">
           {{ layer.description }}
         </p>
       </div>
@@ -29,7 +29,7 @@
         </template>
       </div>
     </div>
-    <div class="padding-sides-small" style="border-bottom: 1px solid #333">
+    <div class="padding-sides-small" style="border-bottom: 1px solid #353535">
       <div>
         <button type="button" class="buttonLink " @click="showEditLayerModal = true" :disabled="!$root.state.connected">
           {{ $t('edit') }}

@@ -22,7 +22,8 @@
               :width="width"
               :height="height"
               fill="white"
-              stroke="#333"
+              stroke="#b9b9b9"
+              stroke-width="2"
             ></rect>
           </g>
           <Calque 
