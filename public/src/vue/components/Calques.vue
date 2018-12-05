@@ -14,7 +14,7 @@
         >
 
           <g
-            :style="moveUpLayers(0)"
+            :style="perspLayers(0)"
             class="m_svgpattern--layer m_svgpattern--layer_persp"
           >
             <rect 
@@ -28,16 +28,16 @@
             ></rect>
           </g>
 
-          <transition-group name="enableMode" tag="g">
+          <transition-group name="enableMode" tag="g" :duration="600">
             <Calque 
-              v-for="(layer, slugLayerName, index) in layers" 
-              v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && slugLayerName === $root.settings.sidebar.layer_viewed)"
-              :key="slugLayerName"
+              v-for="(layer, index) in layers_shown" 
+              v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && layer.slugFolderName === $root.settings.sidebar.layer_viewed)"
+              :key="layer.slugFolderName"
               :index="index"
               :layer="layer"
               :width="width"
               :height="height"
-              :style="moveUpLayers(index+1)"
+              :style="perspLayers(index+1)"
               class="m_svgpattern--layer m_svgpattern--layer_persp"
               :map_projection="map_projection"
             />
@@ -125,7 +125,7 @@ export default {
     placeMyPosition() {
       console.log('PatternSvg / placeMyPosition');      
       const [x,y] = this.map_projection([this.current_position.longitude, this.current_position.latitude]);
-      const index = Object.keys(this.layers).length;
+      const index = Object.keys(this.layers_shown).length;
 
       if(x < 0 || x > this.width || y < 0 || y > this.height) {
         this.$alertify
@@ -146,6 +146,10 @@ export default {
         };
       }
 
+    },
+    layers_shown() {
+      // return this.$root.config.layers;
+      return Object.values(this.layers);
     }
   },
   methods: {
@@ -183,8 +187,8 @@ export default {
       this.globalCanvasSize.width = this.$refs.patternContainer.offsetWidth;
       this.globalCanvasSize.height = this.$refs.patternContainer.offsetHeight;
     },
-    moveUpLayers(index) {
-      console.log('PatternSvg / moveUpLayers');   
+    perspLayers(index) {
+      console.log('PatternSvg / perspLayers');   
       if(this.$root.settings.mode_perspective) {
         const stretch_factor = this.$root.settings.sidebar.view === 'Layers' ? index * this.$root.settings.perspective_stretch : 1 * this.$root.settings.perspective_stretch;
 
@@ -318,6 +322,7 @@ export default {
           _zoom.transform, 
           d3.zoomIdentity.translate(moveToX, moveToY).scale(minimumScale)
         );
+        this.$root.settings.perspective_stretch = 50;
       }
 
       this.zoom.resetZoom();
