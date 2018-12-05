@@ -13,8 +13,9 @@
         <g id="shapes" ref="shapes"
         >
 
-          <g
-            :style="perspLayers(0)"
+          <!-- <g
+            v-if="$root.settings.sidebar.view === 'Layers'"
+            :style="layerOptions(0)"
             class="m_svgpattern--layer m_svgpattern--layer_persp"
           >
             <rect 
@@ -26,18 +27,21 @@
               stroke="#b9b9b9"
               stroke-width="2"
             ></rect>
-          </g>
+          </g> -->
 
           <transition-group name="enableMode" tag="g" :duration="600">
             <Calque 
               v-for="(layer, index) in layers_shown" 
-              v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && layer.slugFolderName === $root.settings.sidebar.layer_viewed)"
-              :key="layer.slugFolderName"
+              v-if="
+              ($root.settings.sidebar.view === 'Layers' && $root.config_getLayerOption(layer.slugFolderName, 'visibility'))
+              || ($root.settings.sidebar.view === 'Layer' && layer.slugFolderName === $root.settings.sidebar.layer_viewed)
+              "
+              :key="index"
               :index="index"
               :layer="layer"
               :width="width"
               :height="height"
-              :style="perspLayers(index+1)"
+              :style="layerOptions(layer, index+1)"
               class="m_svgpattern--layer m_svgpattern--layer_persp"
               :map_projection="map_projection"
             />
@@ -64,17 +68,61 @@
           MA POSITION
           <span class="loader loader-small" v-if="current_position.location_is_loading" />
         </button>
+        <button type="button" class="btn_small" @click="mode_advanced = !mode_advanced">
+          EXPORT ↓
+        </button>
+
+        <div v-if="mode_advanced">
+          <button type="button" class="btn_small" @click="saveSVG()">
+            SVG
+          </button>
+          <button type="button" class="btn_small" disabled @click="saveGeoJSON()">
+            GEOJSON
+          </button>
+        </div>
+
         <div v-if="$root.settings.mode_perspective" class="popup_perspective">
           <input type="range" min="0" max="250" v-model="$root.settings.perspective_stretch" />
         </div>
-
       </div>
     </div>
   </div>
 </template>
 <script>
 import Calque from './Calque.vue'
-import * as d3 from 'd3';
+import * as d3 from 'd3'
+
+
+function getFormattedTime() {
+  var today = new Date();
+  var y = today.getFullYear();
+  var month = today.getMonth() + 1;
+  var d = today.getDate();
+  var h = today.getHours();
+  var min = today.getMinutes();
+  var s = today.getSeconds();
+  return `${y}${month}${d}-${h}${min}${s}`;
+}
+function saveSVGToFile(svgEl, name) {
+  let svg_clone = svgEl.cloneNode(true);
+  svg_clone.setAttribute("version", "1.1");
+  svg_clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  svg_clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+  svg_clone.getElementById('shapes').setAttribute('transform','');
+
+  var svgData = svg_clone.outerHTML;
+
+  var preface = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\r\n';
+
+  var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
+  var svgUrl = URL.createObjectURL(svgBlob);
+  var downloadLink = document.createElement("a");
+  downloadLink.href = svgUrl;
+  downloadLink.download = name;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+}
 
 export default {
   props: ['layers'],
@@ -87,9 +135,9 @@ export default {
       d3svg: '',
       custom_path: undefined,
       grid: {
-        increment: 25,
         enabled: false
       },
+      mode_advanced: false,
 
       current_position: {
         latitude: false,
@@ -153,6 +201,10 @@ export default {
     }
   },
   methods: {
+    saveSVG() {
+      const fileName = `millefeuille_export-${getFormattedTime()}.svg`;
+      saveSVGToFile(this.$refs.pattern, fileName);
+    },
     localizeMe() {
       if(navigator.geolocation) {
         this.current_position.latitude = false;
@@ -187,20 +239,25 @@ export default {
       this.globalCanvasSize.width = this.$refs.patternContainer.offsetWidth;
       this.globalCanvasSize.height = this.$refs.patternContainer.offsetHeight;
     },
-    perspLayers(index) {
-      console.log('PatternSvg / perspLayers');   
-      if(this.$root.settings.mode_perspective) {
-        const stretch_factor = this.$root.settings.sidebar.view === 'Layers' ? index * this.$root.settings.perspective_stretch : 1 * this.$root.settings.perspective_stretch;
+    layerOptions(layer, index) {
+      console.log('PatternSvg / layerOptions');   
 
-        return {
-          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${stretch_factor}px)`,
-          'transform-origin': `${this.width/2}px ${this.height/2}px`
-        };
-      } else {
-        return {
-          'transform-origin': `${this.width/2}px ${this.height/2}px`
-        };
+      let opts = {};
+      opts['transform-origin'] = `${this.width/2}px ${this.height/2}px`;
+      
+      const opacity = this.$root.config_getLayerOption(layer.slugFolderName, 'opacity')/100;
+      if(!!opacity && opacity !== 1) {
+        opts['opacity'] = opacity;
       }
+
+      if(this.$root.settings.mode_perspective) {
+        const move_layer_up_based_on_index = (index * this.$root.settings.perspective_stretch) - (this.layers_shown.length * this.$root.settings.perspective_stretch)/2;
+        const stretch_factor = this.$root.settings.sidebar.view === 'Layers' ? move_layer_up_based_on_index : this.$root.settings.perspective_stretch;
+
+        opts['transform'] = `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${stretch_factor}px)`;
+      }
+
+      return opts;
     },
     setupPanZoom() {
       // this.d3svg exists to make sure we don’t reload d3 for each change
@@ -243,13 +300,18 @@ export default {
       //     return ['#ff0000', '#0000ff', '#00ff00', '#09606F', '#999'][index]
       //   })
 
+      const top_left = this.map_projection.invert([0, 0]);
+      const bottom_right = this.map_projection.invert([this.globalCanvasSize.width, this.globalCanvasSize.height]);
+      
       var x = d3.scaleLinear()
-          .domain([-1, this.globalCanvasSize.width + 1])
-          .range([-1, this.globalCanvasSize.width + 1]);
+          .domain([top_left[0], bottom_right[0]])
+          .range([0, this.globalCanvasSize.width])
+          ;
 
       var y = d3.scaleLinear()
-          .domain([-1, this.globalCanvasSize.height + 1])
-          .range([-1, this.globalCanvasSize.height + 1]);
+          .domain([top_left[1], bottom_right[1]])
+          .range([0, this.globalCanvasSize.height])
+          ;
 
       var xAxis = d3.axisBottom(x)
           .ticks((this.globalCanvasSize.width + 2) / (this.globalCanvasSize.height + 2) * 10)

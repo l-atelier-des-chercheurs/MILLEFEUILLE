@@ -27,28 +27,11 @@
           <label class="margin-vert-verysmall margin-sides-medium">{{ $t('layer_list') }}</label>
 
           <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
-            <Draggable v-for="layer in layers" :key="layer.slugFolderName">
-              <div class="card draggable-item margin-vert-verysmall margin-sides-medium padding-verysmall">
-                <div class="card--header card--header_layer cursor-pointer"
-                  @click="$root.openLayer(layer.slugFolderName)"
-                >
-                  <span class="column-drag-handle" @mouseup.stop="">
-                    &#x2630;
-                  </span>
-                  <img v-if="$root.previewURL(layer,50)" :src="$root.previewURL(layer,50)">
-                  <span class="titre">
-                    {{ layer.name }}
-                  </span>
-                  <!-- <input type="checkbox" v-model="layer.active" />
-                  <span class="item-name" v-html="layer.name" />
-                  <input type="range" v-if="layer.active" v-model="layer.opacity" min=0 max=1 step=0.01 /> -->
-                  <!-- </span> -->
-                  <button type="button" 
-                  >
-                    ►
-                  </button>
-                </div>
-              </div>
+            <Draggable v-for="layer in $root.sortedLayers" :key="layer.slugFolderName">
+              <LayerHeader
+                :layer="layer"
+                :slugLayerName="layer.slugFolderName"
+              />
 
               <!-- <Card :type="'section_separator'">
                 <div slot="header">
@@ -143,7 +126,7 @@ import CreateLayer from './modals/CreateLayer.vue';
 import CreateMedia from './modals/CreateMedia.vue';
 import LayerPanel from './subcomponents/LayerPanel.vue';
 import EditMedia from './modals/EditMedia.vue'
-
+import LayerHeader from './subcomponents/LayerHeader.vue';
 
 const applyDrag = (arr, dragResult) => {
   const { removedIndex, addedIndex, payload } = dragResult
@@ -172,12 +155,13 @@ export default {
     LayerPanel,
     Card,
     CreateMedia,
-    EditMedia
+    EditMedia,
+    LayerHeader
   },
   data () {
     return {
       showCreateLayerModal: false,
-      showCreateMediaModal: false
+      showCreateMediaModal: false,      
     }
   },
   computed: {
@@ -186,10 +170,10 @@ export default {
         return this.layers[this.$root.settings.sidebar.layer_viewed];
       }
       return false;
-    }
+    },
   },
   methods: {
-    onDrop (dropResult) {
+    onDrop(dropResult) {
       // this.$root.layers = applyDrag(this.$root.layers, dropResult)
     }
   }
