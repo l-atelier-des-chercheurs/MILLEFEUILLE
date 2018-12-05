@@ -27,6 +27,10 @@ module.exports = (function() {
       add_to_project: 'Ajouter au projet&nbsp;:',
       input_password: 'Renseignez le mot de passe ci-dessous :',
       validate_with_enter: 'valider avec la touche ENTRÉE',
+      your_device_cant_geoloc:
+        'Votre appareil ou navigateur ne gère pas la géolocalisation.',
+      geoloc_failed: 'La géolocalisation n’a pas pu avoir lieu.',
+      error_code: 'Code erreur : ',
 
       create_a_layer: 'Créer un calque',
       layer_list: 'Liste des calques',
@@ -248,7 +252,11 @@ module.exports = (function() {
         medias_uploaded: 'Tous les médias ont bien étés envoyés.',
         medias_upload_failed:
           'Erreur&nbsp;: certains médias n’ont pas pu être envoyés.',
-        video_converted: 'La vidéo a été convertie et ajoutée au projet.'
+        video_converted: 'La vidéo a été convertie et ajoutée au projet.',
+        your_position_outside_map:
+          'Votre position actuelle est hors de la carte et n’a pas pu être affichée.',
+        data_position_outside_map:
+          'Erreur : une donnée utilise des coordonnées qui sont en dehors de la carte.'
       }
     },
     en: {
@@ -277,6 +285,10 @@ module.exports = (function() {
       add_to_project: 'Add to project:',
       input_password: 'Input the password here:',
       validate_with_enter: 'validate with the ENTER key',
+      your_device_cant_geoloc:
+        'Your browser or device doesn’t support Geolocation',
+      geoloc_failed: 'Geolocation failed.',
+      error_code: 'Error code: ',
 
       create_a_layer: 'Create a layer',
       layer_list: 'Layer’s list',
@@ -493,7 +505,11 @@ module.exports = (function() {
         medias_uploaded: 'All medias were imported successfully.',
         medias_upload_failed: 'Error: some medias failed to import.',
         video_converted:
-          'The video was converted successfully and added to the project.'
+          'The video was converted successfully and added to the project.',
+        your_position_outside_map:
+          'Your position is outside the map and couldn’t be shown.',
+        data_position_outside_map:
+          'Error : a data uses coordinates outside of the map. It won’t be displayed.'
       }
     }
   };

@@ -1,8 +1,8 @@
 <template>
   <div class="card">
-    <div class="card--header card--header_layer bg-noir padding-sides-verysmall c-blanc">
+    <div class="card--header card--header_layer padding-sides-verysmall">
       <button type="button" 
-        class="bg-transparent font-medium c-blanc"
+        class="bg-transparent font-medium"
         @click="$root.closeLayer()"
       >
         ◄
@@ -12,15 +12,15 @@
       </span>
     </div>
 
-    <div class="bg-noir padding-medium padding-top-none c-blanc">
+    <div class="padding-small padding-top-none">
       <div class="" v-if="layer.description">
-        <label class="c-blanc">description</label>
-        <p class="margin-top-none padding-left-small padding-right-none" style="border-left: 1px solid #999;">
+        <label class="">description</label>
+        <p class="margin-top-none padding-left-small padding-right-none" style="border-left: 1px solid #353535;">
           {{ layer.description }}
         </p>
       </div>
       <div class="">
-        <label class="c-blanc">{{ $t('background_map') }}</label><br>
+        <label class="">{{ $t('background_map') }}</label><br>
         <template v-if="layer.hasOwnProperty('preview')">
           <img :src="$root.previewURL(layer, 400)">
         </template>
@@ -29,12 +29,12 @@
         </template>
       </div>
     </div>
-    <div class="bg-noir padding-sides-small c-blanc" style="border-top: 1px solid white">
+    <div class="padding-sides-small" style="border-bottom: 1px solid #353535">
       <div>
-        <button type="button" class="buttonLink c-blanc" @click="showEditLayerModal = true" :disabled="!$root.state.connected">
+        <button type="button" class="buttonLink " @click="showEditLayerModal = true" :disabled="!$root.state.connected">
           {{ $t('edit') }}
         </button>
-        <button type="button" class="buttonLink c-blanc" @click="removeLayer()" :disabled="!$root.state.connected">
+        <button type="button" class="buttonLink " @click="removeLayer()" :disabled="!$root.state.connected">
           {{ $t('remove') }}
         </button>
       </div>

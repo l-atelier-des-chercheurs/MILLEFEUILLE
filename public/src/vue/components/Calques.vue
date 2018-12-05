@@ -12,6 +12,7 @@
       >      
         <g id="shapes" ref="shapes"
         >
+
           <g
             :style="moveUpLayers(0)"
             class="m_svgpattern--layer m_svgpattern--layer_persp"
@@ -22,21 +23,25 @@
               :width="width"
               :height="height"
               fill="white"
-              stroke="#333"
+              stroke="#b9b9b9"
+              stroke-width="2"
             ></rect>
           </g>
-          <Calque 
-            v-for="(layer, slugLayerName, index) in layers" 
-            v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && slugLayerName === $root.settings.sidebar.layer_viewed)"
-            :key="slugLayerName"
-            :index="index"
-            :layer="layer"
-            :width="width"
-            :height="height"
-            :style="moveUpLayers(index+1)"
-            class="m_svgpattern--layer m_svgpattern--layer_persp"
-            :map_projection="map_projection"
-          />
+
+          <transition-group name="enableMode" tag="g">
+            <Calque 
+              v-for="(layer, slugLayerName, index) in layers" 
+              v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && slugLayerName === $root.settings.sidebar.layer_viewed)"
+              :key="slugLayerName"
+              :index="index"
+              :layer="layer"
+              :width="width"
+              :height="height"
+              :style="moveUpLayers(index+1)"
+              class="m_svgpattern--layer m_svgpattern--layer_persp"
+              :map_projection="map_projection"
+            />
+          </transition-group>
 
           <g
             v-if="!!current_position.latitude"
@@ -53,11 +58,16 @@
         <button type="button" class="btn_small" @click="zoom.zoomOut()">-</button>
         <button type="button" class="btn_small" @click="zoom.zoomIn()">+</button>
         <button type="button" class="btn_small" @click="zoom.resetZoom()">RESET</button>
-        <button type="button" class="btn_small" @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">perspective</button>
+        <button type="button" class="btn_small" :class="{ 'active' : $root.settings.mode_perspective }"  @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">perspective</button>
         <button type="button" class="btn_small" :disabled="$root.settings.mode_perspective" :class="{ 'active' : grid.enabled && !$root.settings.mode_perspective }" @click="grid.enabled = !grid.enabled">GRILLE</button>
-        <button type="button" class="btn_small" @click="localizeMe()" v-if="!$root.state.is_electron">MA POSITION
+        <button type="button" class="btn_small" @click="localizeMe()" v-if="!$root.state.is_electron">
+          MA POSITION
           <span class="loader loader-small" v-if="current_position.location_is_loading" />
         </button>
+        <div v-if="$root.settings.mode_perspective" class="popup_perspective">
+          <input type="range" min="0" max="250" v-model="$root.settings.perspective_stretch" />
+        </div>
+
       </div>
     </div>
   </div>
@@ -112,19 +122,17 @@ export default {
   },
 
   computed: {
-    perspStyle() {
-      if(this.$root.settings.mode_perspective) {
-        return {
-          'transform': `rotateX(45deg) rotate(-45deg) scale(1)`
-        };
-      } else if(this.$root.settings.mode_perspective) {
-        return {};
-      }
-    },
     placeMyPosition() {
-      console.log('PatternSvg / layerStyle');      
+      console.log('PatternSvg / placeMyPosition');      
       const [x,y] = this.map_projection([this.current_position.longitude, this.current_position.latitude]);
       const index = Object.keys(this.layers).length;
+
+      if(x < 0 || x > this.width || y < 0 || y > this.height) {
+        this.$alertify
+          .closeLogOnClick(true)
+          .delay(4000)
+          .error(this.$t('notifications.your_position_outside_map'));
+      }
 
       if(this.$root.settings.mode_perspective) {
         return {
@@ -143,10 +151,16 @@ export default {
   methods: {
     localizeMe() {
       if(navigator.geolocation) {
+        this.current_position.latitude = false;
+        this.current_position.longitude = false;
         navigator.geolocation.getCurrentPosition(this.onGeoSuccess, this.onGeoError);  
         this.current_position.location_is_loading = true;
       } else {
-        alert("Your browser or device doesn't support Geolocation");
+        this.$alertify
+          .closeLogOnClick(true)
+          .delay(4000)
+          .error(this.$t('notifications.your_device_cant_geoloc'));
+
       }
     },
     onGeoSuccess(event) {
@@ -159,17 +173,27 @@ export default {
     },
     onGeoError(event) {
       this.current_position.location_is_loading = false;
-      alert("La localisation n’a pas pu avoir lieu. Error code " + event.code + ". " + event.message);
+      this.$alertify
+        .closeLogOnClick(true)
+        .delay(4000)
+        .error(this.$t('notifications.geoloc_failed') + ' ' + this.$t('error_code') + event.code + ". " + event.message);
+    
     },
     handleResize() {
       this.globalCanvasSize.width = this.$refs.patternContainer.offsetWidth;
       this.globalCanvasSize.height = this.$refs.patternContainer.offsetHeight;
     },
     moveUpLayers(index) {
-      console.log('PatternSvg / layerStyle');      
+      console.log('PatternSvg / moveUpLayers');   
+      if(this.$root.settings.sidebar.view === 'Layer') {
+        return {
+          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${1 * this.$root.settings.perspective_stretch}px)`,
+          'transform-origin': `${this.width/2}px ${this.height/2}px`
+        };        
+      } else 
       if(this.$root.settings.mode_perspective) {
         return {
-          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${index * 80}px)`,
+          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${index * this.$root.settings.perspective_stretch}px)`,
           'transform-origin': `${this.width/2}px ${this.height/2}px`
         };
       } else {
