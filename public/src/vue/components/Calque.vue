@@ -10,8 +10,8 @@
       fill="transparent"
     />
     <image 
-      v-if="$root.previewURL(layer, 2200)"
-      :xlink:href="$root.previewURL(layer, 2200)" 
+      v-if="$root.previewURL(layer, 1400)"
+      :xlink:href="$root.previewURL(layer, 1400)" 
       x="0" 
       y="0" 
       :width="width" 

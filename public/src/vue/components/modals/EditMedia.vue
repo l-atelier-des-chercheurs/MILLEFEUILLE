@@ -137,7 +137,6 @@ export default {
     }
   },  
   created() {
-    debugger;
   },
   computed: {
     uriToUploadMedia: function() {

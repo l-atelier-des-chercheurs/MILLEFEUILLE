@@ -58,7 +58,6 @@
         :key="media.metaFileName"
         class="m_sidebarmedia"
       >
-        {{ media.date_uploaded }}
         <MediaContent
           class="m_sidebarmedia--preview"
           :context="'preview'"
@@ -72,7 +71,12 @@
         <div 
           class="m_sidebarmedia--title"
         >
-          {{ media.caption }}
+          <span v-if="!!media.caption">
+            {{ media.caption }}
+          </span><br>
+          <strong v-if="!!media.value">
+            {{ media.value }}
+          </strong>
         </div>
         <div class="m_sidebarmedia--button">
           <button
@@ -131,8 +135,6 @@ export default {
       if(!this.layer.hasOwnProperty('medias')) {
         return sortable;
       }
-
-      debugger;
 
       for (let slugMediaName in this.layer.medias) {
         let orderBy;

@@ -32,7 +32,7 @@
             <Calque 
               v-for="(layer, index) in layers_shown" 
               v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && layer.slugFolderName === $root.settings.sidebar.layer_viewed)"
-              :key="layer.slugFolderName"
+              :key="index"
               :index="index"
               :layer="layer"
               :width="width"
