@@ -15,7 +15,7 @@
 
           <!-- <g
             v-if="$root.settings.sidebar.view === 'Layers'"
-            :style="perspLayers(0)"
+            :style="layerOptions(0)"
             class="m_svgpattern--layer m_svgpattern--layer_persp"
           >
             <rect 
@@ -32,13 +32,16 @@
           <transition-group name="enableMode" tag="g" :duration="600">
             <Calque 
               v-for="(layer, index) in layers_shown" 
-              v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && layer.slugFolderName === $root.settings.sidebar.layer_viewed)"
+              v-if="
+              ($root.settings.sidebar.view === 'Layers' && $root.config_getLayerOption(layer.slugFolderName, 'visibility'))
+              || ($root.settings.sidebar.view === 'Layer' && layer.slugFolderName === $root.settings.sidebar.layer_viewed)
+              "
               :key="index"
               :index="index"
               :layer="layer"
               :width="width"
               :height="height"
-              :style="perspLayers(index+1)"
+              :style="layerOptions(layer, index+1)"
               class="m_svgpattern--layer m_svgpattern--layer_persp"
               :map_projection="map_projection"
             />
@@ -199,7 +202,6 @@ export default {
   },
   methods: {
     saveSVG() {
-      debugger;
       const fileName = `generateur_graphique-${getFormattedTime()}.svg`;
       saveSVGToFile(this.$refs.pattern, fileName);
     },
@@ -237,22 +239,25 @@ export default {
       this.globalCanvasSize.width = this.$refs.patternContainer.offsetWidth;
       this.globalCanvasSize.height = this.$refs.patternContainer.offsetHeight;
     },
-    perspLayers(index) {
-      console.log('PatternSvg / perspLayers');   
-      if(this.$root.settings.mode_perspective) {
+    layerOptions(layer, index) {
+      console.log('PatternSvg / layerOptions');   
 
+      let opts = {};
+      opts['transform-origin'] = `${this.width/2}px ${this.height/2}px`;
+      
+      const opacity = this.$root.config_getLayerOption(layer.slugFolderName, 'opacity')/100;
+      if(!!opacity && opacity !== 1) {
+        opts['opacity'] = opacity;
+      }
+
+      if(this.$root.settings.mode_perspective) {
         const move_layer_up_based_on_index = (index * this.$root.settings.perspective_stretch) - (this.layers_shown.length * this.$root.settings.perspective_stretch)/2;
         const stretch_factor = this.$root.settings.sidebar.view === 'Layers' ? move_layer_up_based_on_index : this.$root.settings.perspective_stretch;
 
-        return {
-          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${stretch_factor}px)`,
-          'transform-origin': `${this.width/2}px ${this.height/2}px`
-        };
-      } else {
-        return {
-          'transform-origin': `${this.width/2}px ${this.height/2}px`
-        };
+        opts['transform'] = `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${stretch_factor}px)`;
       }
+
+      return opts;
     },
     setupPanZoom() {
       // this.d3svg exists to make sure we don’t reload d3 for each change

@@ -1074,6 +1074,7 @@ a {
 
   }
 
+  
 
   /* inputer */
 
@@ -1199,10 +1200,70 @@ a {
 
 }
 
+.switch-verysmall {
+  font-size: .6rem;
+  --switch-size: .6rem;
+}
+
+.m_layeredit {
+  width: auto;
+  .bg-noir;
+  .c-blanc;
+  .padding-sides-small;
+  .padding-bottom-verysmall;
+  
+  label {
+    .c-blanc;
+  }
+
+  .switch {
+    text-align: center;
+    width: 100%;
+    height: auto;
+    --switch-bg-color-checked: @c-orange;
+
+    label {
+      margin-bottom: 0;
+
+    }
+  }
 
 
+}
 
+.visibility_picto {
+  width: 40px;
+  height: 40px;
+  border: 1px solid @c-gris;
+  padding: 0;
+  margin-right: .5em !important;
+  border-radius: 4px;
 
+  // border-color: @c-bleumarine;
+  svg.is--active {
+    path {
+      fill: @c-rouge;
+    }
+  }
+
+  svg {
+    // width: 100%;
+    // height: 100%;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+  
+    path {
+      fill: @c-gris;
+    }
+    
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
 
 
 

@@ -736,7 +736,6 @@ let vm = new Vue({
         type: 'layers',
         slugFolderName: slugLayerName
       });
-      // this.$root.config;
     },
     closeLayer: function() {
       if (window.state.dev_mode === 'debug') {
@@ -927,15 +926,46 @@ let vm = new Vue({
     formatDateToHuman(date) {
       return this.$moment(date, 'YYYY-MM-DD HH:mm:ss').format('LL');
     },
-    updateNetworkInfos() {
-      this.$socketio.updateNetworkInfos();
-    },
-    navigation_back() {
-      if (this.$root.do_navigation.view === 'CaptureView') {
-        this.$root.do_navigation.view = 'ProjectView';
-      } else if (this.$root.do_navigation.view === 'ProjectView') {
-        this.$root.closeProject();
+    config_setLayerOption(slugFolderName, type, value) {
+      if (this.config.layers.length !== 0) {
+        const existingLayerInConfig = this.config.layers.filter(
+          l => slugFolderName === l.slugFolderName
+        );
+        if (existingLayerInConfig.length > 0) {
+          existingLayerInConfig[0][type] = value;
+          return;
+        }
       }
+
+      this.config.layers.push({
+        slugFolderName,
+        visibility: true,
+        editing: false,
+        opacity: 100
+      });
+
+      this.$socketio.listMedias({
+        type: 'layers',
+        slugFolderName
+      });
+    },
+    config_getLayerOption(slugFolderName, type) {
+      if (this.config.layers.length !== 0) {
+        const existingLayerInConfig = this.config.layers.filter(
+          l => slugFolderName === l.slugFolderName
+        );
+        if (existingLayerInConfig.length > 0) {
+          if (
+            type !== 'visibility' &&
+            existingLayerInConfig[0].editing === false
+          ) {
+            return false;
+          }
+
+          return existingLayerInConfig[0][type];
+        }
+      }
+      return false;
     }
   }
 });
