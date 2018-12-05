@@ -54,10 +54,11 @@
     <div class="card--body">
 
       <div
-        v-for="media in layer.medias"
+        v-for="media in sortedMedias"
         :key="media.metaFileName"
         class="m_sidebarmedia"
       >
+        {{ media.date_uploaded }}
         <MediaContent
           class="m_sidebarmedia--preview"
           :context="'preview'"
@@ -105,7 +106,12 @@ export default {
   },
   data() {
     return {
-      showEditLayerModal: false
+      showEditLayerModal: false,
+      mediaSort: {
+        field: 'date_uploaded',
+        type: 'date',
+        order: 'ascending'
+      }
     }
   },
   
@@ -119,6 +125,79 @@ export default {
   watch: {
   },
   computed: {
+    sortedMedias() {
+      var sortable = [];
+
+      if(!this.layer.hasOwnProperty('medias')) {
+        return sortable;
+      }
+
+      debugger;
+
+      for (let slugMediaName in this.layer.medias) {
+        let orderBy;
+        const media = this.layer.medias[slugMediaName];
+
+        if (this.mediaSort.type === 'date') {
+          if(media.hasOwnProperty(this.mediaSort.field)) {
+            orderBy = +this.$moment(
+              media[this.mediaSort.field],
+              'YYYY-MM-DD HH:mm:ss'
+            );
+          }
+          if(orderBy === undefined || Number.isNaN(orderBy)) {
+            orderBy = 1000;
+          }
+        } else if (this.mediaSort.type === 'alph') {
+          orderBy = media[this.mediaSort.field];
+          if(orderBy === undefined || Number.isNaN(orderBy)) {
+            orderBy = 1000;
+          }
+          if(orderBy === undefined) {
+            orderBy = 'z';
+          }          
+        }
+
+        // if(this.$root.isMediaShown(media)) {
+          sortable.push({ slugMediaName, orderBy });
+        // }
+        
+      }
+
+      let sortedSortable = sortable.sort(function(a, b) {
+        let valA = a.orderBy;
+        let valB = b.orderBy;
+        if (
+          typeof a.orderBy === 'string' &&
+          typeof b.orderBy === 'string'
+        ) {
+          valA = valA.toLowerCase();
+          valB = valB.toLowerCase();
+        }
+        if (valA < valB) {
+          return -1;
+        }
+        if (valA > valB) {
+          return 1;
+        }
+        return 0;
+      });
+
+      if (this.mediaSort.order === 'descending') {
+        sortedSortable.reverse();
+      }
+
+      // array order is garanteed while objects properties aren’t,
+      // that’s why we use an array here
+      let sortedMedias = sortedSortable.reduce((accumulator, d) => {
+        let sortedMediaObj = this.layer.medias[d.slugMediaName];
+        sortedMediaObj.slugMediaName = d.slugMediaName;
+        accumulator.push(sortedMediaObj);
+        return accumulator;
+      }, []);
+      
+      return sortedMedias;
+    }    
   },
   methods: {
     removeLayer() {
