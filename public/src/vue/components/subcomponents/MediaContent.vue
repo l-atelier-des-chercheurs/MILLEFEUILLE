@@ -69,7 +69,7 @@
       <iframe v-else :src="mediaURL" />
     </template>
 
-    <template v-else-if="media.type === 'other'">
+    <template v-else-if="media.type === 'other' && media.media_filename.indexOf('.') > -1">
       <div class="padding-small font-small">
         <pre>
 <span v-html="$t('file:')">

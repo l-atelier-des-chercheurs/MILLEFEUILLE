@@ -102,6 +102,9 @@
           },
           "longitude": {
             "type": "number"
+          },
+          "value": {
+            "type": "number"
           }
         }
       }

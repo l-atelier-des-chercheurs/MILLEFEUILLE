@@ -202,8 +202,8 @@ module.exports = function(app, io, m) {
     form.uploadDir = api.getFolderPath(slugFolderName);
 
     let allFilesMeta = [];
-
     let fieldValues = {};
+
     form.on('field', function(name, value) {
       console.log(`Got field with name = ${name} and value = ${value}.`);
       if (name === 'socketid') {
@@ -249,6 +249,7 @@ module.exports = function(app, io, m) {
 
     // once all the files have been uploaded
     form.on('end', function() {
+      console.log(`All files have been sent`);
       let msg = {};
       msg.msg = 'success';
       //           msg.medias = JSON.stringify(allFilesMeta);
@@ -264,6 +265,18 @@ module.exports = function(app, io, m) {
               allFilesMeta[i],
               socketid
             )
+          );
+        }
+        Promise.all(m).then(() => {});
+      } else {
+        var m = [];
+        for (var n in fieldValues) {
+          m.push(
+            sockets.createMediaMeta({
+              type: 'layers',
+              slugFolderName: slugFolderName,
+              additionalMeta: fieldValues[n]
+            })
           );
         }
         Promise.all(m).then(() => {});

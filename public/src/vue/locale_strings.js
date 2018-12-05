@@ -27,16 +27,15 @@ module.exports = (function() {
       add_to_project: 'Ajouter au projet&nbsp;:',
       input_password: 'Renseignez le mot de passe ci-dessous :',
       validate_with_enter: 'valider avec la touche ENTRÉE',
-      your_device_cant_geoloc:
-        'Votre appareil ou navigateur ne gère pas la géolocalisation.',
-      geoloc_failed: 'La géolocalisation n’a pas pu avoir lieu.',
-      error_code: 'Code erreur : ',
+      value: 'valeur',
+      optional: 'optionnel',
 
       create_a_layer: 'Créer un calque',
       layer_list: 'Liste des calques',
       background_map: 'Fond de carte',
       no_background_map: 'Aucun fond de carte sélectionné',
       add_data: 'Ajouter une donnée',
+      edit_data: 'Éditer une donnée',
 
       bytes: 'octets',
       kb: 'ko',
@@ -76,6 +75,7 @@ module.exports = (function() {
       import_all_files: 'Importer tous les fichiers',
       import_medias: 'Importer des médias',
       select_files_to_import: 'Sélectionnez les fichiers à importer',
+      select_file_to_import: 'Sélectionnez un fichier à importer',
       select_cover_image: 'Sélectionnez une image de couverture',
       select_image: 'Sélectionnez une image',
       select_portrait_image: 'Sélectionnez une image de portrait',
@@ -256,7 +256,14 @@ module.exports = (function() {
         your_position_outside_map:
           'Votre position actuelle est hors de la carte et n’a pas pu être affichée.',
         data_position_outside_map:
-          'Erreur : une donnée utilise des coordonnées qui sont en dehors de la carte.'
+          'Erreur : une donnée utilise des coordonnées qui sont en dehors de la carte.',
+        your_device_cant_geoloc:
+          'Votre appareil ou navigateur ne gère pas la géolocalisation.',
+        geoloc_failed: 'La géolocalisation n’a pas pu avoir lieu.',
+        error_code: 'Code erreur : ',
+        missing_location_field: 'Coordonnées manquantes ou erronées.',
+        data_upload_failed:
+          'Erreur sur l’envoi de cette donnée. Vérifiez l’état de votre connexion à internet puis réessayez.'
       }
     },
     en: {
@@ -285,16 +292,15 @@ module.exports = (function() {
       add_to_project: 'Add to project:',
       input_password: 'Input the password here:',
       validate_with_enter: 'validate with the ENTER key',
-      your_device_cant_geoloc:
-        'Your browser or device doesn’t support Geolocation',
-      geoloc_failed: 'Geolocation failed.',
-      error_code: 'Error code: ',
+      value: 'value',
+      optional: 'optional',
 
       create_a_layer: 'Create a layer',
       layer_list: 'Layer’s list',
       background_map: 'Background map',
       no_background_map: 'No background map selected',
-      add_data: 'Add a data',
+      add_data: 'Add data',
+      edit_data: 'Edit data',
 
       bytes: 'bytes',
       kb: 'KB',
@@ -331,6 +337,7 @@ module.exports = (function() {
       import_medias: 'Import medias',
       import_all_files: 'Import all files',
       select_files_to_import: 'Select files to import',
+      select_file_to_import: 'Select a file to import',
       select_cover_image: 'Select a cover image',
       select_image: 'Select an image file',
       select_portrait_image: 'Select a portrait',
@@ -509,7 +516,14 @@ module.exports = (function() {
         your_position_outside_map:
           'Your position is outside the map and couldn’t be shown.',
         data_position_outside_map:
-          'Error : a data uses coordinates outside of the map. It won’t be displayed.'
+          'Error : a data uses coordinates outside of the map. It won’t be displayed.',
+        your_device_cant_geoloc:
+          'Your browser or device doesn’t support Geolocation',
+        geoloc_failed: 'Geolocation failed.',
+        error_code: 'Error code: ',
+        missing_location_field: 'Location field missing or invalid.',
+        data_upload_failed:
+          'Failed on data upload. Check your internet connection and try again.'
       }
     }
   };
