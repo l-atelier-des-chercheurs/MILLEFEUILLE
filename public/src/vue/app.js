@@ -459,7 +459,7 @@ let vm = new Vue({
     currentSort: {
       field: 'date_created',
       type: 'date',
-      order: 'ascending'
+      order: 'descending'
     },
 
     lang: {
@@ -554,17 +554,6 @@ let vm = new Vue({
     }
   },
   computed: {
-    currentProject: function() {
-      if (
-        this.store.hasOwnProperty('projects') &&
-        this.store.layers.hasOwnProperty(
-          this.do_navigation.current_slugLayerName
-        )
-      ) {
-        return this.store.layers[this.do_navigation.current_slugLayerName];
-      }
-      return {};
-    },
     sortedLayers: function() {
       var sortable = [];
 

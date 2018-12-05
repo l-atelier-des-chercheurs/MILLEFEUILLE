@@ -132,7 +132,7 @@ export default {
       d3svg: '',
       custom_path: undefined,
       grid: {
-        enabled: true
+        enabled: false
       },
       mode_advanced: false,
 
