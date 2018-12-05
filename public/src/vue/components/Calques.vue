@@ -12,6 +12,7 @@
       >      
         <g id="shapes" ref="shapes"
         >
+
           <g
             :style="moveUpLayers(0)"
             class="m_svgpattern--layer m_svgpattern--layer_persp"
@@ -26,18 +27,21 @@
               stroke-width="2"
             ></rect>
           </g>
-          <Calque 
-            v-for="(layer, slugLayerName, index) in layers" 
-            v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && slugLayerName === $root.settings.sidebar.layer_viewed)"
-            :key="slugLayerName"
-            :index="index"
-            :layer="layer"
-            :width="width"
-            :height="height"
-            :style="moveUpLayers(index+1)"
-            class="m_svgpattern--layer m_svgpattern--layer_persp"
-            :map_projection="map_projection"
-          />
+
+          <!-- <transition-group name="fade"> -->
+            <Calque 
+              v-for="(layer, slugLayerName, index) in layers" 
+              v-show="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && slugLayerName === $root.settings.sidebar.layer_viewed)"
+              :key="slugLayerName"
+              :index="index"
+              :layer="layer"
+              :width="width"
+              :height="height"
+              :style="moveUpLayers(index+1)"
+              class="m_svgpattern--layer m_svgpattern--layer_persp"
+              :map_projection="map_projection"
+            />
+          <!-- </transition-group> -->
 
           <g
             v-if="!!current_position.latitude"
