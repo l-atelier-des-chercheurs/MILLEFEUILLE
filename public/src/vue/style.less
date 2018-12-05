@@ -350,7 +350,7 @@ a {
 
   > * {
     flex: 1 1 auto;
-    height: 100vh;
+    // height: 100vh;
 
     &.m_controller {
       flex: 1 0 320px;
@@ -374,7 +374,7 @@ a {
   transition: all .4s;
 
   @bg-color: rgba(255,255,255,0);
-  @bg-color-hover: rgba(255,255,255,.90);
+  @bg-color-hover: rgba(255,255,255,.50);
   @dot-color: @c-gris_clair;
   @dot-size: 1px;
   @dot-spacing: 30px;
@@ -515,7 +515,7 @@ a {
 .m_pattern {
   position: relative;
   width: 100%;
-  height:100vh;
+  // height:100vh;
   margin: 0 auto;
   // background-color: #f9f9f9;
   text-align: center;
@@ -855,8 +855,7 @@ a {
   .m_svgpattern--layer_persp {
     transform-box: fill-box;
     transform-origin: center;
-    transition-property: all;
-    transition-duration: 1s;  
+    transition: transform 1s, opacity .4s;
 
     backface-visibility: hidden;
   }
@@ -869,6 +868,23 @@ a {
     // transform: rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, 0px);    
   }
   
+}
+
+.m_statusbar {
+  // position: absolute;
+  // bottom: 0;
+  width: 100%;
+  height: 2em;
+  z-index: 1500;
+  .bg-rouge;
+  .font-verysmall;
+  color: white;
+  .padding-sides-medium;
+
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
 }
 
 

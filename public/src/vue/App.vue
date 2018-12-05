@@ -1,13 +1,20 @@
 <template>
-  <div class="flex-sidebyside">
+  <div style="display: flex;
+    flex-flow: column nowrap;
+    height: 100%;">
+    <div class="m_statusbar" v-if="!$root.state.connected">
+      {{ $t('notifications.connection_lost') }} {{ $t('notifications.contents_wont_be_editable') }}      
+    </div>    
+    <div class="flex-sidebyside">
 
-    <Sidebar 
-      :layers="$root.store.layers"
-    />
-    <Calques
-      :layers="$root.store.layers"
-    />
+      <Sidebar 
+        :layers="$root.store.layers"
+      />
+      <Calques
+        :layers="$root.store.layers"
+      />
 
+    </div>
   </div>
 </template>
 

@@ -28,7 +28,7 @@
             ></rect>
           </g>
 
-          <transition-group name="fade" tag="g">
+          <transition-group name="enableMode" tag="g">
             <Calque 
               v-for="(layer, slugLayerName, index) in layers" 
               v-if="$root.settings.sidebar.view === 'Layers' || ($root.settings.sidebar.view === 'Layer' && slugLayerName === $root.settings.sidebar.layer_viewed)"
