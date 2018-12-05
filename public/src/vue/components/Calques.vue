@@ -185,15 +185,11 @@ export default {
     },
     moveUpLayers(index) {
       console.log('PatternSvg / moveUpLayers');   
-      if(this.$root.settings.sidebar.view === 'Layer') {
-        return {
-          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${1 * this.$root.settings.perspective_stretch}px)`,
-          'transform-origin': `${this.width/2}px ${this.height/2}px`
-        };        
-      } else 
       if(this.$root.settings.mode_perspective) {
+        const stretch_factor = this.$root.settings.sidebar.view === 'Layers' ? index * this.$root.settings.perspective_stretch : 1 * this.$root.settings.perspective_stretch;
+
         return {
-          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${index * this.$root.settings.perspective_stretch}px)`,
+          'transform': `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${stretch_factor}px)`,
           'transform-origin': `${this.width/2}px ${this.height/2}px`
         };
       } else {
