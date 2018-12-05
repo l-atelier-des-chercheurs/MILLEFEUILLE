@@ -124,7 +124,7 @@ export default {
         value: this.media.value
       },
       askBeforeClosingModal: false,
-      current_addmedia_mode: 'location',
+      current_addmedia_mode: 'content',
       location_is_loading: false,
     };
   },
