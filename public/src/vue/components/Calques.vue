@@ -3,11 +3,11 @@
   >
     <div class="m_svgpattern" ref="patternContainer">
       <svg
+        
         xmlns="http://www.w3.org/2000/svg"
         :width="900"
         :height="900"
         ref="pattern"
-        class=""
         :class="{ 'has--grid' : grid.enabled && !$root.settings.mode_perspective }"
       >      
         <g id="shapes" ref="shapes"
