@@ -177,7 +177,8 @@ document.addEventListener(
       if (
         keycode == 13 ||
         (keycode >= 48 && keycode <= 57) ||
-        data_chars.indexOf(keycode) > -1
+        data_chars.indexOf(keycode) > -1 ||
+        true
       ) {
         if (keycode == 13) {
           return keycode;
@@ -185,7 +186,6 @@ document.addEventListener(
           return String.fromCharCode(keycode);
         }
       } else {
-        debugger;
         return false;
       }
     };
