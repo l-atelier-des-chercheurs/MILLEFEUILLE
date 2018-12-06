@@ -156,14 +156,31 @@ document.addEventListener(
     };
 
     $this.validateKey = function(keycode) {
-      console.log('keycode : ' + keycode);
-      const azerty_mapping = [224, 38, 233, 34, 39, 40, 167, 232, 33, 231];
-      const qwerty_mapping = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+      console.log(
+        'keycode : ' + keycode + ' === charcode ' + String.fromCharCode(keycode)
+      );
+      const azerty_mapping = [224, 38, 233, 34, 39, 40, 167, 232, 33, 231, 58];
+      const qwerty_mapping = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 46];
       // si keycode est dans azerty_mapping
       // convertir en qwerty_mapping
       if (azerty_mapping.indexOf(keycode) > -1) {
         keycode = qwerty_mapping[azerty_mapping.indexOf(keycode)];
       }
+
+      if (keycode === 117) {
+        keycode = 48;
+      }
+      // deux points deviennent un point
+      if (keycode === 58) {
+        keycode = 46;
+      }
+
+      console.log(
+        'CONVERSION : keycode : ' +
+          keycode +
+          ' === charcode ' +
+          String.fromCharCode(keycode)
+      );
 
       // data:h 80.70
       // data:t 22.30
