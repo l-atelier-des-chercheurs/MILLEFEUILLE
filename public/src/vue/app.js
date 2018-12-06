@@ -441,7 +441,10 @@ let vm = new Vue({
       ]
       */
       layers: [],
-      layers_order: []
+      layers_order: [],
+      // utilisé par dnd dans la sidebar pour simuler le rendu des
+      // calques à droite sans affecter la liste de la sidebar
+      temp_layers_order: []
     },
 
     // persistant, par device (dans le localstorage)

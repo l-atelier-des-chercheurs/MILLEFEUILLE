@@ -169,7 +169,7 @@ export default {
     placeMyPosition() {
       console.log('PatternSvg / placeMyPosition');      
       const [x,y] = this.map_projection([this.current_position.longitude, this.current_position.latitude]);
-      const index = this.sortedLayersSlugs.length;
+      const index = this.slugLayersShown.length;
 
       if(x < 0 || x > this.width || y < 0 || y > this.height) {
         this.$alertify
@@ -192,8 +192,10 @@ export default {
 
     },
     slugLayersShown() {
-      // return this.$root.config.layers;
       if(this.$root.settings.sidebar.view === 'Layers') {
+        if(this.$root.config.temp_layers_order.length > 0) {
+          return this.$root.config.temp_layers_order.filter(s => this.$root.config_getLayerOption(s, 'visibility') === true).reverse();            
+        }
         return this.$root.sortedLayersSlugs.filter(s => this.$root.config_getLayerOption(s, 'visibility') === true).reverse();
       }
       if(this.$root.settings.sidebar.view === 'Layer') {
@@ -252,7 +254,6 @@ export default {
       }
 
       if(this.$root.settings.mode_perspective) {
-        debugger;
         const move_layer_up_based_on_index = (index * this.$root.settings.perspective_stretch) - (this.slugLayersShown.length * this.$root.settings.perspective_stretch)/2;
         const stretch_factor = this.$root.settings.sidebar.view === 'Layers' ? move_layer_up_based_on_index : this.$root.settings.perspective_stretch;
 

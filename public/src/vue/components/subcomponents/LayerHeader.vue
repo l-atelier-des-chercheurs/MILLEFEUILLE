@@ -30,7 +30,7 @@
         ►
       </button>
     </div>
-    <div class="m_layeredit" v-if="layerVisilibity">
+    <div class="m_layeredit " v-if="layerVisilibity">
       <span class="switch switch-verysmall">
         <input type="checkbox" class="switch" :id="`editlayer_${slugLayerName}`" v-model="is_editing">
         <label :for="`editlayer_${slugLayerName}`">mise en forme</label>

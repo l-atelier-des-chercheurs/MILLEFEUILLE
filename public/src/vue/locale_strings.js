@@ -29,6 +29,7 @@ module.exports = (function() {
       validate_with_enter: 'valider avec la touche ENTRÉE',
       value: 'valeur',
       optional: 'optionnel',
+      opacity: 'opacité',
 
       create_a_layer: 'Créer un calque',
       layer_list: 'Liste des calques',
@@ -299,6 +300,7 @@ module.exports = (function() {
       validate_with_enter: 'validate with the ENTER key',
       value: 'value',
       optional: 'optional',
+      opacity: 'opacity',
 
       create_a_layer: 'Create a layer',
       layer_list: 'Layer’s list',
