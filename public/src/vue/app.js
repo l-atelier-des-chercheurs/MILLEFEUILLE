@@ -505,17 +505,26 @@ let vm = new Vue({
     /* à la connexion/reconnexion, détecter si un projet ou une publi sont ouverts 
     et si c’est le cas, rafraichir leur contenu (meta, medias) */
     this.$eventHub.$on('socketio.reconnect', () => {
-      // TODO
-      // if (this.current_slugLayerName) {
-      //   this.$socketio.listFolder({
-      //     type: 'projects',
-      //     slugFolderName: this.do_navigation.current_slugLayerName
-      //   });
-      //   this.$socketio.listMedias({
-      //     type: 'projects',
-      //     slugFolderName: this.do_navigation.current_slugLayerName
-      //   });
-      // }
+      this.sortedLayersSlugs
+        .filter(s => this.$root.config_getLayerOption(s, 'visibility') === true)
+        .map(s => {
+          this.$socketio.listFolder({
+            type: 'layers',
+            slugFolderName: s
+          });
+        });
+
+      if (this.settings.sidebar.view === 'Layer') {
+        this.$socketio.listFolder({
+          type: 'layers',
+          slugFolderName: this.settings.sidebar.layer_viewed
+        });
+
+        this.$socketio.listMedias({
+          type: 'layers',
+          slugFolderName: this.settings.sidebar.layer_viewed
+        });
+      }
     });
 
     window.addEventListener('tag.newTagDetected', this.newTagDetected);
