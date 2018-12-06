@@ -915,14 +915,17 @@ let vm = new Vue({
         console.log(`ROOT EVENT: newTagDetected with e.detail = ${e.detail}`);
       }
 
-      const pos_deuxpoints =
-        e.detail.indexOf('M') > -1
-          ? e.detail.indexOf('M')
-          : e.detail.indexOf(':');
+      if (!(e.detail.indexOf('data') === 0 || e.detail.indexOf('dqtq') === 0)) {
+        return;
+      }
+
+      debugger;
+
+      const pos_type = 4;
 
       // couper après M ou :, récupérer la première lettre puis couper le reste du message
-      const type = e.detail.substring(pos_deuxpoints + 1, pos_deuxpoints + 2);
-      const value = Number(e.detail.substring(pos_deuxpoints + 3));
+      const type = e.detail.substring(pos_type, pos_type + 1);
+      const value = Number(e.detail.substring(pos_type + 1));
 
       const dict = {
         h: 'humidite',
@@ -930,10 +933,16 @@ let vm = new Vue({
         s: 'son'
       };
 
-      this.createPinFromData({
-        type: dict[type],
-        value
-      });
+      alertify
+        .closeLogOnClick(true)
+        .maxLogItems(3)
+        .delay(4000)
+        .log('Nouvelle valeur : ' + dict[type] + ' = ' + value);
+
+      // this.createPinFromData({
+      //   type: dict[type],
+      //   value
+      // });
     },
 
     createPinFromData({ type, value }) {
