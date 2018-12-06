@@ -955,12 +955,7 @@ a {
 }
 
 @t-handle_width: 20px;
-@t-handle_right_adjustment: 4px;
-
-.card.is--visible {
-  margin-left: -@t-skipline/4;
-  // margin: 0;
-}
+@t-handle_right_adjustment: 0px;
 
 
 .card {
@@ -974,9 +969,13 @@ a {
     // background-color: #f9f9f9;
     color: #000;
   }
-
+  
   &.is--visible {
-    // border: 1px solid #333;
+    margin-left: -@t-skipline/4;
+
+    .visibility_picto {
+      border-radius: 0 4px 4px 0;
+    }
   }
 
   &.section_separator {

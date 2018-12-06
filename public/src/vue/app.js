@@ -479,11 +479,11 @@ let vm = new Vue({
       document.body.classList.add('has_systembar');
     }
 
-    if (window.state.dev_mode === 'debug') {
-      console.log('ROOT EVENT: created / checking for password');
-    }
-
     if (!window.state.is_electron && this.state.session_password !== '') {
+      if (window.state.dev_mode === 'debug') {
+        console.log('ROOT EVENT: created / checking for password');
+      }
+
       function hashCode(s) {
         return s.split('').reduce(function(a, b) {
           a = (a << 5) - a + b.charCodeAt(0);
@@ -491,9 +491,20 @@ let vm = new Vue({
         }, 0);
       }
 
-      var pass = window.prompt(this.$t('input_password'));
-      if (this.state.session_password !== hashCode(pass) + '') {
-        return;
+      let pass = '';
+
+      if (
+        !(
+          !!localStorage.getItem('session_password') &&
+          localStorage.getItem('session_password') ===
+            this.state.session_password
+        )
+      ) {
+        const pass = window.prompt(this.$t('input_password'));
+        if (this.state.session_password !== hashCode(pass) + '') {
+          return;
+        }
+        localStorage.setItem('session_password', hashCode(pass));
       }
     }
 
