@@ -40,6 +40,8 @@ module.exports = function(app, io, m) {
       pageData.slugFolderName = '';
       pageData.url = req.path;
       pageData.protocol = req.protocol;
+      pageData.folderPreviewFilename_ext =
+        settings.folderPreviewFilename + settings.thumbExt;
       pageData.structure = settings.structure;
       // pageData.authorsFolder = settings.structure.authors.path;
       pageData.isDebug = dev.isDebug();

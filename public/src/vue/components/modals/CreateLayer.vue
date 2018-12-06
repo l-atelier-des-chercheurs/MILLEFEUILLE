@@ -20,8 +20,10 @@
 <!-- Preview -->
       <div class="margin-bottom-small">
         <label>{{ $t('background_map') }}</label><br>
-        <ImageSelect @newPreview="value => { preview = value }">
-        </ImageSelect>
+        <ImageSelect 
+          @newPreview="value => { preview = value }"
+          :instructions="$t('select_background_map')"
+        />
       </div>
 
 
