@@ -217,15 +217,6 @@ export default {
     }    
   },
   methods: {
-    removeLayer() {
-      if (window.confirm(this.$t('sure_to_remove_layer'))) {
-        this.$root.removeFolder({ 
-          type: 'layers', 
-          slugFolderName: this.layer.slugFolderName
-        });
-        this.$root.closeLayer();
-      }
-    },
   }
 }
 </script>
