@@ -115,7 +115,7 @@ import MediaContent from './MediaContent.vue';
 
 
 export default {
-  props: ['layer'],
+  props: ['layer', 'slugLayerName'],
   components: {
     EditLayer,
     MediaContent
