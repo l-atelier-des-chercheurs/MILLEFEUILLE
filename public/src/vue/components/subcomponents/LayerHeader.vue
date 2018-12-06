@@ -1,5 +1,5 @@
 <template>
-  <div class="card draggable-item margin-sides-medium padding-small"
+  <div class="card draggable-item margin-sides-small padding-small"
     :class="{ 'is--visible' : layerVisilibity }" 
   >
     <div class="card--header card--header_layer cursor-pointer"
