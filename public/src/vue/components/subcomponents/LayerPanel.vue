@@ -83,12 +83,15 @@
         <div 
           class="m_sidebarmedia--title"
         >
-          <span v-if="!!media.caption">
+          <div><i>{{ media.type }}</i></div>
+          <div v-if="!!media.caption">
             {{ media.caption }}
-          </span><br>
-          <strong v-if="!!media.value">
-            {{ media.value }}
-          </strong>
+          </div>
+          <div>
+            <strong v-if="!!media.value">
+              {{ media.value }}
+            </strong>
+          </div>
         </div>
         <div class="m_sidebarmedia--button">
           <button

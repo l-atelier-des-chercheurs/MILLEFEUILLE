@@ -919,8 +919,6 @@ let vm = new Vue({
         return;
       }
 
-      debugger;
-
       const pos_type = 4;
 
       // couper après M ou :, récupérer la première lettre puis couper le reste du message
@@ -948,7 +946,6 @@ let vm = new Vue({
     createPinFromData({ type, value }) {
       this.getLocationConstant()
         .then(event => {
-          debugger;
           this.$root.createMedia({
             slugFolderName: type,
             type: 'layers',
