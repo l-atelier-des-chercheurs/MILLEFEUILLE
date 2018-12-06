@@ -36,6 +36,7 @@ module.exports = (function() {
       no_background_map: 'Aucun fond de carte sélectionné',
       add_data: 'Ajouter une donnée',
       edit_data: 'Éditer une donnée',
+      edit_layer: 'Éditer le calque',
 
       bytes: 'octets',
       kb: 'ko',
@@ -78,6 +79,8 @@ module.exports = (function() {
       select_file_to_import: 'Sélectionnez un fichier à importer',
       select_cover_image: 'Sélectionnez une image de couverture',
       select_image: 'Sélectionnez une image',
+      select_background_map: 'Sélectionnez un fond de carte',
+      remove_background_map: 'Supprimer le fond de carte',
       select_portrait_image: 'Sélectionnez une image de portrait',
       add_to_publication: 'Ajouter à la publication',
       add_a_page: 'Ajouter une page',
@@ -302,6 +305,7 @@ module.exports = (function() {
       no_background_map: 'No background map selected',
       add_data: 'Add data',
       edit_data: 'Edit data',
+      edit_layer: 'Edit layer',
 
       bytes: 'bytes',
       kb: 'KB',
@@ -341,6 +345,8 @@ module.exports = (function() {
       select_file_to_import: 'Select a file to import',
       select_cover_image: 'Select a cover image',
       select_image: 'Select an image file',
+      select_background_map: 'Select background map',
+      remove_background_map: 'Remove background map',
       select_portrait_image: 'Select a portrait',
       add_to_publication: 'Add to publication',
       add_a_page: 'Add a page',

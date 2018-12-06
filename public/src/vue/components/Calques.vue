@@ -274,7 +274,8 @@ export default {
 
       svg.select('.axis--x').remove();
       svg.select('.axis--y').remove();
- 
+
+
       this.map_projection = d3.geoMercator()
         // .scale(width / 2 / Math.PI)
         .scale(1189000)

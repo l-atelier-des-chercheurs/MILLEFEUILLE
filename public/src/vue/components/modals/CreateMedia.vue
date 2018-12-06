@@ -93,7 +93,7 @@
               <div class="m_uploadFile--action"
                 v-if="selected_files_meta.hasOwnProperty(f.name)"
               >
-                <button type="button" class="buttonLink"
+                <!-- <button type="button" class="buttonLink"
                   @click="sendThisFile(f)"
                   :disabled="read_only || (selected_files_meta.hasOwnProperty(f.name) && selected_files_meta[f.name].status === 'success')"
                 >
@@ -106,7 +106,7 @@
                   <template v-else-if="selected_files_meta[f.name].status === 'failed'">
                     {{ $t('retry') }}
                   </template>
-                </button>
+                </button> -->
               </div>
             </div>
 
@@ -188,7 +188,7 @@ export default {
   },
   methods: {
     createMedia(event) {
-      console.log('createMedia');
+        console.log('createMedia');
 
         // préparer un petit paquet pour upload
         // peut contenir un média, une note ou une valeur (ou aucun des trois)
@@ -233,7 +233,7 @@ export default {
         }
 
         if (this.$root.state.dev_mode === 'debug') {
-          console.log(`METHODS • sendThisFile: name = ${meta.filename} / formData is ready`);
+          console.log(`METHODS • createMedia: name = ${meta.filename} / formData is ready`);
         }
 
         // TODO : possibilité de cancel
@@ -248,13 +248,13 @@ export default {
           .then(x => x.data)
           .then(x => {
             if (this.$root.state.dev_mode === 'debug') {
-              console.log(`METHODS • sendThisFile: name = ${meta.filename} / success uploading`);
+              console.log(`METHODS • createMedia: name = ${meta.filename} / success uploading`);
             }
             this.$emit('close');
           })
           .catch(err => {
             if (this.$root.state.dev_mode === 'debug') {
-              console.log(`METHODS • sendThisFile: name = ${meta.filename} / failed uploading`);
+              console.log(`METHODS • createMedia: name = ${meta.filename} / failed uploading`);
             }
             this.$alertify
               .closeLogOnClick(true)
@@ -263,8 +263,6 @@ export default {
 
             reject();      
           });
-
-      this.sendAllFiles();
     },
 
     getLocationConstant() {

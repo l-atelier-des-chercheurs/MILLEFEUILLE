@@ -22,16 +22,16 @@
       <div class="">
         <label class="">{{ $t('background_map') }}</label><br>
         <template v-if="layer.hasOwnProperty('preview')">
-          <div class="background_map">
-            <img :src="$root.previewURL(layer, 400)" class="">
+          <div class="overlay_img_and_link">
+            <img :src="$root.previewURL(layer, 400)" class="bg_img">
             <a 
               :download="`fond_de_carte-${layer.slugFolderName}.jpeg`" 
-              :href="$root.previewURL(layer, 2200)" 
+              :href="previewURL" 
               :title="`fond_de_carte-${layer.slugFolderName}.jpeg`" 
               target="_blank"
               class="buttonLink"
               :disabled="read_only"
-              >
+            >
               {{ $t('download') }}
             </a>
           </div>
@@ -41,13 +41,10 @@
         </template>
       </div>
     </div>
-    <div class="padding-sides-small" style="border-bottom: 1px solid #b9b9b9">
-      <div>
+    <div class="padding-sides-small " style="border-bottom: 1px solid #b9b9b9; text-align: center; ">
+      <div class="margin-bottom-small">
         <button type="button" class="buttonLink " @click="showEditLayerModal = true" :disabled="!$root.state.connected">
-          {{ $t('edit') }}
-        </button>
-        <button type="button" class="buttonLink " @click="removeLayer()" :disabled="!$root.state.connected">
-          {{ $t('remove') }}
+          {{ $t('edit_layer') }}
         </button>
       </div>
 
@@ -144,6 +141,9 @@ export default {
   watch: {
   },
   computed: {
+    previewURL() {
+      return `/${this.slugLayerName}/${this.$root.state.folderPreviewFilename_ext}`
+    },
     sortedMedias() {
       var sortable = [];
 

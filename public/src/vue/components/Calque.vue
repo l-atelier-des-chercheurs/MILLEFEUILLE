@@ -84,7 +84,7 @@ export default {
   },
   computed: {
     background_res() {
-      return this.$root.settings.sidebar.view === 'Layers' ? 1400 : 2200
+      return this.$root.settings.sidebar.view === 'Layers' ? 2200 : 2200
     }
   },
   methods: {

@@ -231,11 +231,11 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style scoped style="sass">
 .mediaContainer--videoPlay {
   width: 100%;
   height: 100%;
-  padding: 10px ~"calc(50% - 50px)";
+  padding: 10px calc(50% - 50px);
   position: absolute;
   top: 0;
   left: 0;
@@ -244,10 +244,9 @@ export default {
   cursor: pointer;
   background-image: linear-gradient(transparent, rgba(0,0,0,.1));
   transition: opacity 150ms;
-
-  &.is--hidden {
-    opacity: 0;
-  }
+}
+.mediaContainer--videoPlay.is--hidden {
+  opacity: 0;
 }
 
 </style>

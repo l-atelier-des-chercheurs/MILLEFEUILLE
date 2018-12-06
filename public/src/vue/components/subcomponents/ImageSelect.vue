@@ -9,7 +9,7 @@
     </div>
     <div class="m_imageselect--image" v-else>
       <img :src="image" />
-      <button class="buttonLink" type="button" @click="removeImage">Supprimer</button>
+      <button class="buttonLink" type="button" @click="removeImage">{{ _remove }}</button>
     </div>
   </div>
 </template>
@@ -18,7 +18,8 @@
 export default {
   props: {
     previewURL: [String, Boolean],
-    instructions: String
+    t_instructions: String,
+    t_remove: String
   },
   components: {
   },
@@ -39,7 +40,10 @@ export default {
   },
   computed: {
     _instructions() {
-      return this.instructions !== undefined ? this.instructions : this.$t('select_image');
+      return this.t_instructions !== undefined ? this.t_instructions : this.$t('select_image');
+    },
+    _remove() {
+      return this.t_remove !== undefined ? this.t_remove : this.$t('remove');
     }
   },
   methods: {

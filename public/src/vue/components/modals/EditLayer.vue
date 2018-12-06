@@ -33,6 +33,8 @@
         <ImageSelect 
           :previewURL="$root.previewURL(layer,400)"
           @newPreview="value => { preview = value }"
+          :t_instructions="$t('select_background_map')"
+          :t_remove="$t('remove_background_map')"
         >
         </ImageSelect>
       </div>

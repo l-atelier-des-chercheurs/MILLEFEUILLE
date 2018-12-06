@@ -574,8 +574,8 @@ a {
 
 .m_sidebarmedia {
   display: flex;
-  flex-wrap: row nowrap;
-  .padding-small;
+  flex-flow: row nowrap;
+  justify-content: stretch;
   align-content: center;
   align-items: center;
 
@@ -599,10 +599,14 @@ a {
 
   .m_sidebarmedia--title {
     flex: 1 1 auto;
-    .padding-small;
-    .t-ellipse;
-    .font-verysmall;
+    width: 0px;
+    .padding-sides-verysmall;
+    .font-verysmall;    
     
+    > div {
+      .t-ellipse;
+      
+    }
   }
 
 
@@ -998,17 +1002,6 @@ a {
       margin: 0;
   }
 
-  .background_map {
-    position: relative;
-    img {
-      border: 1px solid @c-gris_clair;
-    }
-    a {
-      position: absolute;
-      bottom: 0;right: 0;
-    }
-  }
-
   .card--header {
     display: flex;
     flex-flow: row nowrap;
@@ -1109,6 +1102,19 @@ a {
     opacity: 0;
   }
 
+}
+
+.overlay_img_and_link {
+  position: relative;
+  .bg_img {
+    border: 1px solid @c-gris_clair;
+  }
+  a {
+    position: absolute;
+    bottom: 0;right: 0;
+    text-shadow: 0px 1px 8px white;
+    color: black;
+  }
 }
 
 .switch-verysmall {
