@@ -32,11 +32,7 @@
           <transition-group name="enableMode" tag="g" :duration="600">
             <Calque 
               v-for="(layer, index) in layers_shown" 
-              v-if="
-              ($root.settings.sidebar.view === 'Layers' && $root.config_getLayerOption(layer.slugFolderName, 'visibility'))
-              || ($root.settings.sidebar.view === 'Layer' && layer.slugFolderName === $root.settings.sidebar.layer_viewed)
-              "
-              :key="index"
+              :key="layer.slugFolderName"
               :index="index"
               :layer="layer"
               :width="width"
@@ -197,7 +193,12 @@ export default {
     },
     layers_shown() {
       // return this.$root.config.layers;
-      return Object.values(this.layers);
+      if(this.$root.settings.sidebar.view === 'Layers') {
+        return this.$root.sortedLayers.filter(l => this.$root.config_getLayerOption(l.slugFolderName, 'visibility') === true).reverse();
+      }
+      if(this.$root.settings.sidebar.view === 'Layer') {
+        return this.$root.sortedLayers.filter(l => l.slugFolderName === this.$root.settings.sidebar.layer_viewed);
+      }
     }
   },
   methods: {

@@ -910,6 +910,75 @@ let vm = new Vue({
       }
     },
 
+    newTagDetected(e) {
+      if (window.state.dev_mode === 'debug') {
+        console.log(`ROOT EVENT: newTagDetected with e.detail = ${e.detail}`);
+      }
+
+      const pos_deuxpoints =
+        e.detail.indexOf('M') > -1
+          ? e.detail.indexOf('M')
+          : e.detail.indexOf(':');
+
+      // couper après M ou :, récupérer la première lettre puis couper le reste du message
+      const type = e.detail.substring(pos_deuxpoints + 1, pos_deuxpoints + 2);
+      const value = Number(e.detail.substring(pos_deuxpoints + 3));
+
+      const dict = {
+        h: 'humidite',
+        t: 'temperature',
+        s: 'son'
+      };
+
+      this.createPinFromData({
+        type: dict[type],
+        value
+      });
+    },
+
+    createPinFromData({ type, value }) {
+      this.getLocationConstant()
+        .then(event => {
+          debugger;
+          this.$root.createMedia({
+            slugFolderName: type,
+            type: 'layers',
+            additionalMeta: {
+              latitude: event.coords.latitude,
+              longitude: event.coords.longitude,
+              value,
+              type: 'other'
+            }
+          });
+        })
+        .catch(event => {
+          this.$alertify
+            .closeLogOnClick(true)
+            .delay(4000)
+            .error(
+              this.$t('notifications.geoloc_failed') +
+                ' ' +
+                this.$t('error_code') +
+                event.code +
+                '. ' +
+                event.message
+            );
+        });
+    },
+
+    getLocationConstant() {
+      return new Promise(function(resolve, reject) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        } else {
+          this.$alertify
+            .closeLogOnClick(true)
+            .delay(4000)
+            .error(this.$t('notifications.your_device_cant_geoloc'));
+        }
+      });
+    },
+
     loadAllProjectsMedias() {
       if (window.state.dev_mode === 'debug') {
         console.log(`ROOT EVENT: loadAllProjectsMedias`);
