@@ -26,7 +26,10 @@
         <div class="panel panel_image" v-show="$root.settings.sidebar.view === 'Layers'">
           <label class="margin-vert-verysmall margin-sides-medium">{{ $t('layer_list') }}</label>
 
-          <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
+          <Container @drop="onDrop" 
+            drag-handle-selector=".column-drag-handle" 
+            drag-class="is--being_handled"
+          >
             <Draggable v-for="layer in $root.sortedLayers" :key="layer.slugFolderName">
               <LayerHeader
                 :layer="layer"

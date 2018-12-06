@@ -220,21 +220,26 @@ html,body {
 .column-drag-handle {
   cursor: move;
 }
+
 // .column-drag-handle {
-//   position: relative;
-//   background-color: #fff;
-//   color: #000;
-//   text-shadow: 0px 0px 4px white;
-//   background-size: cover;
-//   overflow: hidden;
-//   flex: 0 0 3em;
-//   cursor: move;
+//   /* border: 1px solid black; */
+//   padding: 0.2rem;
+//   background-color: #ccc;
+//   border-radius: 10px;
+//   width: 20px;
+//   height: 20px;
+//   display: block;
+//   flex: 0 0 20px;
+//   font-size: .5em;
+//   /* line-height: 1em; */
 //   text-align: center;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   align-self: stretch;
+//   margin-right: 5px;
 // }
+
+.column-drag-handle {
+  border: 1px solid black;
+  margin-right: 0;
+}
 
 .item-name {
   overflow: hidden;
@@ -279,6 +284,7 @@ label, .label {
   font-family: inherit;
   font-weight: 500;
   .font-verysmall;
+  .c-noir;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -615,7 +621,6 @@ a {
 .t-ellipse {
   display: block;
   text-overflow: ellipsis;
-  white-space: nowrap;
   overflow: hidden;  
 }
 .t-small {
@@ -939,13 +944,39 @@ a {
 }
 
 
+.smooth-dnd-draggable-wrapper {
+  .is--being_handled {
+    box-shadow: 0px 2px 7px 0px @c-gris;
+  }
+}
+
+.card.is--visible {
+  @t-handle_width: 20px;
+  @t-handle_right_adjustment: 4px;
+
+  margin-left: @t-skipline/4;
+
+  .column-drag-handle {
+    border-right: 0;
+    height: 40px;
+    width: @t-handle_width + @t-handle_right_adjustment;
+    margin-right: -@t-handle_right_adjustment;
+    padding-right: @t-handle_right_adjustment;
+
+    line-height: 40px;
+    font-size: 10px;
+    text-align: center;
+    border-radius: 4px 0px 0px 4px;
+  }   
+
+}
 
 
 .card {
   min-height: 40px;
   background-color: #fff;
   color: @c-noir;
-  box-shadow: 0px 2px 7px 0px @c-gris;
+  // box-shadow: 0px 2px 7px 0px @c-gris;
   // width: 100%;
 
   &:hover {
@@ -953,6 +984,9 @@ a {
     color: #000;
   }
 
+  &.is--visible {
+    // border: 1px solid #333;
+  }
 
   &.section_separator {
 
@@ -1009,16 +1043,6 @@ a {
     align-items: center;
     min-height: 40px;
 
-    img {
-      background-color: @c-gris_clair;
-    }
-
-    button {
-      min-height: 0;
-      height: 40px;
-      margin: 0;
-    }
-
     &.card--header_layer {
       // justify-content: space-between;
       text-align: left;
@@ -1034,6 +1058,7 @@ a {
       > .titre {
         flex: 1 1 auto;
         .font-small;
+        .t-ellipse;
       }
 
       button {
@@ -1048,6 +1073,17 @@ a {
         margin-right: 0;
       }
     }
+
+    img {
+      background-color: @c-gris_clair;
+    }
+
+    button {
+      min-height: 0;
+      height: 40px;
+      margin: 0;
+    }
+    
 
     input {
       width: 40px;
@@ -1137,7 +1173,7 @@ a {
     text-align: center;
     width: 100%;
     height: auto;
-    --switch-bg-color-checked: @c-orange;
+    --switch-bg-color-checked: @c-noir;
     label {
       margin-bottom: 0;
 
@@ -1159,13 +1195,14 @@ a {
   // border: 0;
   background-color: transparent;
 
+  
   &.is--active {
     background-color: transparent;
-    border-color: @c-orange;
+    border-color: @c-noir;
 
     svg {
       path {
-        fill: @c-orange;
+        fill: @c-noir;
       }
     }
   }
@@ -1183,13 +1220,11 @@ a {
   svg {
     position: absolute;
     z-index: 1;
-    // width: 100%;
-    // height: 100%;
-    width: 20px;
-    height: 20px;
+    width: 100%;
+    height: 100%;
     top: 0;
+    padding: 8px;
     left: 0;
-    margin: 10px;
   
     path {
       fill: @c-gris;

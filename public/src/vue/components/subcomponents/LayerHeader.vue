@@ -1,11 +1,13 @@
 <template>
-  <div class="card draggable-item margin-vert-verysmall margin-sides-medium">
-    <div class="card--header card--header_layer cursor-pointer padding-verysmall"
+  <div class="card draggable-item margin-sides-medium padding-small"
+    :class="{ 'is--visible' : layerVisilibity }" 
+  >
+    <div class="card--header card--header_layer cursor-pointer"
       @click="$root.openLayer(slugLayerName)"
     >
-      <!-- <span class="column-drag-handle" @mouseup.stop="" v-if="false">
+      <span class="column-drag-handle" @mouseup.stop="" v-if="layerVisilibity">
         &#x2630;
-      </span> -->
+      </span>
       <button type="button" class="visibility_picto"
         @click.stop="is_visible = !is_visible" 
         :class="{ 'is--active' : layerVisilibity }" 

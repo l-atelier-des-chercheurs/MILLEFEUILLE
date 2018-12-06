@@ -14,7 +14,7 @@
       y="0" 
       :width="width" 
       :height="height" 
-      stroke="#B9B9B9"
+      stroke="#333"
       stroke-width="1"
       fill="transparent"
     />
