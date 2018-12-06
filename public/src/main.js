@@ -172,7 +172,7 @@ document.addEventListener(
       // dqtqMt èé:&à
       // dqtqMs èé:&à
 
-      const data_chars = [100, 97, 116, 97, 58, 104, 115, 32, 46];
+      const data_chars = [100, 97, 116, 97, 58, 104, 115, 32, 46, 113, 77];
 
       if (
         keycode == 13 ||
