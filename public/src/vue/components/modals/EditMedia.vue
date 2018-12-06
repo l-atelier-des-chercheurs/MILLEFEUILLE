@@ -63,14 +63,28 @@
                 / {{ media.type }}
               </span>  
             </label><br>
-            <MediaContent
-              class="m_sidebarmedia--preview"
-              :context="'edit'"
-              :slugFolderName="slugLayerName"
-              :media="media"
-              v-model="media.content"
-            >
-            </MediaContent>
+            <div class="overlay_img_and_link">
+              <MediaContent
+                class="m_sidebarmedia--preview bg_img"
+                :context="'edit'"
+                :slugFolderName="slugLayerName"
+                :media="media"
+                v-model="media.content"
+              >
+              </MediaContent>
+              <a 
+                :download="media.media_filename" 
+                :href="mediaURL" 
+                :title="media.media_filename" 
+                target="_blank"
+                class="buttonLink hide_on_print"
+                :disabled="read_only"
+                >
+                {{ $t('download') }}
+              </a>
+
+            </div>
+            
           </div>
 
     <!-- Caption -->
@@ -131,6 +145,7 @@ export default {
       askBeforeClosingModal: false,
       current_addmedia_mode: 'content',
       location_is_loading: false,
+      mediaURL: `/${this.slugLayerName}/${this.media.media_filename}`
     };
   },
   watch: {
