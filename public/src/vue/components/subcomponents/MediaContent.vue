@@ -231,3 +231,23 @@ export default {
   }
 };
 </script>
+<style scoped>
+.mediaContainer--videoPlay {
+  width: 100%;
+  height: 100%;
+  padding: 10px ~"calc(50% - 50px)";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  opacity: 0.95;
+  cursor: pointer;
+  background-image: linear-gradient(transparent, rgba(0,0,0,.1));
+  transition: opacity 150ms;
+
+  &.is--hidden {
+    opacity: 0;
+  }
+}
+
+</style>

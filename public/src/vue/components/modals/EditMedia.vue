@@ -57,10 +57,15 @@
         <div v-else-if="current_addmedia_mode === 'content'">
 
           <div class="margin-bottom-small">
-            <label>{{ $t('media') }}</label><br>
+            <label>
+              {{ $t('media') }}
+              <span v-if="media.hasOwnProperty('type')">
+                / {{ media.type }}
+              </span>  
+            </label><br>
             <MediaContent
               class="m_sidebarmedia--preview"
-              :context="'preview'"
+              :context="'edit'"
               :slugFolderName="slugLayerName"
               :media="media"
               v-model="media.content"
