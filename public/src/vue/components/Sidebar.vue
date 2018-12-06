@@ -51,6 +51,7 @@
           <label class="margin-vert-verysmall">{{ $t('layer') }}</label>
           <LayerPanel
             :layer="current_layer"
+            :slugLayerName="current_layer.slugFolderName"
           />
         </div>
       </transition>
