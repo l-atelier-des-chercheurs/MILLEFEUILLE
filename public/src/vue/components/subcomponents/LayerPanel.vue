@@ -1,6 +1,6 @@
 <template>
-  <div class="card">
-    <div class="card--header card--header_layer padding-verysmall">
+  <div class="card margin-sides-small padding-small">
+    <div class="card--header card--header_layer">
       <button type="button" 
         class="bg-transparent"
         @click="$root.closeLayer()"
@@ -12,7 +12,7 @@
       </span>
     </div>
 
-    <div class="padding-small padding-top-none">
+    <div class="">
       <div class="" v-if="layer.description">
         <label class="">description</label>
         <p class="margin-top-none padding-left-small padding-right-none" style="border-left: 1px solid #b9b9b9;">
@@ -65,7 +65,7 @@
       <div
         v-for="media in sortedMedias"
         :key="media.metaFileName"
-        class="m_sidebarmedia"
+        class="m_sidebarmedia padding-vert-verysmall"
       >
         <MediaContent
           class="m_sidebarmedia--preview"
@@ -115,7 +115,7 @@ import MediaContent from './MediaContent.vue';
 
 
 export default {
-  props: ['layer', 'slugLayerName'],
+  props: ['layer'],
   components: {
     EditLayer,
     MediaContent

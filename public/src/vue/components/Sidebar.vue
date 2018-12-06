@@ -48,10 +48,10 @@
 
       <transition name="slideFromLeft">
         <div
-          class="panel panel_pattern padding-sides-medium"
+          class="panel panel_pattern"
           v-if="$root.settings.sidebar.view === 'Layer'"
         >
-          <label class="margin-vert-verysmall">{{ $t('layer') }}</label>
+          <label class="margin-vert-verysmall margin-sides-medium">{{ $t('layer') }}</label>
           <LayerPanel
             :layer="current_layer"
             :slugLayerName="current_layer.slugFolderName"
