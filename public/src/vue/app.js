@@ -440,8 +440,12 @@ let vm = new Vue({
         { slugLayerName: plop2, ordre: 0, opacite: .2 }
       ]
       */
-      layers: [],
-      layers_order: [],
+      layers_options: !!localStorage.getItem('config.layers_options')
+        ? localStorage.getItem('config.layers_options').split(',')
+        : [],
+      layers_order: !!localStorage.getItem('config.layers_order')
+        ? localStorage.getItem('config.layers_order').split(',')
+        : [],
       // utilisé par dnd dans la sidebar pour simuler le rendu des
       // calques à droite sans affecter la liste de la sidebar
       temp_layers_order: []
@@ -575,6 +579,12 @@ let vm = new Vue({
       ) {
         this.unsetAuthor();
       }
+    },
+    'config.layers_options': function() {
+      localStorage.setItem('config.layers_options', this.config.layers_options);
+    }
+    'config.layers_order': function() {
+      localStorage.setItem('config.layers_order', this.config.layers_order);
     }
   },
   computed: {
@@ -1037,8 +1047,8 @@ let vm = new Vue({
       return this.$moment(date, 'YYYY-MM-DD HH:mm:ss').format('LL');
     },
     config_setLayerOption(slugFolderName, type, value) {
-      if (this.config.layers.length !== 0) {
-        const existingLayerInConfig = this.config.layers.filter(
+      if (this.config.layers_options.length !== 0) {
+        const existingLayerInConfig = this.config.layers_options.filter(
           l => slugFolderName === l.slugFolderName
         );
         if (existingLayerInConfig.length > 0) {
@@ -1047,7 +1057,7 @@ let vm = new Vue({
         }
       }
 
-      this.config.layers.push({
+      this.config.layers_options.push({
         slugFolderName,
         visibility: true,
         editing: false,
@@ -1060,8 +1070,8 @@ let vm = new Vue({
       });
     },
     config_getLayerOption(slugFolderName, type) {
-      if (this.config.layers.length !== 0) {
-        const existingLayerInConfig = this.config.layers.filter(
+      if (this.config.layers_options.length !== 0) {
+        const existingLayerInConfig = this.config.layers_options.filter(
           l => slugFolderName === l.slugFolderName
         );
         if (existingLayerInConfig.length > 0) {

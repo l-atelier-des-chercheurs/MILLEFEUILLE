@@ -188,7 +188,6 @@ export default {
     },
     onDropReady(dropResult) {
       this.$root.config.temp_layers_order = applyDrag(this.$root.sortedLayersSlugs, dropResult);
-      // this.$root.config.layers_order = applyDrag(this.$root.sortedLayersSlugs, dropResult);
     },
     onDragend(dropResult) {
       this.$root.config.temp_layers_order = [];
