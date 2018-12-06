@@ -654,7 +654,7 @@ let vm = new Vue({
       if (this.config.layers_order.length > 0) {
         sortable.map(s => {
           if (!this.config.layers_order.includes(s)) {
-            this.config.layers_order.push(s);
+            this.config.layers_order.unshift(s);
           }
         });
         return this.config.layers_order;
