@@ -440,7 +440,8 @@ let vm = new Vue({
         { slugLayerName: plop2, ordre: 0, opacite: .2 }
       ]
       */
-      layers: []
+      layers: [],
+      layers_order: []
     },
 
     // persistant, par device (dans le localstorage)
@@ -554,10 +555,10 @@ let vm = new Vue({
     }
   },
   computed: {
-    sortedLayers: function() {
+    sortedLayersSlugs: function() {
       var sortable = [];
 
-      if (!this.store.layers || this.store.layers.length === 0) {
+      if (!this.store.layers || Object.keys(this.store.layers).length === 0) {
         return [];
       }
 
@@ -624,34 +625,45 @@ let vm = new Vue({
           // this.$root.settings.layer_filter.keyword = false;
         });
       }
-
-      let sortedSortable = sortable.sort(function(a, b) {
-        let valA = a.orderBy;
-        let valB = b.orderBy;
-        if (typeof a.orderBy === 'string' && typeof b.orderBy === 'string') {
-          valA = valA.toLowerCase();
-          valB = valB.toLowerCase();
-        }
-        if (valA < valB) {
-          return -1;
-        }
-        if (valA > valB) {
-          return 1;
-        }
-        return 0;
-      });
+      sortable = sortable
+        .sort(function(a, b) {
+          let valA = a.orderBy;
+          let valB = b.orderBy;
+          if (typeof a.orderBy === 'string' && typeof b.orderBy === 'string') {
+            valA = valA.toLowerCase();
+            valB = valB.toLowerCase();
+          }
+          if (valA < valB) {
+            return -1;
+          }
+          if (valA > valB) {
+            return 1;
+          }
+          return 0;
+        })
+        .map(s => s.slugLayerName);
 
       if (this.currentSort.order === 'descending') {
-        sortedSortable.reverse();
+        sortable.reverse();
       }
 
-      let sortedLayers = sortedSortable.reduce((accumulator, d) => {
-        let sortedMediaObj = this.store.layers[d.slugLayerName];
-        accumulator.push(sortedMediaObj);
-        return accumulator;
-      }, []);
+      // si on a un ordre de défini, on part là-dessus puis on le complète avec sortable
+      if (this.config.layers_order.length > 0) {
+        sortable.map(s => {
+          if (!this.config.layers_order.includes(s)) {
+            this.config.layers_order.push(s);
+          }
+        });
+        return this.config.layers_order;
+      }
 
-      return sortedLayers;
+      return sortable;
+
+      // return sortable.reduce((accumulator, d) => {
+      //   let sortedMediaObj = this.store.layers[d.slugLayerName];
+      //   accumulator.push(sortedMediaObj);
+      //   return accumulator;
+      // }, []);
     }
   },
   methods: {

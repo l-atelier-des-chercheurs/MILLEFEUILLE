@@ -30,10 +30,10 @@
             drag-handle-selector=".column-drag-handle" 
             drag-class="is--being_handled"
           >
-            <Draggable v-for="layer in $root.sortedLayers" :key="layer.slugFolderName">
+            <Draggable v-for="slugLayerName in $root.sortedLayersSlugs" :key="slugLayerName">
               <LayerHeader
-                :layer="layer"
-                :slugLayerName="layer.slugFolderName"
+                :layer="$root.store.layers[slugLayerName]"
+                :slugLayerName="slugLayerName"
               />
 
               <!-- <Card :type="'section_separator'">
@@ -62,6 +62,8 @@
 
 
     <div class="m_controller--bottomBar">
+
+      {{ $root.config.layers }}
 
       <transition name="slideFromBottom" mode="out-in" :duration="500">
         <div v-if="$root.settings.sidebar.view === 'Layers'"
@@ -178,7 +180,10 @@ export default {
   },
   methods: {
     onDrop(dropResult) {
-      // this.$root.layers = applyDrag(this.$root.layers, dropResult)
+      // on 
+      debugger;
+      
+      // const layers_in_order = applyDrag(this.$root.layers, dropResult)
     }
   }
 }

@@ -2,7 +2,8 @@
   <div class="card margin-sides-small padding-small">
     <div class="card--header card--header_layer">
       <button type="button" 
-        class="bg-transparent"
+        class="bg-transparent "
+        style="margin-left:-0.81rem;"
         @click="$root.closeLayer()"
       >
         ◄

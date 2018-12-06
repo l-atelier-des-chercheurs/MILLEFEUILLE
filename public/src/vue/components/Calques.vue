@@ -31,13 +31,13 @@
 
           <transition-group name="enableMode" tag="g" :duration="600">
             <Calque 
-              v-for="(layer, index) in layers_shown" 
-              :key="layer.slugFolderName"
+              v-for="(slugLayerName, index) in slugLayersShown" 
+              :key="slugLayerName"
               :index="index"
-              :layer="layer"
+              :layer="$root.store.layers[slugLayerName]"
               :width="width"
               :height="height"
-              :style="layerOptions(layer, index+1)"
+              :style="layerOptions(slugLayerName, index+1)"
               class="m_svgpattern--layer m_svgpattern--layer_persp"
               :map_projection="map_projection"
             />
@@ -169,7 +169,7 @@ export default {
     placeMyPosition() {
       console.log('PatternSvg / placeMyPosition');      
       const [x,y] = this.map_projection([this.current_position.longitude, this.current_position.latitude]);
-      const index = Object.keys(this.layers_shown).length;
+      const index = this.sortedLayersSlugs.length;
 
       if(x < 0 || x > this.width || y < 0 || y > this.height) {
         this.$alertify
@@ -191,13 +191,13 @@ export default {
       }
 
     },
-    layers_shown() {
+    slugLayersShown() {
       // return this.$root.config.layers;
       if(this.$root.settings.sidebar.view === 'Layers') {
-        return this.$root.sortedLayers.filter(l => this.$root.config_getLayerOption(l.slugFolderName, 'visibility') === true).reverse();
+        return this.$root.sortedLayersSlugs.filter(s => this.$root.config_getLayerOption(s, 'visibility') === true).reverse();
       }
       if(this.$root.settings.sidebar.view === 'Layer') {
-        return this.$root.sortedLayers.filter(l => l.slugFolderName === this.$root.settings.sidebar.layer_viewed);
+        return this.$root.sortedLayersSlugs.filter(s => s === this.$root.settings.sidebar.layer_viewed);
       }
     }
   },
@@ -240,19 +240,20 @@ export default {
       this.globalCanvasSize.width = this.$refs.patternContainer.offsetWidth;
       this.globalCanvasSize.height = this.$refs.patternContainer.offsetHeight;
     },
-    layerOptions(layer, index) {
-      console.log('PatternSvg / layerOptions');   
+    layerOptions(slugLayerName, index) {
+      console.log('PatternSvg / layerOptions for ' + slugLayerName);   
 
       let opts = {};
       opts['transform-origin'] = `${this.width/2}px ${this.height/2}px`;
       
-      const opacity = this.$root.config_getLayerOption(layer.slugFolderName, 'opacity')/100;
+      const opacity = this.$root.config_getLayerOption(slugLayerName, 'opacity')/100;
       if(!!opacity && opacity !== 1) {
         opts['opacity'] = opacity;
       }
 
       if(this.$root.settings.mode_perspective) {
-        const move_layer_up_based_on_index = (index * this.$root.settings.perspective_stretch) - (this.layers_shown.length * this.$root.settings.perspective_stretch)/2;
+        debugger;
+        const move_layer_up_based_on_index = (index * this.$root.settings.perspective_stretch) - (this.slugLayersShown.length * this.$root.settings.perspective_stretch)/2;
         const stretch_factor = this.$root.settings.sidebar.view === 'Layers' ? move_layer_up_based_on_index : this.$root.settings.perspective_stretch;
 
         opts['transform'] = `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${stretch_factor}px)`;
