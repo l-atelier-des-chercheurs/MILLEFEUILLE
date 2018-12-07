@@ -139,6 +139,7 @@ module.exports = (function() {
         'Pour accéder à cet élément avec un autre appareil, connectez vous au même réseau wifi puis entrez l’url suivante dans un navigateur web, ou bien scannez le code QR&nbsp;: ',
       sureToRemoveProject: 'Êtes-vous sûr de vouloir supprimer ce projet ?',
       sure_to_remove_layer: 'Êtes-vous sûr de vouloir supprimer ce calque ?',
+      sure_to_remove_data: 'Êtes-vous sûr de vouloir supprimer cette donnée ?',
       sureToRemoveMedia: 'Êtes-vous sûr de vouloir supprimer ce média ?',
 
       edit_the_media: 'Éditer le média',
@@ -414,8 +415,9 @@ module.exports = (function() {
         'To access this do•doc element with another device, first connect it to the same wifi network, then type this adress in your browser or scan this QR code:',
       sureToRemoveProject: 'Do you really want to delete this project?',
       sure_to_remove_layer: 'Do you really want to delete this layer?',
-      sureToRemoveMedia: 'Do you really want to delete this media?',
+      sure_to_remove_data: 'Do you really want to delete this data?',
 
+      sureToRemoveMedia: 'Do you really want to delete this media?',
       publication: 'Publication',
       edit_the_media: 'Edit media',
       edit_project: 'Edit project',
