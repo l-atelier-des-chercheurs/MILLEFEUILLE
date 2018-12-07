@@ -440,7 +440,8 @@ let vm = new Vue({
         { slugLayerName: plop2, ordre: 0, opacite: .2 }
       ]
       */
-      layers_options: [],
+      layers_options2: {},
+
       layers_order: [],
       // utilisé par dnd dans la sidebar pour simuler le rendu des
       // calques à droite sans affecter la liste de la sidebar
@@ -455,7 +456,7 @@ let vm = new Vue({
         layer_viewed: false
       },
       mode_perspective: false,
-      perspective_stretch: 50,
+      perspective_stretch: 100,
 
       highlight_media: '',
 
@@ -533,25 +534,23 @@ let vm = new Vue({
         );
       }
     }
-    // if (!!localStorage.getItem('config.layers_options')) {
-    //   if (tryParseJSON(localStorage.getItem('config.layers_options'))) {
-    //     this.config.layers_options = JSON.parse(
-    //       localStorage.getItem('config.layers_options')
-    //     );
-    //   }
-    // }
+
+    if (!!localStorage.getItem('config.layers_options2')) {
+      if (tryParseJSON(localStorage.getItem('config.layers_options2'))) {
+        this.config.layers_options2 = JSON.parse(
+          localStorage.getItem('config.layers_options2')
+        );
+      }
+    }
+
+    this.$eventHub.$on(`socketio.layers.folders_listed`, () => {
+      this.loadVisibleLayersMedias();
+    });
 
     /* à la connexion/reconnexion, détecter si un projet ou une publi sont ouverts 
     et si c’est le cas, rafraichir leur contenu (meta, medias) */
     this.$eventHub.$on('socketio.reconnect', () => {
-      this.sortedLayersSlugs
-        .filter(s => this.$root.config_getLayerOption(s, 'visibility') === true)
-        .map(s => {
-          this.$socketio.listFolder({
-            type: 'layers',
-            slugFolderName: s
-          });
-        });
+      this.loadVisibleLayersMedias();
 
       if (this.settings.sidebar.view === 'Layer') {
         this.$socketio.listFolder({
@@ -604,11 +603,14 @@ let vm = new Vue({
         this.unsetAuthor();
       }
     },
-    'config.layers_options': function() {
-      localStorage.setItem(
-        'config.layers_options',
-        JSON.stringify(this.config.layers_options)
-      );
+    'config.layers_options2': {
+      handler() {
+        localStorage.setItem(
+          'config.layers_options2',
+          JSON.stringify(this.config.layers_options2)
+        );
+      },
+      deep: true
     },
     'config.layers_order': function() {
       localStorage.setItem(
@@ -884,7 +886,21 @@ let vm = new Vue({
 
     resetConfig() {
       this.config.layers_order = [];
-      this.config.layers_options = [];
+      this.config.layers_options2 = [];
+    },
+    loadVisibleLayersMedias() {
+      this.sortedLayersSlugs
+        .filter(s => this.config_getLayerOption(s, 'visibility') === true)
+        .map(s => {
+          this.$socketio.listFolder({
+            type: 'layers',
+            slugFolderName: s
+          });
+          this.$socketio.listMedias({
+            type: 'layers',
+            slugFolderName: s
+          });
+        });
     },
 
     isMediaShown(media) {
@@ -1083,49 +1099,26 @@ let vm = new Vue({
     formatDateToHuman(date) {
       return this.$moment(date, 'YYYY-MM-DD HH:mm:ss').format('LL');
     },
-    config_setLayerOption(slugFolderName, type, value) {
-      if (this.config.layers_options.length !== 0) {
-        const layerIndex = this.config.layers_options.findIndex(
-          l => l.slugFolderName === slugFolderName
-        );
-        if (layerIndex > -1) {
-          this.config.layers_options[layerIndex][type] = value;
-          return;
-        }
+    config_setLayerOption(slugLayerName, type, value) {
+      console.log('config_setLayerOption');
+
+      if (!this.config.layers_options2.hasOwnProperty(type)) {
+        this.$set(this.config.layers_options2, type, {});
       }
-
-      this.config.layers_options.push({
-        slugFolderName,
-        visibility: true,
-        editing: false,
-        opacity: 100,
-        fusion_mode: 'normal',
-        pin_mode_media_type: false,
-        pin_color: '#000'
-      });
-
-      this.$socketio.listMedias({
-        type: 'layers',
-        slugFolderName
-      });
+      if (this.config.layers_options2[type].hasOwnProperty(slugLayerName)) {
+        this.config.layers_options2[type][slugLayerName] = value;
+        return;
+      }
+      this.$set(this.config.layers_options2[type], slugLayerName, value);
     },
-    config_getLayerOption(slugFolderName, type) {
-      if (this.config.layers_options.length !== 0) {
-        const existingLayerInConfig = this.config.layers_options.filter(
-          l => slugFolderName === l.slugFolderName
-        );
-        if (existingLayerInConfig.length > 0) {
-          if (
-            type !== 'visibility' &&
-            existingLayerInConfig[0].editing === false
-          ) {
-            return false;
-          }
-
-          return existingLayerInConfig[0][type];
-        }
+    config_getLayerOption(slugLayerName, type) {
+      if (
+        this.config.layers_options2.hasOwnProperty(type) &&
+        this.config.layers_options2[type].hasOwnProperty(slugLayerName)
+      ) {
+        return this.config.layers_options2[type][slugLayerName];
       }
-      return false;
+      return;
     }
   }
 });
