@@ -26,7 +26,7 @@
         :transform="getCoordinates(media)"
         :key="key"      
         class="pins"
-        @click="openMedia({ slugLayerName, metaFileName: media.metaFileName })"
+        @click="$root.openMedia({ slugLayerName, metaFileName: media.metaFileName })"
       >
         <circle cx="0" cy="-3" r="2" 
           fill="#ff0000"

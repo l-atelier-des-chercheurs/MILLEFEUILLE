@@ -843,11 +843,16 @@ a {
 
     .grid {
       display: none;
+      pointer-events: none;
     }
     &.has--grid {
       .grid {
         display: block;
       }
+    }
+
+    .calque_bg {
+      pointer-events: none;
     }
 
     div {
@@ -922,6 +927,7 @@ a {
 
   .pins {
     transition: transform 1s, opacity .4s;
+    cursor: pointer;
   }
   
 }
