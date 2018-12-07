@@ -851,7 +851,7 @@ a {
       }
     }
 
-    .calque_bg {
+    .calque_bg, .calque_image {
       pointer-events: none;
     }
 
@@ -928,6 +928,12 @@ a {
   .pins {
     transition: transform 1s, opacity .4s;
     cursor: pointer;
+    
+    &.is--highlighted {
+      circle, path {
+        fill: #000;
+      }
+    }
   }
   
 }
