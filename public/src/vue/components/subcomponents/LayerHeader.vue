@@ -44,30 +44,35 @@
           <label>{{ $t('opacity') }}</label><br>
           <input type="range" min="10" max="100" v-model.lazy="layer_opacity" :readonly="read_only">
         </div>
+      </template>
 
 <!-- Mode de fusion -->
+      <div 
+        class="margin-bottom-small" 
+      >
+        <label>
+          {{ $t('fusion_mode') }}<br>
+          <small></small>
+        </label>
+        <select v-model="fusion_mode">
+          <option v-for="opt in 'normal | multiply | screen | overlay | darken | lighten | color-dodge | color-burn | hard-light | soft-light | difference | exclusion | hue | saturation | color | luminosity'.split(' | ')" 
+            :value="opt" 
+            :key="opt"
+          >
+            {{ opt }}
+          </option>
+        </select>          
+      </div>
+
+<!-- Opacity -->
         <div 
           class="margin-bottom-small" 
         >
-          <label>
-            {{ $t('fusion_mode') }}<br>
-            <small></small>
-          </label>
-          <select v-model="fusion_mode">
-            <option v-for="opt in 'normal | multiply | screen | overlay | darken | lighten | color-dodge | color-burn | hard-light | soft-light | difference | exclusion | hue | saturation | color | luminosity'.split(' | ')" 
-              :value="opt" 
-              :key="opt"
-            >
-              {{ opt }}
-            </option>
-          </select>          
+          <label>{{ $t('pin_mode_media_type') }}</label><br>
+          <input type="checkbox" v-model.lazy="pin_mode_media_type" :readonly="read_only">
         </div>
 
-      </template>
     </div>
-
-
-
   </div>
   </template>
 <script>
@@ -86,6 +91,7 @@ export default {
       is_editing: false,
       layer_opacity: 100,
       fusion_mode: 'normal',
+      pin_mode_media_type: false,
 
       timer: ''
     }
@@ -118,7 +124,11 @@ export default {
     },
     'fusion_mode': function() {
       this.$root.config_setLayerOption(this.slugLayerName, 'fusion_mode', this.fusion_mode);      
-    }
+    },
+    'pin_mode_media_type': function() {
+      this.$root.config_setLayerOption(this.slugLayerName, 'pin_mode_media_type', this.pin_mode_media_type);      
+    },
+
   },
   computed: {
     layerVisilibity() {
