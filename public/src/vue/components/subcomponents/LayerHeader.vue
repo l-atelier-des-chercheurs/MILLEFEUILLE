@@ -71,6 +71,14 @@ export default {
   },
   
   created() {
+    // const idx = this.$root.config.layers_options.findIndex(
+    //   l => l.slugFolderName === this.slugLayerName
+    // );
+    // if(idx > -1) {
+    //   const layer_options = this.$root.config.layers_options[idx];
+    //   this.is_visible = layer_options.visibility;
+    //   this.is_editing = layer_options.editing;
+    // }
   },
   mounted() {
   },

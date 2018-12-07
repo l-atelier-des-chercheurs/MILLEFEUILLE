@@ -440,12 +440,8 @@ let vm = new Vue({
         { slugLayerName: plop2, ordre: 0, opacite: .2 }
       ]
       */
-      layers_options: !!localStorage.getItem('config.layers_options')
-        ? localStorage.getItem('config.layers_options').split(',')
-        : [],
-      layers_order: !!localStorage.getItem('config.layers_order')
-        ? localStorage.getItem('config.layers_order').split(',')
-        : [],
+      layers_options: [],
+      layers_order: [],
       // utilisé par dnd dans la sidebar pour simuler le rendu des
       // calques à droite sans affecter la liste de la sidebar
       temp_layers_order: []
@@ -517,6 +513,32 @@ let vm = new Vue({
       this.settings.windowHeight = window.innerHeight;
     });
 
+    function tryParseJSON(jsonString) {
+      try {
+        var o = JSON.parse(jsonString);
+        if (o && typeof o === 'object') {
+          return o;
+        }
+      } catch (e) {}
+      return false;
+    }
+
+    // check si localstorage config
+    if (!!localStorage.getItem('config.layers_order')) {
+      if (tryParseJSON(localStorage.getItem('config.layers_order'))) {
+        this.config.layers_order = JSON.parse(
+          localStorage.getItem('config.layers_order')
+        );
+      }
+    }
+    // if (!!localStorage.getItem('config.layers_options')) {
+    //   if (tryParseJSON(localStorage.getItem('config.layers_options'))) {
+    //     this.config.layers_options = JSON.parse(
+    //       localStorage.getItem('config.layers_options')
+    //     );
+    //   }
+    // }
+
     /* à la connexion/reconnexion, détecter si un projet ou une publi sont ouverts 
     et si c’est le cas, rafraichir leur contenu (meta, medias) */
     this.$eventHub.$on('socketio.reconnect', () => {
@@ -581,10 +603,16 @@ let vm = new Vue({
       }
     },
     'config.layers_options': function() {
-      localStorage.setItem('config.layers_options', this.config.layers_options);
-    }
+      localStorage.setItem(
+        'config.layers_options',
+        JSON.stringify(this.config.layers_options)
+      );
+    },
     'config.layers_order': function() {
-      localStorage.setItem('config.layers_order', this.config.layers_order);
+      localStorage.setItem(
+        'config.layers_order',
+        JSON.stringify(this.config.layers_order)
+      );
     }
   },
   computed: {
@@ -850,6 +878,11 @@ let vm = new Vue({
       this.settings.media_filter.fav = !this.settings.media_filter.fav;
     },
 
+    resetConfig() {
+      this.config.layers_order = [];
+      this.config.layers_options = [];
+    },
+
     isMediaShown(media) {
       if (this.settings.media_filter.fav === true) {
         if (!media.fav) {
@@ -1048,11 +1081,12 @@ let vm = new Vue({
     },
     config_setLayerOption(slugFolderName, type, value) {
       if (this.config.layers_options.length !== 0) {
-        const existingLayerInConfig = this.config.layers_options.filter(
-          l => slugFolderName === l.slugFolderName
+        debugger;
+        const layerIndex = this.config.layers_options.findIndex(
+          l => l.slugFolderName === slugFolderName
         );
-        if (existingLayerInConfig.length > 0) {
-          existingLayerInConfig[0][type] = value;
+        if (layerIndex > -1) {
+          this.config.layers_options[layerIndex][type] = value;
           return;
         }
       }
