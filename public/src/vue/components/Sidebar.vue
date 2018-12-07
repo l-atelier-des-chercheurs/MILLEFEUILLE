@@ -72,7 +72,7 @@
         </button>
       </div>
 
-      {{ $root.config.layers_options }}
+      <!-- {{ $root.config.layers_options }} -->
 
       <transition name="slideFromBottom" mode="out-in" :duration="500">
         <div v-if="$root.settings.sidebar.view === 'Layers'"
