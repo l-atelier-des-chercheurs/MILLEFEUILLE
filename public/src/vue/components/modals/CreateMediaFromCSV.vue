@@ -102,7 +102,7 @@ export default {
         let formData = new FormData();
 
         const _csv = this.mediadata.csv.split('\n');
-        const header = _csv.shift().split(this.csv_separator);
+        const header = this.mediadata.header.split(this.csv_separator);
 
         let columns_to_extract = this.available_fields;
         columns_to_extract = columns_to_extract.map(i => {
