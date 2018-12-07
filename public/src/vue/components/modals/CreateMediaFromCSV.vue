@@ -10,20 +10,32 @@
     </template>
 
     <template slot="sidebar">
-      <select v-model="csv_separator">
-        <option v-for="sep in [{ 
-            label: 'virgule',
-            key: ',',
-          },{
-            label: 'point virgule',
-            key: ';',
-          }]" :value="sep.key" :key="sep.key">
-          {{ sep.label }}
-        </option>
-      </select>
 
-      <textarea class="font-verysmall" v-model="mediadata.csv">
-      </textarea>
+      <div class="margin-bottom-small">
+        <select v-model="csv_separator">
+          <option v-for="sep in [{ 
+              label: 'virgule (,)',
+              key: ',',
+            },{
+              label: 'point virgule (;)',
+              key: ';',
+            }]" :value="sep.key" :key="sep.key">
+            {{ sep.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="margin-bottom-small">
+        <label>champs<br>
+          <small>Utilisez bien le séparateur ci-dessus</small>
+        </label>
+        <input type="text" required class="font-verysmall" v-model="mediadata.header">
+      </div>
+
+      <div class="margin-bottom-small">
+        <label>contenu</label>
+        <textarea class="font-verysmall" v-model="mediadata.csv" />
+      </div>
     </template>
 
     <template slot="submit_button">
@@ -49,7 +61,8 @@ export default {
   data() {
     return {
       mediadata: {
-        csv: 'latitude, longitude, caption, value'
+        header: 'latitude, longitude, caption, value',
+        csv: ''
       },
       available_fields: ['latitude', 'longitude', 'caption', 'value'],
       csv_separator: ',',
@@ -68,6 +81,8 @@ export default {
         this.askBeforeClosingModal = true;
       },
       deep: true
+    },
+    'csv_separator': function() {
     }
   },  
   created() {
