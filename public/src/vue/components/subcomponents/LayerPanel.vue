@@ -26,9 +26,9 @@
           <div class="overlay_img_and_link">
             <img :src="$root.previewURL(layer, 400)" class="bg_img">
             <a 
-              :download="`fond_de_carte-${layer.slugFolderName}.jpeg`" 
+              :download="`fond_de_carte-${slugLayerName}.jpeg`" 
               :href="previewURL" 
-              :title="`fond_de_carte-${layer.slugFolderName}.jpeg`" 
+              :title="`fond_de_carte-${slugLayerName}.jpeg`" 
               target="_blank"
               class="buttonLink"
               :disabled="read_only"
@@ -53,7 +53,7 @@
       <EditLayer
         v-if="showEditLayerModal"
         @close="showEditLayerModal = false"
-        :slugLayerName="layer.slugFolderName"
+        :slugLayerName="slugLayerName"
         :layer="layer"
         :read_only="!$root.state.connected"
       />
@@ -72,7 +72,7 @@
           v-if="media.type !== 'other'"
           class="m_sidebarmedia--preview"
           :context="'preview'"
-          :slugFolderName="layer.slugFolderName"
+          :slugFolderName="slugLayerName"
           :media="media"
           :read_only="read_only"
           :preview_size="50"
@@ -95,7 +95,7 @@
         <div class="m_sidebarmedia--button">
           <button
             class="buttonLink padding-verysmall"
-            @click="$root.openMedia({ slugLayerName: layer.slugFolderName, metaFileName: media.metaFileName })"
+            @click="$root.openMedia({ slugLayerName, metaFileName: media.metaFileName })"
             :disabled="!$root.state.connected"
             :key="'createButton'"
           >
@@ -117,7 +117,7 @@ import MediaContent from './MediaContent.vue';
 
 
 export default {
-  props: ['layer'],
+  props: ['layer', 'slugLayerName'],
   components: {
     EditLayer,
     MediaContent
