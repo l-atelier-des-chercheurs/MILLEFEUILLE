@@ -56,7 +56,9 @@
         </div>
         <div v-else-if="current_addmedia_mode === 'content'">
 
-          <div class="margin-bottom-small">
+          <div class="margin-bottom-small"
+            v-if="media.type !== 'other'"
+          >
             <label>
               {{ $t('media') }}
               <span v-if="media.hasOwnProperty('type')">
