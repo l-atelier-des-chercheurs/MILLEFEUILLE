@@ -21,10 +21,8 @@
           {{ sep.label }}
         </option>
       </select>
-      {{ csv_separator }}
 
-
-      <textarea class="font-small" v-model="mediadata.csv">
+      <textarea class="font-verysmall" v-model="mediadata.csv">
       </textarea>
     </template>
 
@@ -120,7 +118,13 @@ export default {
                 .error(this.$t('notifications.error_on_dataset'));              
             }
 
-            meta[field] = items[idx];
+            let val = items[idx];
+
+            if(field === 'latitude' || field === 'longitude') {
+              val = val.replace(/,/,'.')
+            }
+
+            meta[field] = val;
           });
 
           meta.filename = 'data_' + (Math.random().toString(36) + '00000000000000000').slice(2, 10 + 2);
