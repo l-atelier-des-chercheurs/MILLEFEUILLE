@@ -1081,7 +1081,6 @@ let vm = new Vue({
     },
     config_setLayerOption(slugFolderName, type, value) {
       if (this.config.layers_options.length !== 0) {
-        debugger;
         const layerIndex = this.config.layers_options.findIndex(
           l => l.slugFolderName === slugFolderName
         );

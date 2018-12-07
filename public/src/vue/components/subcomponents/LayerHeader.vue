@@ -44,7 +44,18 @@
           <label>{{ $t('opacity') }}</label><br>
           <input type="range" min="10" max="100" v-model.lazy="layer_opacity" :readonly="read_only">
         </div>
-        
+
+<!-- Mode de fusion -->
+        <div 
+          class="margin-bottom-small" 
+        >
+          <label>
+            {{ $t('fusion_mode') }}<br>
+            <small>normal | multiply | screen | overlay | darken | lighten | color-dodge | color-burn | hard-light | soft-light | difference | exclusion | hue | saturation | color | luminosity</small>
+          </label>
+          <input type="text" v-model="fusion_mode" :readonly="read_only">
+        </div>
+
       </template>
     </div>
 
@@ -66,7 +77,10 @@ export default {
     return {
       is_visible: false,
       is_editing: false,
-      layer_opacity: 100
+      layer_opacity: 100,
+      fusion_mode: '',
+
+      timer: ''
     }
   },
   
@@ -94,6 +108,15 @@ export default {
     },
     'is_visible': function() {
       this.$root.config_setLayerOption(this.slugLayerName, 'visibility', this.is_visible);      
+    },
+    'fusion_mode': function() {
+      if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.$root.config_setLayerOption(this.slugLayerName, 'fusion_mode', this.fusion_mode);      
+      }, 800);
     }
   },
   computed: {

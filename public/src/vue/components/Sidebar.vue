@@ -72,7 +72,7 @@
         </button>
       </div>
 
-      <!-- {{ $root.config.layers_options }} -->
+      {{ $root.config.layers_options }}
 
       <transition name="slideFromBottom" mode="out-in" :duration="500">
         <div v-if="$root.settings.sidebar.view === 'Layers'"
@@ -189,7 +189,6 @@ export default {
   },
   methods: {
     onDrop(dropResult) {
-      debugger;
       this.$root.config.layers_order = applyDrag(this.$root.sortedLayersSlugs, dropResult);
       // const layers_in_order = applyDrag(this.$root.layers, dropResult)
       this.$root.config.temp_layers_order = [];

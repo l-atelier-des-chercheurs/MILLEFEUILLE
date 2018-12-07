@@ -247,6 +247,11 @@ export default {
 
       let opts = {};
       opts['transform-origin'] = `${this.width/2}px ${this.height/2}px`;
+
+      const fusion_mode = this.$root.config_getLayerOption(slugLayerName, 'fusion_mode');
+      if(!!fusion_mode) {
+        opts['mix-blend-mode'] = fusion_mode;
+      }
       
       const opacity = this.$root.config_getLayerOption(slugLayerName, 'opacity')/100;
       if(!!opacity && opacity !== 1) {
