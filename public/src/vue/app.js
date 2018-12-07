@@ -457,6 +457,8 @@ let vm = new Vue({
       mode_perspective: false,
       perspective_stretch: 50,
 
+      highlight_media: '',
+
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth
     },
@@ -845,6 +847,8 @@ let vm = new Vue({
       }
 
       this.media_modal.open = false;
+      this.media_modal.current_slugLayerName = false;
+      this.media_modal.current_metaFileName = false;
     },
     setProjectKeywordFilter(newKeywordFilter) {
       if (this.settings.project_filter.keyword !== newKeywordFilter) {

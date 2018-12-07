@@ -1,6 +1,7 @@
 <template>
   <g>
     <image 
+      class="calque_image"
       v-if="$root.previewURL(layer, background_res)"
       :xlink:href="$root.previewURL(layer, background_res)" 
       style="image-rendering:pixelated; mix-blend-mode: multiplyyyyyy;"
@@ -10,6 +11,7 @@
       :height="height" 
     />
     <rect 
+      class="calque_bg"
       x="0" 
       y="0" 
       :width="width" 
@@ -17,7 +19,6 @@
       stroke="#333"
       stroke-width="1"
       fill="transparent"
-      class="calque_bg"
     />
     <transition-group name="slideUp" tag="g">
       <g
@@ -26,6 +27,9 @@
         :transform="getCoordinates(media)"
         :key="key"      
         class="pins"
+        :class="{ 'is--highlighted' : media.metaFileName === $root.settings.highlight_media || media.metaFileName === $root.media_modal.current_metaFileName }"
+        @mouseover="$root.settings.highlight_media = media.metaFileName"
+        @mouseleave="$root.settings.highlight_media = ''"
         @click="$root.openMedia({ slugLayerName, metaFileName: media.metaFileName })"
       >
         <circle cx="0" cy="-3" r="2" 

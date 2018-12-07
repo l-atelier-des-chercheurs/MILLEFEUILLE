@@ -67,6 +67,8 @@
         v-for="media in sortedMedias"
         :key="media.metaFileName"
         class="m_sidebarmedia padding-vert-verysmall"
+        @mouseover="$root.settings.highlight_media = media.metaFileName"
+        @mouseleave="$root.settings.highlight_media = ''"
       >
         <MediaContent
           v-if="media.type !== 'other'"
