@@ -66,11 +66,6 @@
 
 
     <div class="m_controller--bottomBar">
-      <div class="margin-bottom-verysmall" v-if="this.$root.config.layers_options.length > 0 || this.$root.config.layers_order.length > 0">
-        <button type="button" class="btn_small bg-transparent " @click="$root.resetConfig()">
-          RESET RÉGLAGES
-        </button>
-      </div>
 
       <!-- {{ $root.config.layers_options }} -->
 
@@ -78,6 +73,12 @@
         <div v-if="$root.settings.sidebar.view === 'Layers'"
           :key="'layers_options'"
         >
+          <div class="margin-bottom-verysmall" v-if="this.$root.config.layers_options.length > 0 || this.$root.config.layers_order.length > 0">
+            <button type="button" class="btn_small bg-transparent " @click="$root.resetConfig()">
+              RESET MISE EN FORME
+            </button>
+          </div>
+
           <button
             class="barButton barButton_createLayer"
             v-if="!showCreateLayerModal"
@@ -100,7 +101,6 @@
         >
           <button
             class="barButton barButton_addData"
-            v-if="$root.settings.sidebar.view === 'Layer'"
             @click="showCreateMediaModal = true"
             :disabled="!$root.state.connected"
             :key="'createButton'"
@@ -109,12 +109,32 @@
               {{ $t('add_data') }}
             </span>
           </button>
+
           <CreateMedia
             v-if="showCreateMediaModal"
             @close="showCreateMediaModal = false"
             :slugLayerName="$root.settings.sidebar.layer_viewed"
             :read_only="!$root.state.connected"
           />
+
+          <button
+            class="btn_small"
+            @click="showCreateMediaFromCSVModal = true"
+            :disabled="!$root.state.connected"
+            :key="'createSVGButton'"
+          >
+            <span>
+              {{ $t('add_data_from_CSV') }}
+            </span>
+          </button>
+
+          <CreateMediaFromCSV
+            v-if="showCreateMediaFromCSVModal"
+            @close="showCreateMediaFromCSVModal = false"
+            :slugLayerName="$root.settings.sidebar.layer_viewed"
+            :read_only="!$root.state.connected"
+          />        
+
         </div>
       </transition>
 
@@ -139,6 +159,7 @@ import Card from './subcomponents/Card.vue';
 import { Container, Draggable } from 'vue-smooth-dnd'
 import CreateLayer from './modals/CreateLayer.vue';
 import CreateMedia from './modals/CreateMedia.vue';
+import CreateMediaFromCSV from './modals/CreateMediaFromCSV.vue';
 import LayerPanel from './subcomponents/LayerPanel.vue';
 import EditMedia from './modals/EditMedia.vue'
 import LayerHeader from './subcomponents/LayerHeader.vue';
@@ -170,6 +191,7 @@ export default {
     LayerPanel,
     Card,
     CreateMedia,
+    CreateMediaFromCSV,
     EditMedia,
     LayerHeader
   },
@@ -177,6 +199,7 @@ export default {
     return {
       showCreateLayerModal: false,
       showCreateMediaModal: false,      
+      showCreateMediaFromCSVModal: false
     }
   },
   computed: {
