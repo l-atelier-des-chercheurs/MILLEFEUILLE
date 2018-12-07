@@ -51,9 +51,16 @@
         >
           <label>
             {{ $t('fusion_mode') }}<br>
-            <small>normal | multiply | screen | overlay | darken | lighten | color-dodge | color-burn | hard-light | soft-light | difference | exclusion | hue | saturation | color | luminosity</small>
+            <small></small>
           </label>
-          <input type="text" v-model="fusion_mode" :readonly="read_only">
+          <select v-model="fusion_mode">
+            <option v-for="opt in 'normal | multiply | screen | overlay | darken | lighten | color-dodge | color-burn | hard-light | soft-light | difference | exclusion | hue | saturation | color | luminosity'.split(' | ')" 
+              :value="opt" 
+              :key="opt"
+            >
+              {{ opt }}
+            </option>
+          </select>          
         </div>
 
       </template>
@@ -78,7 +85,7 @@ export default {
       is_visible: false,
       is_editing: false,
       layer_opacity: 100,
-      fusion_mode: '',
+      fusion_mode: 'normal',
 
       timer: ''
     }
@@ -110,13 +117,7 @@ export default {
       this.$root.config_setLayerOption(this.slugLayerName, 'visibility', this.is_visible);      
     },
     'fusion_mode': function() {
-      if (this.timer) {
-          clearTimeout(this.timer);
-          this.timer = null;
-      }
-      this.timer = setTimeout(() => {
-        this.$root.config_setLayerOption(this.slugLayerName, 'fusion_mode', this.fusion_mode);      
-      }, 800);
+      this.$root.config_setLayerOption(this.slugLayerName, 'fusion_mode', this.fusion_mode);      
     }
   },
   computed: {
