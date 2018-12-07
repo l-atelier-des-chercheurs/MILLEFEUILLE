@@ -930,8 +930,8 @@ a {
     cursor: pointer;
     
     &.is--highlighted {
-      circle, path {
-        fill: #000;
+      circle, path, rect, polygon {
+        fill: @c-rouge;
       }
     }
   }
@@ -1165,9 +1165,10 @@ a {
   }
   a {
     position: absolute;
-    bottom: 0;right: 0;
+    top: 0;right: 0;
     text-shadow: 0px 1px 8px white;
     color: black;
+    .font-verysmall;
   }
 }
 

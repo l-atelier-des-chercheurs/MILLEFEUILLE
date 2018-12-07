@@ -64,6 +64,17 @@
               <span v-if="media.hasOwnProperty('type')">
                 / {{ media.type }}
               </span>  
+              <a 
+                :download="media.media_filename" 
+                :href="mediaURL" 
+                :title="media.media_filename" 
+                target="_blank"
+                class="buttonLink hide_on_print margin-bottom-none"
+                :disabled="read_only"
+                >
+                {{ $t('download') }}
+              </a>
+              <br>
             </label><br>
             <div class="overlay_img_and_link">
               <MediaContent
@@ -74,16 +85,6 @@
                 v-model="media.content"
               >
               </MediaContent>
-              <a 
-                :download="media.media_filename" 
-                :href="mediaURL" 
-                :title="media.media_filename" 
-                target="_blank"
-                class="buttonLink hide_on_print"
-                :disabled="read_only"
-                >
-                {{ $t('download') }}
-              </a>
 
             </div>
             
