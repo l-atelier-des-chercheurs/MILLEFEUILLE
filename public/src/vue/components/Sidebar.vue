@@ -26,11 +26,17 @@
         <div class="panel panel_image" v-show="$root.settings.sidebar.view === 'Layers'">
           <label class="margin-vert-verysmall margin-sides-medium">{{ $t('layer_list') }}</label>
 
-          <Container @drop="onDrop" drag-handle-selector=".column-drag-handle">
-            <Draggable v-for="layer in $root.sortedLayers" :key="layer.slugFolderName">
+          <Container 
+            @drop="onDrop" 
+            @drop-ready="onDropReady"
+            @drag-end="onDragend"
+            drag-handle-selector=".column-drag-handle" 
+            drag-class="is--being_handled"
+          >
+            <Draggable v-for="slugLayerName in $root.sortedLayersSlugs" :key="slugLayerName">
               <LayerHeader
-                :layer="layer"
-                :slugLayerName="layer.slugFolderName"
+                :layer="$root.store.layers[slugLayerName]"
+                :slugLayerName="slugLayerName"
               />
 
               <!-- <Card :type="'section_separator'">
@@ -45,10 +51,10 @@
 
       <transition name="slideFromLeft">
         <div
-          class="panel panel_pattern padding-sides-medium"
+          class="panel panel_pattern"
           v-if="$root.settings.sidebar.view === 'Layer'"
         >
-          <label class="margin-vert-verysmall">{{ $t('layer') }}</label>
+          <label class="margin-vert-verysmall margin-sides-medium">{{ $t('layer') }}</label>
           <LayerPanel
             :layer="current_layer"
             :slugLayerName="current_layer.slugFolderName"
@@ -59,6 +65,14 @@
 
 
     <div class="m_controller--bottomBar">
+
+      <div class="margin-bottom-verysmall" v-if="this.$root.config.layers_options.length > 0 || this.$root.config.layers_order.length > 0">
+        <button type="button" class="btn_small bg-transparent " @click="$root.resetConfig()">
+          RESET RÉGLAGES
+        </button>
+      </div>
+
+      {{ $root.config.layers_options }}
 
       <transition name="slideFromBottom" mode="out-in" :duration="500">
         <div v-if="$root.settings.sidebar.view === 'Layers'"
@@ -175,7 +189,15 @@ export default {
   },
   methods: {
     onDrop(dropResult) {
-      // this.$root.layers = applyDrag(this.$root.layers, dropResult)
+      this.$root.config.layers_order = applyDrag(this.$root.sortedLayersSlugs, dropResult);
+      // const layers_in_order = applyDrag(this.$root.layers, dropResult)
+      this.$root.config.temp_layers_order = [];
+    },
+    onDropReady(dropResult) {
+      this.$root.config.temp_layers_order = applyDrag(this.$root.sortedLayersSlugs, dropResult);
+    },
+    onDragend(dropResult) {
+      this.$root.config.temp_layers_order = [];
     }
   }
 }

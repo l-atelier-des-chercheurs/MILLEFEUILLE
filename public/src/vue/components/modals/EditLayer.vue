@@ -63,6 +63,12 @@
         <label>{{ $t('author') }}</label><br>
       </div> -->
 
+      <div class="margin-bottom-small">
+        <button type="button" class="btn_small" @click="removeLayer">
+          {{ $t('remove_layer_and_content') }}
+        </button>
+      </div>
+
     </template>
 
     <template slot="submit_button">
@@ -150,6 +156,15 @@ export default {
       });
 
       this.$emit('close', '');
+    },
+    removeLayer() {
+      if (window.confirm(this.$t('sure_to_remove_layer'))) {
+        this.$root.removeFolder({ 
+          type: 'layers', 
+          slugFolderName: this.slugLayerName
+        });
+        this.$root.closeLayer();
+      }
     }
   }
 };

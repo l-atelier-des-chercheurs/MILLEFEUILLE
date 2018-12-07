@@ -1,11 +1,13 @@
 <template>
-  <div class="card draggable-item margin-vert-verysmall margin-sides-medium">
-    <div class="card--header card--header_layer cursor-pointer padding-verysmall"
+  <div class="card draggable-item margin-sides-small padding-small"
+    :class="{ 'is--visible' : layerVisilibity }" 
+  >
+    <div class="card--header card--header_layer cursor-pointer"
       @click="$root.openLayer(slugLayerName)"
     >
-      <!-- <span class="column-drag-handle" @mouseup.stop="" v-if="false">
+      <span class="column-drag-handle" @mouseup.stop="" v-if="layerVisilibity">
         &#x2630;
-      </span> -->
+      </span>
       <button type="button" class="visibility_picto"
         @click.stop="is_visible = !is_visible" 
         :class="{ 'is--active' : layerVisilibity }" 
@@ -28,7 +30,7 @@
         ►
       </button>
     </div>
-    <div class="m_layeredit" v-if="layerVisilibity">
+    <div class="m_layeredit " v-if="layerVisilibity">
       <span class="switch switch-verysmall">
         <input type="checkbox" class="switch" :id="`editlayer_${slugLayerName}`" v-model="is_editing">
         <label :for="`editlayer_${slugLayerName}`">mise en forme</label>
@@ -42,7 +44,18 @@
           <label>{{ $t('opacity') }}</label><br>
           <input type="range" min="10" max="100" v-model.lazy="layer_opacity" :readonly="read_only">
         </div>
-        
+
+<!-- Mode de fusion -->
+        <div 
+          class="margin-bottom-small" 
+        >
+          <label>
+            {{ $t('fusion_mode') }}<br>
+            <small>normal | multiply | screen | overlay | darken | lighten | color-dodge | color-burn | hard-light | soft-light | difference | exclusion | hue | saturation | color | luminosity</small>
+          </label>
+          <input type="text" v-model="fusion_mode" :readonly="read_only">
+        </div>
+
       </template>
     </div>
 
@@ -64,11 +77,22 @@ export default {
     return {
       is_visible: false,
       is_editing: false,
-      layer_opacity: 100
+      layer_opacity: 100,
+      fusion_mode: '',
+
+      timer: ''
     }
   },
   
   created() {
+    // const idx = this.$root.config.layers_options.findIndex(
+    //   l => l.slugFolderName === this.slugLayerName
+    // );
+    // if(idx > -1) {
+    //   const layer_options = this.$root.config.layers_options[idx];
+    //   this.is_visible = layer_options.visibility;
+    //   this.is_editing = layer_options.editing;
+    // }
   },
   mounted() {
   },
@@ -84,6 +108,15 @@ export default {
     },
     'is_visible': function() {
       this.$root.config_setLayerOption(this.slugLayerName, 'visibility', this.is_visible);      
+    },
+    'fusion_mode': function() {
+      if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.$root.config_setLayerOption(this.slugLayerName, 'fusion_mode', this.fusion_mode);      
+      }, 800);
     }
   },
   computed: {

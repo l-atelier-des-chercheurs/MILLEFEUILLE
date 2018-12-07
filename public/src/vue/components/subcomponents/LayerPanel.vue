@@ -1,8 +1,9 @@
 <template>
-  <div class="card">
-    <div class="card--header card--header_layer padding-verysmall">
+  <div class="card margin-sides-small padding-small">
+    <div class="card--header card--header_layer">
       <button type="button" 
-        class="bg-transparent"
+        class="bg-transparent font-medium"
+        style="margin-left:-0.81rem;"
         @click="$root.closeLayer()"
       >
         ◄
@@ -12,7 +13,7 @@
       </span>
     </div>
 
-    <div class="padding-small padding-top-none">
+    <div class="">
       <div class="" v-if="layer.description">
         <label class="">description</label>
         <p class="margin-top-none padding-left-small padding-right-none" style="border-left: 1px solid #b9b9b9;">
@@ -65,9 +66,10 @@
       <div
         v-for="media in sortedMedias"
         :key="media.metaFileName"
-        class="m_sidebarmedia"
+        class="m_sidebarmedia padding-vert-verysmall"
       >
         <MediaContent
+          v-if="media.type !== 'other'"
           class="m_sidebarmedia--preview"
           :context="'preview'"
           :slugFolderName="layer.slugFolderName"
@@ -115,7 +117,7 @@ import MediaContent from './MediaContent.vue';
 
 
 export default {
-  props: ['layer', 'slugLayerName'],
+  props: ['layer'],
   components: {
     EditLayer,
     MediaContent
@@ -217,15 +219,6 @@ export default {
     }    
   },
   methods: {
-    removeLayer() {
-      if (window.confirm(this.$t('sure_to_remove_layer'))) {
-        this.$root.removeFolder({ 
-          type: 'layers', 
-          slugFolderName: this.layer.slugFolderName
-        });
-        this.$root.closeLayer();
-      }
-    },
   }
 }
 </script>

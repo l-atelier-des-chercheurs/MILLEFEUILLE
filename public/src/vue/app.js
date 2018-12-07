@@ -440,7 +440,11 @@ let vm = new Vue({
         { slugLayerName: plop2, ordre: 0, opacite: .2 }
       ]
       */
-      layers: []
+      layers_options: [],
+      layers_order: [],
+      // utilisé par dnd dans la sidebar pour simuler le rendu des
+      // calques à droite sans affecter la liste de la sidebar
+      temp_layers_order: []
     },
 
     // persistant, par device (dans le localstorage)
@@ -475,11 +479,11 @@ let vm = new Vue({
       document.body.classList.add('has_systembar');
     }
 
-    if (window.state.dev_mode === 'debug') {
-      console.log('ROOT EVENT: created / checking for password');
-    }
-
     if (!window.state.is_electron && this.state.session_password !== '') {
+      if (window.state.dev_mode === 'debug') {
+        console.log('ROOT EVENT: created / checking for password');
+      }
+
       function hashCode(s) {
         return s.split('').reduce(function(a, b) {
           a = (a << 5) - a + b.charCodeAt(0);
@@ -487,9 +491,20 @@ let vm = new Vue({
         }, 0);
       }
 
-      var pass = window.prompt(this.$t('input_password'));
-      if (this.state.session_password !== hashCode(pass) + '') {
-        return;
+      let pass = '';
+
+      if (
+        !(
+          !!localStorage.getItem('session_password') &&
+          localStorage.getItem('session_password') ===
+            this.state.session_password
+        )
+      ) {
+        const pass = window.prompt(this.$t('input_password'));
+        if (this.state.session_password !== hashCode(pass) + '') {
+          return;
+        }
+        localStorage.setItem('session_password', hashCode(pass));
       }
     }
 
@@ -498,20 +513,55 @@ let vm = new Vue({
       this.settings.windowHeight = window.innerHeight;
     });
 
+    function tryParseJSON(jsonString) {
+      try {
+        var o = JSON.parse(jsonString);
+        if (o && typeof o === 'object') {
+          return o;
+        }
+      } catch (e) {}
+      return false;
+    }
+
+    // check si localstorage config
+    if (!!localStorage.getItem('config.layers_order')) {
+      if (tryParseJSON(localStorage.getItem('config.layers_order'))) {
+        this.config.layers_order = JSON.parse(
+          localStorage.getItem('config.layers_order')
+        );
+      }
+    }
+    // if (!!localStorage.getItem('config.layers_options')) {
+    //   if (tryParseJSON(localStorage.getItem('config.layers_options'))) {
+    //     this.config.layers_options = JSON.parse(
+    //       localStorage.getItem('config.layers_options')
+    //     );
+    //   }
+    // }
+
     /* à la connexion/reconnexion, détecter si un projet ou une publi sont ouverts 
     et si c’est le cas, rafraichir leur contenu (meta, medias) */
     this.$eventHub.$on('socketio.reconnect', () => {
-      // TODO
-      // if (this.current_slugLayerName) {
-      //   this.$socketio.listFolder({
-      //     type: 'projects',
-      //     slugFolderName: this.do_navigation.current_slugLayerName
-      //   });
-      //   this.$socketio.listMedias({
-      //     type: 'projects',
-      //     slugFolderName: this.do_navigation.current_slugLayerName
-      //   });
-      // }
+      this.sortedLayersSlugs
+        .filter(s => this.$root.config_getLayerOption(s, 'visibility') === true)
+        .map(s => {
+          this.$socketio.listFolder({
+            type: 'layers',
+            slugFolderName: s
+          });
+        });
+
+      if (this.settings.sidebar.view === 'Layer') {
+        this.$socketio.listFolder({
+          type: 'layers',
+          slugFolderName: this.settings.sidebar.layer_viewed
+        });
+
+        this.$socketio.listMedias({
+          type: 'layers',
+          slugFolderName: this.settings.sidebar.layer_viewed
+        });
+      }
     });
 
     window.addEventListener('tag.newTagDetected', this.newTagDetected);
@@ -551,13 +601,25 @@ let vm = new Vue({
       ) {
         this.unsetAuthor();
       }
+    },
+    'config.layers_options': function() {
+      localStorage.setItem(
+        'config.layers_options',
+        JSON.stringify(this.config.layers_options)
+      );
+    },
+    'config.layers_order': function() {
+      localStorage.setItem(
+        'config.layers_order',
+        JSON.stringify(this.config.layers_order)
+      );
     }
   },
   computed: {
-    sortedLayers: function() {
+    sortedLayersSlugs: function() {
       var sortable = [];
 
-      if (!this.store.layers || this.store.layers.length === 0) {
+      if (!this.store.layers || Object.keys(this.store.layers).length === 0) {
         return [];
       }
 
@@ -624,34 +686,45 @@ let vm = new Vue({
           // this.$root.settings.layer_filter.keyword = false;
         });
       }
-
-      let sortedSortable = sortable.sort(function(a, b) {
-        let valA = a.orderBy;
-        let valB = b.orderBy;
-        if (typeof a.orderBy === 'string' && typeof b.orderBy === 'string') {
-          valA = valA.toLowerCase();
-          valB = valB.toLowerCase();
-        }
-        if (valA < valB) {
-          return -1;
-        }
-        if (valA > valB) {
-          return 1;
-        }
-        return 0;
-      });
+      sortable = sortable
+        .sort(function(a, b) {
+          let valA = a.orderBy;
+          let valB = b.orderBy;
+          if (typeof a.orderBy === 'string' && typeof b.orderBy === 'string') {
+            valA = valA.toLowerCase();
+            valB = valB.toLowerCase();
+          }
+          if (valA < valB) {
+            return -1;
+          }
+          if (valA > valB) {
+            return 1;
+          }
+          return 0;
+        })
+        .map(s => s.slugLayerName);
 
       if (this.currentSort.order === 'descending') {
-        sortedSortable.reverse();
+        sortable.reverse();
       }
 
-      let sortedLayers = sortedSortable.reduce((accumulator, d) => {
-        let sortedMediaObj = this.store.layers[d.slugLayerName];
-        accumulator.push(sortedMediaObj);
-        return accumulator;
-      }, []);
+      // si on a un ordre de défini, on part là-dessus puis on le complète avec sortable
+      if (this.config.layers_order.length > 0) {
+        sortable.map(s => {
+          if (!this.config.layers_order.includes(s)) {
+            this.config.layers_order.unshift(s);
+          }
+        });
+        return this.config.layers_order;
+      }
 
-      return sortedLayers;
+      return sortable;
+
+      // return sortable.reduce((accumulator, d) => {
+      //   let sortedMediaObj = this.store.layers[d.slugLayerName];
+      //   accumulator.push(sortedMediaObj);
+      //   return accumulator;
+      // }, []);
     }
   },
   methods: {
@@ -803,6 +876,11 @@ let vm = new Vue({
     },
     setFavAuthorFilter(newFavFilter) {
       this.settings.media_filter.fav = !this.settings.media_filter.fav;
+    },
+
+    resetConfig() {
+      this.config.layers_order = [];
+      this.config.layers_options = [];
     },
 
     isMediaShown(media) {
@@ -1002,21 +1080,22 @@ let vm = new Vue({
       return this.$moment(date, 'YYYY-MM-DD HH:mm:ss').format('LL');
     },
     config_setLayerOption(slugFolderName, type, value) {
-      if (this.config.layers.length !== 0) {
-        const existingLayerInConfig = this.config.layers.filter(
-          l => slugFolderName === l.slugFolderName
+      if (this.config.layers_options.length !== 0) {
+        const layerIndex = this.config.layers_options.findIndex(
+          l => l.slugFolderName === slugFolderName
         );
-        if (existingLayerInConfig.length > 0) {
-          existingLayerInConfig[0][type] = value;
+        if (layerIndex > -1) {
+          this.config.layers_options[layerIndex][type] = value;
           return;
         }
       }
 
-      this.config.layers.push({
+      this.config.layers_options.push({
         slugFolderName,
         visibility: true,
         editing: false,
-        opacity: 100
+        opacity: 100,
+        fusion_mode: ''
       });
 
       this.$socketio.listMedias({
@@ -1025,8 +1104,8 @@ let vm = new Vue({
       });
     },
     config_getLayerOption(slugFolderName, type) {
-      if (this.config.layers.length !== 0) {
-        const existingLayerInConfig = this.config.layers.filter(
+      if (this.config.layers_options.length !== 0) {
+        const existingLayerInConfig = this.config.layers_options.filter(
           l => slugFolderName === l.slugFolderName
         );
         if (existingLayerInConfig.length > 0) {

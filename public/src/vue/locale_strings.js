@@ -29,6 +29,7 @@ module.exports = (function() {
       validate_with_enter: 'valider avec la touche ENTRÉE',
       value: 'valeur',
       optional: 'optionnel',
+      opacity: 'opacité',
 
       create_a_layer: 'Créer un calque',
       layer_list: 'Liste des calques',
@@ -75,17 +76,18 @@ module.exports = (function() {
       import: 'Importer',
       import_all_files: 'Importer tous les fichiers',
       import_medias: 'Importer des médias',
-      select_files_to_import: 'Sélectionnez les fichiers à importer',
-      select_file_to_import: 'Sélectionnez un fichier à importer',
-      select_cover_image: 'Sélectionnez une image de couverture',
-      select_image: 'Sélectionnez une image',
-      select_background_map: 'Sélectionnez un fond de carte',
+      select_files_to_import: 'Sélectionner les fichiers à importer',
+      select_file_to_import: 'Sélectionner un fichier à importer',
+      select_cover_image: 'Sélectionner une image de couverture',
+      select_image: 'Sélectionner une image',
+      select_background_map: 'Sélectionner un fond de carte',
       remove_background_map: 'Supprimer le fond de carte',
-      select_portrait_image: 'Sélectionnez une image de portrait',
+      select_portrait_image: 'Sélectionner une image de portrait',
       add_to_publication: 'Ajouter à la publication',
       add_a_page: 'Ajouter une page',
       insert_a_page_here: 'Insérer une page ici',
       remove_this_page: '▲ Supprimer cette page ▲',
+      remove_layer_and_content: 'Supprimer ce calque et tout son contenu',
 
       made_with_dodoc:
         'Page web réalisée avec l’application libre et gratuite do•doc',
@@ -298,6 +300,7 @@ module.exports = (function() {
       validate_with_enter: 'validate with the ENTER key',
       value: 'value',
       optional: 'optional',
+      opacity: 'opacity',
 
       create_a_layer: 'Create a layer',
       layer_list: 'Layer’s list',
@@ -352,6 +355,7 @@ module.exports = (function() {
       add_a_page: 'Add a page',
       insert_a_page_here: 'Insert a page here',
       remove_this_page: '▲ Remove this page ▲',
+      remove_layer_and_content: 'Remove this layer and its content',
 
       made_with_dodoc: 'Webpage made with do•doc, a free and open-source app',
 
