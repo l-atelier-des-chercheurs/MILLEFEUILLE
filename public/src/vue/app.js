@@ -1095,7 +1095,8 @@ let vm = new Vue({
         slugFolderName,
         visibility: true,
         editing: false,
-        opacity: 100
+        opacity: 100,
+        fusion_mode: ''
       });
 
       this.$socketio.listMedias({

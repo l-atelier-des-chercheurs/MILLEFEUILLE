@@ -66,13 +66,13 @@
 
     <div class="m_controller--bottomBar">
 
-      <div v-if="this.$root.config.layers_options.length > 0 || this.$root.config.layers_order.length > 0">
-        <button type="button" class="btn_small bg-transparent" @click="$root.resetConfig()">
+      <div class="margin-bottom-verysmall" v-if="this.$root.config.layers_options.length > 0 || this.$root.config.layers_order.length > 0">
+        <button type="button" class="btn_small bg-transparent " @click="$root.resetConfig()">
           RESET RÉGLAGES
         </button>
       </div>
 
-      {{ $root.config.layers_options }}
+      <!-- {{ $root.config.layers_options }} -->
 
       <transition name="slideFromBottom" mode="out-in" :duration="500">
         <div v-if="$root.settings.sidebar.view === 'Layers'"

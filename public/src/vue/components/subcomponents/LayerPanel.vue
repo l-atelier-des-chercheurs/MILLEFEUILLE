@@ -2,7 +2,7 @@
   <div class="card margin-sides-small padding-small">
     <div class="card--header card--header_layer">
       <button type="button" 
-        class="bg-transparent "
+        class="bg-transparent font-medium"
         style="margin-left:-0.81rem;"
         @click="$root.closeLayer()"
       >
@@ -69,6 +69,7 @@
         class="m_sidebarmedia padding-vert-verysmall"
       >
         <MediaContent
+          v-if="media.type !== 'other'"
           class="m_sidebarmedia--preview"
           :context="'preview'"
           :slugFolderName="layer.slugFolderName"
