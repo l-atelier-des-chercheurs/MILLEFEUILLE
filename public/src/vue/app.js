@@ -1095,7 +1095,7 @@ let vm = new Vue({
         visibility: true,
         editing: false,
         opacity: 100,
-        fusion_mode: ''
+        fusion_mode: 'normal'
       });
 
       this.$socketio.listMedias({
