@@ -1139,7 +1139,7 @@ module.exports = (function() {
               resolve();
             })
             .catch(err => {
-              reject(err);
+              resolve(err);
             });
         });
       });

@@ -109,6 +109,11 @@
         </div>
       </transition>
       
+      <div class="margin-bottom-small">
+        <button type="button" class="btn_small" @click="removeMedia">
+          {{ $t('remove_data') }}
+        </button>
+      </div>
       
     </template>
 
@@ -243,6 +248,17 @@ export default {
       }
       this.selected_files = Array.from($event.target.files); 
       this.selected_files_meta = {};
+    },
+    removeMedia() {
+      if (window.confirm(this.$t('sure_to_remove_data'))) {
+        this.$root.removeMedia({
+          type: 'layers',
+          slugFolderName: this.slugLayerName, 
+          slugMediaName: this.slugMediaName
+        });
+
+        this.$emit('close');      
+      }
     }
   }
 };
