@@ -165,7 +165,7 @@ export default {
   },
   methods: {
     editMedia(event) {
-      console.log('createMedia');
+      console.log('editMedia');
 
         // préparer un petit paquet pour upload
         // peut contenir un média, une note ou une valeur (ou aucun des trois)
