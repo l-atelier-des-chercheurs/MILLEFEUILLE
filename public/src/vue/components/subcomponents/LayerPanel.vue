@@ -21,10 +21,7 @@
         </p>
       </div>
       <div class="">
-        <label class="">{{ $t('background_map') }}</label><br>
-        <template v-if="layer.hasOwnProperty('preview')">
-          <div class="overlay_img_and_link">
-            <img :src="$root.previewURL(layer, 400)" class="bg_img">
+        <label class="">{{ $t('background_map') }}
             <a 
               :download="`fond_de_carte-${slugLayerName}.jpeg`" 
               :href="previewURL" 
@@ -35,6 +32,10 @@
             >
               {{ $t('download') }}
             </a>
+          </label><br>
+        <template v-if="layer.hasOwnProperty('preview')">
+          <div class="overlay_img_and_link">
+            <img :src="$root.previewURL(layer, 400)" class="bg_img">
           </div>
         </template>
         <template v-else>

@@ -17,7 +17,7 @@
         <img :src="linkToVideoThumb">
       </template>
       <template v-else>
-        <video ref="video" preload="none" :src="mediaURL" :poster="linkToVideoThumb" />
+        <video ref="video" preload="none" :src="mediaURL" :poster="linkToVideoThumb" controls autoplay />
         <svg 
           ref="playIcon" 
           v-if="!video_is_playing"
@@ -33,7 +33,7 @@
     </template>
 
     <template v-else-if="media.type === 'audio'">
-      <audio controls preload="none" :src="mediaURL" />
+      <audio controls preload="none" :src="mediaURL" autoplay />
     </template>
 
     <template v-else-if="media.type === 'text'">
@@ -122,7 +122,7 @@ export default {
         preview_hovered: 600,
         default: 1600
       },
-      video_is_playing: false,
+      video_is_playing: true,
       htmlForEditor: this.value,
       customToolbar: [
         [{ 'header': [false, 1, 2, 3, 4] }],
