@@ -171,7 +171,10 @@ export default {
         return;
       }
 
-      return `translate(${x}, ${y})`
+      if(x !== 0 && y !== 0) {
+        return `translate(${x}, ${y})`
+      }
+      return;
     },
     mercator(x, y) {
         return [x, Math.log(Math.tan(Math.PI / 4 + y / 2))];
