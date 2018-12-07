@@ -129,6 +129,9 @@ export default {
     }
   },
   computed: {
+    pinColor() {
+      return this.$root.config_getLayerOption(this.slugLayerName, 'pin_color');      
+    },
     background_res() {
       return this.$root.settings.sidebar.view === 'Layers' ? 1400 : 2200
     },
