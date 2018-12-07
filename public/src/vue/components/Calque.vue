@@ -17,6 +17,7 @@
       stroke="#333"
       stroke-width="1"
       fill="transparent"
+      class="calque_bg"
     />
     <transition-group name="slideUp" tag="g">
       <g
@@ -25,6 +26,7 @@
         :transform="getCoordinates(media)"
         :key="key"      
         class="pins"
+        @click="$root.openMedia({ slugLayerName, metaFileName: media.metaFileName })"
       >
         <circle cx="0" cy="-3" r="2" 
           fill="#ff0000"
@@ -65,7 +67,7 @@
 
 
 export default {
-  props: ['layer', 'index', 'width', 'height', 'map_projection'],
+  props: ['layer', 'slugLayerName', 'index', 'width', 'height', 'map_projection'],
   components: {
   },
   data() {

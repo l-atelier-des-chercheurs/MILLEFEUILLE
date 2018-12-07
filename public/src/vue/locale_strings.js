@@ -30,6 +30,7 @@ module.exports = (function() {
       value: 'valeur',
       optional: 'optionnel',
       opacity: 'opacité',
+      fusion_mode: 'mode de fusion',
 
       create_a_layer: 'Créer un calque',
       layer_list: 'Liste des calques',
@@ -301,6 +302,7 @@ module.exports = (function() {
       value: 'value',
       optional: 'optional',
       opacity: 'opacity',
+      fusion_mode: 'fusion mode',
 
       create_a_layer: 'Create a layer',
       layer_list: 'Layer’s list',
