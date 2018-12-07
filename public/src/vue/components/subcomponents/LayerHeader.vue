@@ -1,16 +1,16 @@
 <template>
   <div class="card draggable-item margin-sides-small padding-small"
-    :class="{ 'is--visible' : layerVisilibity }" 
+    :class="{ 'is--visible' : opts.visibility }" 
   >
     <div class="card--header card--header_layer cursor-pointer"
       @click="$root.openLayer(slugLayerName)"
     >
-      <span class="column-drag-handle" @mouseup.stop="" v-if="layerVisilibity">
+      <span class="column-drag-handle" @mouseup.stop="" v-if="opts.visibility">
         &#x2630;
       </span>
       <button type="button" class="visibility_picto"
-        @click.stop="is_visible = !is_visible" 
-        :class="{ 'is--active' : layerVisilibity }" 
+        @click.stop="opts.visibility = !opts.visibility" 
+        :class="{ 'is--active' : opts.visibility }" 
       > 
         <img v-if="$root.previewURL(layer,50)" :src="$root.previewURL(layer,50)" />
         <svg 
@@ -30,19 +30,19 @@
         ►
       </button>
     </div>
-    <div class="m_layeredit " v-if="layerVisilibity">
+    <div class="m_layeredit " v-if="opts.visibility">
       <span class="switch switch-verysmall">
-        <input type="checkbox" class="switch" :id="`editlayer_${slugLayerName}`" v-model="is_editing">
+        <input type="checkbox" class="switch" :id="`editlayer_${slugLayerName}`" v-model="opts.editing">
         <label :for="`editlayer_${slugLayerName}`">mise en forme</label>
       </span>
 
-      <template v-if="layerEditing">
+      <template v-if="opts.editing">
 <!-- Opacity -->
         <div 
           class="margin-bottom-small" 
         >
           <label>{{ $t('opacity') }}</label><br>
-          <input type="range" min="10" max="100" v-model.lazy="layer_opacity" :readonly="read_only">
+          <input type="range" min="10" max="100" v-model="opts.opacity" :readonly="read_only">
         </div>
 
   <!-- Mode de fusion -->
@@ -52,7 +52,7 @@
           <label>
             {{ $t('fusion_mode') }}<br>
           </label>
-          <select v-model="fusion_mode">
+          <select v-model="opts.fusion_mode">
             <option v-for="opt in 'normal | multiply | screen | overlay | darken | lighten | color-dodge | color-burn | hard-light | soft-light | difference | exclusion | hue | saturation | color | luminosity'.split(' | ')" 
               :value="opt" 
               :key="opt"
@@ -67,7 +67,7 @@
           class="margin-bottom-small" 
         >
           <label>{{ $t('pin_mode_media_type') }}</label><br>
-          <input type="checkbox" v-model="pin_mode_media_type" :readonly="read_only">
+          <input type="checkbox" v-model="opts.pin_mode_media_type" :readonly="read_only">
         </div>
 
 <!-- pin_color -->
@@ -75,7 +75,7 @@
           class="margin-bottom-small" 
         >
           <label>{{ $t('pin_mode_media_type') }}</label><br>
-          <input type="color" v-model="pin_color" :readonly="read_only">
+          <input type="color" v-model="opts.pin_color" :readonly="read_only">
         </div>
       </template>
     </div>
@@ -93,26 +93,23 @@ export default {
   },
   data() {
     return {
-      is_visible: false,
-      is_editing: false,
-      layer_opacity: 100,
-      fusion_mode: 'normal',
-      pin_mode_media_type: false,
-      pin_color: '#000',
-
-      timer: ''
+      opts: {
+        visibility: false,
+        editing: false,
+        opacity: 100,
+        fusion_mode: 'normal',
+        pin_type: 'icon',
+        pin_color: '#000'
+      }
     }
   },
   
   created() {
-    // const idx = this.$root.config.layers_options.findIndex(
-    //   l => l.slugFolderName === this.slugLayerName
-    // );
-    // if(idx > -1) {
-    //   const layer_options = this.$root.config.layers_options[idx];
-    //   this.is_visible = layer_options.visibility;
-    //   this.is_editing = layer_options.editing;
-    // }
+    Object.keys(this.opts).map(type => {
+      if(!!this.$root.config_getLayerOption(this.slugLayerName, type)) {
+        this.opts[type] = this.$root.config_getLayerOption(this.slugLayerName, type);
+      }
+    })
   },
   mounted() {
   },
@@ -120,32 +117,27 @@ export default {
   },
 
   watch: {
-    'is_editing': function() {
-      this.$root.config_setLayerOption(this.slugLayerName, 'editing', this.is_editing);
-    },
-    'layer_opacity': function() {
-      this.$root.config_setLayerOption(this.slugLayerName, 'opacity', this.layer_opacity);
-    },
-    'is_visible': function() {
-      this.$root.config_setLayerOption(this.slugLayerName, 'visibility', this.is_visible);      
-    },
-    'fusion_mode': function() {
-      this.$root.config_setLayerOption(this.slugLayerName, 'fusion_mode', this.fusion_mode);      
-    },
-    'pin_mode_media_type': function() {
-      this.$root.config_setLayerOption(this.slugLayerName, 'pin_mode_media_type', this.pin_mode_media_type);      
-    },
-    'pin_color': function() {
-      this.$root.config_setLayerOption(this.slugLayerName, 'pin_color', this.pin_color);      
+    'opts': {
+      handler(val, oldVal) {
+        Object.keys(val).map(v => {
+          // if(oldVal.hasOwnProperty(v) && this.opts[v] !== val[v]) {
+          this.$root.config_setLayerOption(this.slugLayerName, v, val[v]);
+          // }
+        })
+      },
+      deep: true,
     }
+    // 'is_editing': function() {
+    //   this.$root.config_setLayerOption(this.slugLayerName, 'editing', this.is_editing);
+    // },
   },
   computed: {
-    layerVisilibity() {
-      return this.$root.config_getLayerOption(this.slugLayerName, 'visibility');
-    },
-    layerEditing() {
-      return this.$root.config_getLayerOption(this.slugLayerName, 'editing');
-    }
+    // visible() {
+    //   return this.$root.config_getLayerOption(this.slugLayerName, 'visibility');
+    // },
+    // editing() {
+    //   return this.$root.config_getLayerOption(this.slugLayerName, 'editing');
+    // }
   },
   methods: {
   }

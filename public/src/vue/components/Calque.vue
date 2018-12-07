@@ -27,6 +27,7 @@
         :transform="getCoordinates(media)"
         :key="key"      
         class="pins"
+        :fill="pinColor"
         :class="[media.type, { 'is--highlighted' : media.metaFileName === $root.settings.highlight_media || media.metaFileName === $root.media_modal.current_metaFileName }]"
         @mouseover="$root.settings.highlight_media = media.metaFileName"
         @mouseleave="$root.settings.highlight_media = ''"
@@ -52,10 +53,8 @@
           
           <template v-else>
               <circle cx="0" cy="-3" r="2" 
-                fill="#000"
               />
               <path 
-                fill="#000"
                 transform="translate(-10,-10)"
                 d="M10.292,4.229c-1.487,0-2.691,1.205-2.691,2.691s1.205,2.691,2.691,2.691s2.69-1.205,2.69-2.691
                         S11.779,4.229,10.292,4.229z M10.292,8.535c-0.892,0-1.615-0.723-1.615-1.615S9.4,5.306,10.292,5.306
@@ -121,12 +120,6 @@ export default {
   },
 
   watch: {
-    '$root.config.layers_options': {
-      handler() {
-        const plop = this.pinModePictoMediaType;
-      },
-      deep: true
-    }
   },
   computed: {
     pinColor() {
@@ -136,23 +129,6 @@ export default {
       return this.$root.settings.sidebar.view === 'Layers' ? 1400 : 2200
     },
     pinModePictoMediaType() {
-      // const type = 'pin_mode_media_type';
-
-      // if (this.$root.config.layers_options.length !== 0) {
-      //   const existingLayerInConfig = this.$root.config.layers_options.filter(
-      //     l => this.slugLayerName === l.slugFolderName
-      //   );
-      //   if (existingLayerInConfig.length > 0) {
-      //     if (
-      //       type !== 'visibility' &&
-      //       existingLayerInConfig[0].editing === false
-      //     ) {
-      //       return false;
-      //     }
-
-      //     return existingLayerInConfig[0][type];
-      //   }
-      // }
       return true;
     }
   },
