@@ -32,6 +32,7 @@
           <transition-group name="enableMode" tag="g" :duration="600">
             <Calque 
               v-for="(slugLayerName, index) in slugLayersShown" 
+              v-if="$root.store.layers.hasOwnProperty(slugLayerName)"
               :key="slugLayerName"
               :index="index"
               :layer="$root.store.layers[slugLayerName]"
@@ -40,6 +41,7 @@
               :style="layerOptions(slugLayerName, index+1)"
               class="m_svgpattern--layer m_svgpattern--layer_persp"
               :map_projection="map_projection"
+              :slugLayerName="slugLayerName"
             />
           </transition-group>
 

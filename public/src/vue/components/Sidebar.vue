@@ -35,6 +35,7 @@
           >
             <Draggable v-for="slugLayerName in $root.sortedLayersSlugs" :key="slugLayerName">
               <LayerHeader
+                v-if="$root.store.layers.hasOwnProperty(slugLayerName)"
                 :layer="$root.store.layers[slugLayerName]"
                 :slugLayerName="slugLayerName"
               />
