@@ -263,7 +263,6 @@ export default {
       if(this.$root.settings.mode_perspective) {
         const move_layer_up_based_on_index = (index * this.$root.settings.perspective_stretch) - (this.slugLayersShown.length * this.$root.settings.perspective_stretch)/2;
         const stretch_factor = this.$root.settings.sidebar.view === 'Layers' ? move_layer_up_based_on_index : this.$root.settings.perspective_stretch;
-
         opts['transform'] = `rotateX(45deg) rotate(-45deg) scale(1) translate3d(0px, 0px, ${stretch_factor}px)`;
       }
 
