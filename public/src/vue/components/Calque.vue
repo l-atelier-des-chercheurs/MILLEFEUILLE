@@ -33,28 +33,52 @@
         @mouseleave="$root.settings.highlight_media = ''"
         @click="$root.openMedia({ slugLayerName, metaFileName: media.metaFileName })"
       >
-        <template v-if="pinModePictoMediaType">
-          <template v-if="media.type === 'image'">
-            <rect x="1.8" y="5" class="st0" width="16.4" height="10.7"/>
-            <polygon class="st0" points="14.6,8.8 5.5,8.8 6.8,3.7 13.3,3.7 "/>
-            <circle class="st1" fill="#fff" cx="10" cy="10.4" r="2.6"/>
-          </template>
-          <template v-else-if="media.type === 'video'">
-            <rect x="1.2" y="5.3" class="st0" width="14.2" height="10.3"/>
-            <polygon class="st0" points="18.8,13.8 12,11.6 12,9.2 18.8,7.1 "/>
-            <polygon class="st1" fill="#fff" points="8,7.2 10.9,10.1 8,12.9 "/>
-          </template>
-          <template v-else-if="media.type === 'audio'">
-            <rect x="1.2" y="5.3" class="st0" width="14.2" height="10.3"/>
-            <polygon class="st0" points="18.8,13.8 12,11.6 12,9.2 18.8,7.1 "/>
-            <polygon class="st1" fill="#fff" points="8,7.2 10.9,10.1 8,12.9 "/>
-          </template>
+        <circle cx="0" cy="0" r="2" fill="#ff00ff" />
+        <g :style="pinStyle()" class="pins--group">
+          <template v-if="pinModePictoMediaType">
+            <template v-if="media.type === 'image'">
+              <rect x="1.8" y="5" class="st0" width="16.4" height="10.7"/>
+              <polygon class="st0" points="14.6,8.8 5.5,8.8 6.8,3.7 13.3,3.7 "/>
+              <circle class="st1" fill="#fff" cx="10" cy="10.4" r="2.6"/>
+            </template>
+            <template v-else-if="media.type === 'video'">
+              <rect x="1.2" y="5.3" class="st0" width="14.2" height="10.3"/>
+              <polygon class="st0" points="18.8,13.8 12,11.6 12,9.2 18.8,7.1 "/>
+              <polygon class="st1" fill="#fff" points="8,7.2 10.9,10.1 8,12.9 "/>
+            </template>
+            <template v-else-if="media.type === 'audio'">
+              <rect x="1.2" y="5.3" class="st0" width="14.2" height="10.3"/>
+              <polygon class="st0" points="18.8,13.8 12,11.6 12,9.2 18.8,7.1 "/>
+              <polygon class="st1" fill="#fff" points="8,7.2 10.9,10.1 8,12.9 "/>
+            </template>
 
-          
+            
+            <template v-else>
+                <circle cx="0" cy="0" r="1" 
+                />
+                <path 
+                  transform="translate(-10,-20)"
+                  d="M10.292,4.229c-1.487,0-2.691,1.205-2.691,2.691s1.205,2.691,2.691,2.691s2.69-1.205,2.69-2.691
+                          S11.779,4.229,10.292,4.229z M10.292,8.535c-0.892,0-1.615-0.723-1.615-1.615S9.4,5.306,10.292,5.306
+                          c0.891,0,1.614,0.722,1.614,1.614S11.184,8.535,10.292,8.535z M10.292,1C6.725,1,3.834,3.892,3.834,7.458
+                          c0,3.567,6.458,10.764,6.458,10.764s6.458-7.196,6.458-10.764C16.75,3.892,13.859,1,10.292,1z M4.91,7.525
+                          c0-3.009,2.41-5.449,5.382-5.449c2.971,0,5.381,2.44,5.381,5.449s-5.381,9.082-5.381,9.082S4.91,10.535,4.91,7.525z" />
+            </template>
+
+            <!-- <foreignObject x="-10" y="-10" width="20" height="20">
+              <div xmlns="http://www.w3.org/1999/xhtml"
+                :style="`--main-value: ${Math.random() * 10}px`"
+              >
+                {{ media.value }}
+              </div>
+            </foreignObject> -->
+          </template>
           <template v-else>
               <circle cx="0" cy="-3" r="2" 
+                fill="#000"
               />
               <path 
+                fill="#000"
                 transform="translate(-10,-10)"
                 d="M10.292,4.229c-1.487,0-2.691,1.205-2.691,2.691s1.205,2.691,2.691,2.691s2.69-1.205,2.69-2.691
                         S11.779,4.229,10.292,4.229z M10.292,8.535c-0.892,0-1.615-0.723-1.615-1.615S9.4,5.306,10.292,5.306
@@ -62,43 +86,12 @@
                         c0,3.567,6.458,10.764,6.458,10.764s6.458-7.196,6.458-10.764C16.75,3.892,13.859,1,10.292,1z M4.91,7.525
                         c0-3.009,2.41-5.449,5.382-5.449c2.971,0,5.381,2.44,5.381,5.449s-5.381,9.082-5.381,9.082S4.91,10.535,4.91,7.525z" />
           </template>
-
-          <!-- <foreignObject x="-10" y="-10" width="20" height="20">
-            <div xmlns="http://www.w3.org/1999/xhtml"
-              :style="`--main-value: ${Math.random() * 10}px`"
-            >
-              {{ media.value }}
-            </div>
-          </foreignObject> -->
-        </template>
-        <template v-else>
-            <circle cx="0" cy="-3" r="2" 
-              fill="#000"
-            />
-            <path 
-              fill="#000"
-              transform="translate(-10,-10)"
-              d="M10.292,4.229c-1.487,0-2.691,1.205-2.691,2.691s1.205,2.691,2.691,2.691s2.69-1.205,2.69-2.691
-                      S11.779,4.229,10.292,4.229z M10.292,8.535c-0.892,0-1.615-0.723-1.615-1.615S9.4,5.306,10.292,5.306
-                      c0.891,0,1.614,0.722,1.614,1.614S11.184,8.535,10.292,8.535z M10.292,1C6.725,1,3.834,3.892,3.834,7.458
-                      c0,3.567,6.458,10.764,6.458,10.764s6.458-7.196,6.458-10.764C16.75,3.892,13.859,1,10.292,1z M4.91,7.525
-                      c0-3.009,2.41-5.449,5.382-5.449c2.971,0,5.381,2.44,5.381,5.449s-5.381,9.082-5.381,9.082S4.91,10.535,4.91,7.525z" />
-        </template>
+        </g>
       </g>
 
     </transition-group>
 
   </g>
-  <!-- <div class="box" :style="layerStyles">
-    <div class="face" v-if="previewURL"
-      :style="boxStyle(0)"
-    >
-      <img 
-        :src="previewURL"
-        :style="imgStyle(layer)"
-      >
-    </div> 
-  </div>       -->
 </template>
 <script>
 
@@ -133,8 +126,11 @@ export default {
     }
   },
   methods: {
-    imgStyle(layer) {
-      return { opacity: layer.opacity }
+    pinStyle() {
+      if(this.$root.settings.mode_perspective) {
+        return 'transform: rotateX(0deg) rotate(45deg) scale(1, 1.4);';
+      }
+      return 'transform: rotateX(0deg) rotate(0deg) scale(1,1);';
     },
     getCoordinates(media) {
       if(!this.map_projection) {
