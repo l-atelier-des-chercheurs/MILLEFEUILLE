@@ -1102,6 +1102,13 @@ let vm = new Vue({
     config_setLayerOption(slugLayerName, type, value) {
       console.log('config_setLayerOption');
 
+      if (type === 'visibility' && value === true) {
+        this.$socketio.listMedias({
+          type: 'layers',
+          slugFolderName: slugLayerName
+        });
+      }
+
       if (!this.config.layers_options2.hasOwnProperty(type)) {
         this.$set(this.config.layers_options2, type, {});
       }
