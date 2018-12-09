@@ -838,6 +838,19 @@ let vm = new Vue({
         );
       }
 
+      if (this.media_modal.open === true) {
+        this.closeMedia();
+
+        this.$nextTick(() => {
+          this.media_modal.open = true;
+          this.media_modal.minimized = false;
+          this.media_modal.current_slugLayerName = slugLayerName;
+          this.media_modal.current_metaFileName = metaFileName;
+        });
+
+        return;
+      }
+
       this.media_modal.open = true;
       this.media_modal.minimized = false;
       this.media_modal.current_slugLayerName = slugLayerName;
