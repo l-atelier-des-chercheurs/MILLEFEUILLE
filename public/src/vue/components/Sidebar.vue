@@ -38,6 +38,7 @@
                 v-if="$root.store.layers.hasOwnProperty(slugLayerName)"
                 :layer="$root.store.layers[slugLayerName]"
                 :slugLayerName="slugLayerName"
+                :opts2="layer_opts(slugLayerName)"
               />
 
               <!-- <Card :type="'section_separator'">
@@ -67,13 +68,13 @@
 
     <div class="m_controller--bottomBar">
 
-      <!-- {{ $root.config.layers_options2 }} -->
+      {{ $root.config.layers_options2 }}
 
       <transition name="slideFromBottom" mode="out-in" :duration="500">
         <div v-if="$root.settings.sidebar.view === 'Layers'"
           :key="'layers_options2'"
         >
-          <div class="margin-bottom-verysmall" v-if="this.$root.config.layers_options2.length > 0 || this.$root.config.layers_order.length > 0">
+          <div class="margin-bottom-verysmall" v-if="Object.keys(this.$root.config.layers_options2).length > 0 || this.$root.config.layers_order.length > 0">
             <button type="button" class="btn_small bg-transparent " @click="$root.resetConfig()">
               RESET MISE EN FORME
             </button>
@@ -221,6 +222,16 @@ export default {
     },
     onDragend(dropResult) {
       this.$root.config.temp_layers_order = [];
+    },
+    layer_opts(slugLayerName) {
+      let opt = {};
+      if(Object.keys(this.$root.config.layers_options2).length === 0) {
+        return opt;
+      }
+      Object.keys(this.$root.config.layers_options2)
+        .filter(o => this.$root.config.layers_options2[o].hasOwnProperty(slugLayerName))
+        .map(o => opt[o] = this.$root.config.layers_options2[o][slugLayerName]);
+      return opt;
     }
   }
 }

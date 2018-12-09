@@ -537,9 +537,13 @@ let vm = new Vue({
 
     if (!!localStorage.getItem('config.layers_options2')) {
       if (tryParseJSON(localStorage.getItem('config.layers_options2'))) {
-        this.config.layers_options2 = JSON.parse(
+        const localConfig = JSON.parse(
           localStorage.getItem('config.layers_options2')
         );
+        if (Object.keys(localConfig).length > 0) {
+          this.config.layers_options2 = localConfig;
+        }
+        debugger;
       }
     }
 
@@ -605,6 +609,7 @@ let vm = new Vue({
     },
     'config.layers_options2': {
       handler() {
+        debugger;
         localStorage.setItem(
           'config.layers_options2',
           JSON.stringify(this.config.layers_options2)
@@ -899,7 +904,13 @@ let vm = new Vue({
 
     resetConfig() {
       this.config.layers_order = [];
-      this.config.layers_options2 = [];
+      this.config.layers_options2 = {};
+      // Object.keys(this.config.layers_options2).map(k => {
+      //   let opt = this.config.layers_options2[k];
+      //   Object.keys(opt).map(s => {
+      //     this.$delete(this.config.layers_options2[k], s);
+      //   });
+      // });
     },
     loadVisibleLayersMedias() {
       this.sortedLayersSlugs
@@ -1121,15 +1132,14 @@ let vm = new Vue({
           slugFolderName: slugLayerName
         });
       }
-
       if (!this.config.layers_options2.hasOwnProperty(type)) {
         this.$set(this.config.layers_options2, type, {});
       }
-      if (this.config.layers_options2[type].hasOwnProperty(slugLayerName)) {
-        this.config.layers_options2[type][slugLayerName] = value;
+      if (!this.config.layers_options2[type].hasOwnProperty(slugLayerName)) {
+        this.$set(this.config.layers_options2[type], slugLayerName, value);
         return;
       }
-      this.$set(this.config.layers_options2[type], slugLayerName, value);
+      this.config.layers_options2[type][slugLayerName] = value;
     },
     config_getLayerOption(slugLayerName, type) {
       if (

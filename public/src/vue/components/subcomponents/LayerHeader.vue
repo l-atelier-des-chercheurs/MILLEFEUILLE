@@ -79,28 +79,27 @@
         </div>
       </template>
     </div>
+    {{ opts2 }}
+
   </div>
-  </template>
+</template>
 <script>
 
 
 export default {
   props: {
     layer: Object,
-    slugLayerName: String
+    slugLayerName: String,
+    opts2: {
+      type: Object,
+      default: {}
+    }
   },
   components: {
   },
   data() {
     return {
-      opts: {
-        visibility: false,
-        editing: false,
-        opacity: 100,
-        fusion_mode: 'normal',
-        pin_type: 'icon',
-        pin_color: '#000'
-      }
+      opts: this.opts2
     }
   },
   
@@ -117,27 +116,22 @@ export default {
   },
 
   watch: {
-    'opts': {
+    'computedOptions': {
       handler(val, oldVal) {
         Object.keys(val).map(v => {
-          // if(oldVal.hasOwnProperty(v) && this.opts[v] !== val[v]) {
-          this.$root.config_setLayerOption(this.slugLayerName, v, val[v]);
-          // }
+          if(oldVal.hasOwnProperty(v) && val[v] !== oldVal[v]) {
+            this.$root.config_setLayerOption(this.slugLayerName, v, val[v]);
+          }
         })
       },
       deep: true,
     }
-    // 'is_editing': function() {
-    //   this.$root.config_setLayerOption(this.slugLayerName, 'editing', this.is_editing);
-    // },
   },
   computed: {
-    // visible() {
-    //   return this.$root.config_getLayerOption(this.slugLayerName, 'visibility');
-    // },
-    // editing() {
-    //   return this.$root.config_getLayerOption(this.slugLayerName, 'editing');
-    // }
+    // watch the entire as a new object
+    computedOptions: function() {
+        return Object.assign({}, this.opts);
+    }
   },
   methods: {
   }
