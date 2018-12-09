@@ -37,6 +37,18 @@ module.exports = function() {
       ? https.createServer(options, app)
       : http.createServer(app);
 
+  if (settings.protocol === 'https') {
+    // redirect from http (port 80) to https (port 443)
+    http
+      .createServer((req, res) => {
+        res.writeHead(301, {
+          Location: 'https://' + req.headers['host'] + req.url
+        });
+        res.end();
+      })
+      .listen(80);
+  }
+
   var io = require('socket.io').listen(server);
   dev.logverbose('Starting server 2');
 
