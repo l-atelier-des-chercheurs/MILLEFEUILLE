@@ -537,9 +537,12 @@ let vm = new Vue({
 
     if (!!localStorage.getItem('config.layers_options2')) {
       if (tryParseJSON(localStorage.getItem('config.layers_options2'))) {
-        this.config.layers_options2 = JSON.parse(
+        const localConfig = JSON.parse(
           localStorage.getItem('config.layers_options2')
         );
+        if (Object.keys(localConfig).length > 0) {
+          this.config.layers_options2 = localConfig;
+        }
       }
     }
 
@@ -838,6 +841,19 @@ let vm = new Vue({
         );
       }
 
+      if (this.media_modal.open === true) {
+        this.closeMedia();
+
+        this.$nextTick(() => {
+          this.media_modal.open = true;
+          this.media_modal.minimized = false;
+          this.media_modal.current_slugLayerName = slugLayerName;
+          this.media_modal.current_metaFileName = metaFileName;
+        });
+
+        return;
+      }
+
       this.media_modal.open = true;
       this.media_modal.minimized = false;
       this.media_modal.current_slugLayerName = slugLayerName;
@@ -886,7 +902,13 @@ let vm = new Vue({
 
     resetConfig() {
       this.config.layers_order = [];
-      this.config.layers_options2 = [];
+      this.config.layers_options2 = {};
+      // Object.keys(this.config.layers_options2).map(k => {
+      //   let opt = this.config.layers_options2[k];
+      //   Object.keys(opt).map(s => {
+      //     this.$delete(this.config.layers_options2[k], s);
+      //   });
+      // });
     },
     loadVisibleLayersMedias() {
       this.sortedLayersSlugs
@@ -1108,22 +1130,21 @@ let vm = new Vue({
           slugFolderName: slugLayerName
         });
       }
-
-      if (!this.config.layers_options2.hasOwnProperty(type)) {
-        this.$set(this.config.layers_options2, type, {});
+      if (!this.config.layers_options2.hasOwnProperty(slugLayerName)) {
+        this.$set(this.config.layers_options2, slugLayerName, {});
       }
-      if (this.config.layers_options2[type].hasOwnProperty(slugLayerName)) {
-        this.config.layers_options2[type][slugLayerName] = value;
+      if (!this.config.layers_options2[slugLayerName].hasOwnProperty(type)) {
+        this.$set(this.config.layers_options2[slugLayerName], type, value);
         return;
       }
-      this.$set(this.config.layers_options2[type], slugLayerName, value);
+      this.config.layers_options2[slugLayerName][type] = value;
     },
     config_getLayerOption(slugLayerName, type) {
       if (
-        this.config.layers_options2.hasOwnProperty(type) &&
-        this.config.layers_options2[type].hasOwnProperty(slugLayerName)
+        this.config.layers_options2.hasOwnProperty(slugLayerName) &&
+        this.config.layers_options2[slugLayerName].hasOwnProperty(type)
       ) {
-        return this.config.layers_options2[type][slugLayerName];
+        return this.config.layers_options2[slugLayerName][type];
       }
       return;
     }

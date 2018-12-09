@@ -33,7 +33,12 @@
     </template>
 
     <template v-else-if="media.type === 'audio'">
-      <audio controls preload="none" :src="mediaURL" autoplay />
+      <template v-if="context === 'preview'">
+        <audio controls preload="none" :src="mediaURL"  />
+      </template>
+      <template v-else>
+        <audio controls preload="none" :src="mediaURL" autoplay />
+      </template>
     </template>
 
     <template v-else-if="media.type === 'text'">

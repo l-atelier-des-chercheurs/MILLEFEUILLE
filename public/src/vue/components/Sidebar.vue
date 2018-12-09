@@ -38,6 +38,7 @@
                 v-if="$root.store.layers.hasOwnProperty(slugLayerName)"
                 :layer="$root.store.layers[slugLayerName]"
                 :slugLayerName="slugLayerName"
+                :saved_opts="load_layer_opts(slugLayerName)"
               />
 
               <!-- <Card :type="'section_separator'">
@@ -73,9 +74,9 @@
         <div v-if="$root.settings.sidebar.view === 'Layers'"
           :key="'layers_options2'"
         >
-          <div class="margin-bottom-verysmall" v-if="this.$root.config.layers_options2.length > 0 || this.$root.config.layers_order.length > 0">
+          <div class="margin-bottom-verysmall" v-if="Object.keys(this.$root.config.layers_options2).length > 0 || this.$root.config.layers_order.length > 0">
             <button type="button" class="btn_small bg-transparent " @click="$root.resetConfig()">
-              RESET MISE EN FORME
+              RESET
             </button>
           </div>
 
@@ -221,6 +222,13 @@ export default {
     },
     onDragend(dropResult) {
       this.$root.config.temp_layers_order = [];
+    },
+    load_layer_opts(slugLayerName) {
+      let opt = {};
+      if(Object.keys(this.$root.config.layers_options2).length === 0 || !this.$root.config.layers_options2.hasOwnProperty(slugLayerName)) {
+        return opt;
+      }
+      return this.$root.config.layers_options2[slugLayerName];
     }
   }
 }

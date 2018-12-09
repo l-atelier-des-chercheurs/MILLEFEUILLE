@@ -3,12 +3,14 @@
   >
     <div class="m_svgpattern" ref="patternContainer">
       <svg
-        
         xmlns="http://www.w3.org/2000/svg"
         :width="900"
         :height="900"
         ref="pattern"
-        :class="{ 'has--grid' : grid.enabled && !$root.settings.mode_perspective }"
+        :class="{ 
+          'has--grid' : grid.enabled && !$root.settings.mode_perspective,
+          'is--persp' : $root.settings.mode_perspective
+        }"
       >      
         <g id="shapes" ref="shapes"
         >
@@ -29,7 +31,7 @@
             ></rect>
           </g> -->
 
-          <transition-group name="enableMode" tag="g" :duration="600">
+          <transition-group name="enableLayer" tag="g"  >
             <Calque 
               v-for="(slugLayerName, index) in slugLayersShown" 
               v-if="$root.store.layers.hasOwnProperty(slugLayerName)"
@@ -60,7 +62,7 @@
         <button type="button" class="btn_small" @click="zoom.zoomOut()">-</button>
         <button type="button" class="btn_small" @click="zoom.zoomIn()">+</button>
         <button type="button" class="btn_small" @click="zoom.resetZoom()">RESET</button>
-        <button type="button" class="btn_small" :class="{ 'active' : $root.settings.mode_perspective }"  @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">perspective</button>
+        <button type="button" class="btn_small" :class="{ 'is--active' : $root.settings.mode_perspective }"  @click="$root.settings.mode_perspective = !$root.settings.mode_perspective">perspective</button>
         <button type="button" class="btn_small" :disabled="$root.settings.mode_perspective" :class="{ 'active' : grid.enabled && !$root.settings.mode_perspective }" @click="grid.enabled = !grid.enabled">GRILLE</button>
         <button type="button" class="btn_small" @click="localizeMe()" v-if="!$root.state.is_electron">
           MA POSITION
