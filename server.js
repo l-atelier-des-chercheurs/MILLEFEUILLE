@@ -21,7 +21,6 @@ module.exports = function() {
   var app = express();
   app.use(compression());
 
-  // only for HTTPS, works without asking for a certificate
   const privateKey = fs.readFileSync(
     path.join(__dirname, 'ssl', 'file.pem'),
     'utf8'
@@ -30,12 +29,18 @@ module.exports = function() {
     path.join(__dirname, 'ssl', 'file.crt'),
     'utf8'
   );
-  const options = { key: privateKey, cert: certificate };
+  let options = { key: privateKey, cert: certificate };
 
-  let server =
-    settings.protocol === 'https'
-      ? https.createServer(options, app)
-      : http.createServer(app);
+  if (settings.process === 'node') {
+    options = {
+      key: fs.readFileSync(
+        '/etc/letsencrypt/live/millefeuille.latelier-des-chercheurs.fr/privkey.pem'
+      ),
+      cert: fs.readFileSync(
+        '/etc/letsencrypt/live/millefeuille.latelier-des-chercheurs.fr/cert.pem'
+      )
+    };
+  }
 
   if (settings.protocol === 'https') {
     // redirect from http (port 80) to https (port 443)
@@ -48,6 +53,11 @@ module.exports = function() {
       })
       .listen(80);
   }
+
+  let server =
+    settings.protocol === 'https'
+      ? https.createServer(options, app)
+      : http.createServer(app);
 
   var io = require('socket.io').listen(server);
   dev.logverbose('Starting server 2');
