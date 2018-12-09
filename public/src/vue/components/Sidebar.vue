@@ -38,7 +38,7 @@
                 v-if="$root.store.layers.hasOwnProperty(slugLayerName)"
                 :layer="$root.store.layers[slugLayerName]"
                 :slugLayerName="slugLayerName"
-                :opts2="layer_opts(slugLayerName)"
+                :saved_opts="load_layer_opts(slugLayerName)"
               />
 
               <!-- <Card :type="'section_separator'">
@@ -68,7 +68,7 @@
 
     <div class="m_controller--bottomBar">
 
-      {{ $root.config.layers_options2 }}
+      <!-- {{ $root.config.layers_options2 }} -->
 
       <transition name="slideFromBottom" mode="out-in" :duration="500">
         <div v-if="$root.settings.sidebar.view === 'Layers'"
@@ -223,15 +223,12 @@ export default {
     onDragend(dropResult) {
       this.$root.config.temp_layers_order = [];
     },
-    layer_opts(slugLayerName) {
+    load_layer_opts(slugLayerName) {
       let opt = {};
-      if(Object.keys(this.$root.config.layers_options2).length === 0) {
+      if(Object.keys(this.$root.config.layers_options2).length === 0 || !this.$root.config.layers_options2.hasOwnProperty(slugLayerName)) {
         return opt;
       }
-      Object.keys(this.$root.config.layers_options2)
-        .filter(o => this.$root.config.layers_options2[o].hasOwnProperty(slugLayerName))
-        .map(o => opt[o] = this.$root.config.layers_options2[o][slugLayerName]);
-      return opt;
+      return this.$root.config.layers_options2[slugLayerName];
     }
   }
 }

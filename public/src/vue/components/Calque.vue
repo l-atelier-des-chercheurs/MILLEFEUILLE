@@ -34,57 +34,39 @@
         @mouseleave="$root.settings.highlight_media = ''"
         @click="$root.openMedia({ slugLayerName, metaFileName: media.metaFileName })"
       >
-        <circle cx="0" cy="0" r="2" fill="#ff00ff" />
+        <!-- <circle cx="0" cy="0" r="2" fill="#ff00ff" /> -->
         <g :style="pinStyle()" class="pins--group">
-          <template v-if="pinModePictoMediaType">
-            <template v-if="media.type === 'image'">
-              <rect x="1.8" y="5" class="st0" width="16.4" height="10.7"/>
-              <polygon class="st0" points="14.6,8.8 5.5,8.8 6.8,3.7 13.3,3.7 "/>
-              <circle class="st1" fill="#fff" cx="10" cy="10.4" r="2.6"/>
-            </template>
-            <template v-else-if="media.type === 'video'">
-              <rect x="1.2" y="5.3" class="st0" width="14.2" height="10.3"/>
-              <polygon class="st0" points="18.8,13.8 12,11.6 12,9.2 18.8,7.1 "/>
-              <polygon class="st1" fill="#fff" points="8,7.2 10.9,10.1 8,12.9 "/>
-            </template>
-            <template v-else-if="media.type === 'audio'">
-              <rect x="1.2" y="5.3" class="st0" width="14.2" height="10.3"/>
-              <polygon class="st0" points="18.8,13.8 12,11.6 12,9.2 18.8,7.1 "/>
-              <polygon class="st1" fill="#fff" points="8,7.2 10.9,10.1 8,12.9 "/>
-            </template>
+          <g transform="translate(-10,-20) scale(2)" >
+            <template v-if="pinModePictoMediaType && ['image', 'video', 'audio'].includes(media.type)">
+              <template v-if="media.type === 'image'">
+                <rect x="1.8" y="5" class="st0" width="16.4" height="10.7"/>
+                <polygon class="st0" points="14.6,8.8 5.5,8.8 6.8,3.7 13.3,3.7 "/>
+                <circle class="st1" fill="#fff" cx="10" cy="10.4" r="2.6"/>
+              </template>
+              <template v-else-if="media.type === 'video'">
+                <rect x="1.2" y="5.3" class="st0" width="14.2" height="10.3"/>
+                <polygon class="st0" points="18.8,13.8 12,11.6 12,9.2 18.8,7.1 "/>
+                <polygon class="st1" fill="#fff" points="8,7.2 10.9,10.1 8,12.9 "/>
+              </template>
+              <template v-else-if="media.type === 'audio'">
+                <rect x="1.2" y="5.3" class="st0" width="14.2" height="10.3"/>
+                <polygon class="st0" points="18.8,13.8 12,11.6 12,9.2 18.8,7.1 "/>
+                <polygon class="st1" fill="#fff" points="8,7.2 10.9,10.1 8,12.9 "/>
+              </template>
 
-            
-            <template v-else>
-                <circle cx="0" cy="0" r="1" 
-                />
-                <path 
-                  transform="translate(-10,-20)"
-                  d="M10.292,4.229c-1.487,0-2.691,1.205-2.691,2.691s1.205,2.691,2.691,2.691s2.69-1.205,2.69-2.691
-                          S11.779,4.229,10.292,4.229z M10.292,8.535c-0.892,0-1.615-0.723-1.615-1.615S9.4,5.306,10.292,5.306
-                          c0.891,0,1.614,0.722,1.614,1.614S11.184,8.535,10.292,8.535z M10.292,1C6.725,1,3.834,3.892,3.834,7.458
-                          c0,3.567,6.458,10.764,6.458,10.764s6.458-7.196,6.458-10.764C16.75,3.892,13.859,1,10.292,1z M4.91,7.525
-                          c0-3.009,2.41-5.449,5.382-5.449c2.971,0,5.381,2.44,5.381,5.449s-5.381,9.082-5.381,9.082S4.91,10.535,4.91,7.525z" />
+              <!-- <foreignObject x="-10" y="-10" width="20" height="20">
+                <div xmlns="http://www.w3.org/1999/xhtml"
+                  :style="`--main-value: ${Math.random() * 10}px`"
+                >
+                  {{ media.value }}
+                </div>
+              </foreignObject> -->
             </template>
-
-            <!-- <foreignObject x="-10" y="-10" width="20" height="20">
-              <div xmlns="http://www.w3.org/1999/xhtml"
-                :style="`--main-value: ${Math.random() * 10}px`"
-              >
-                {{ media.value }}
-              </div>
-            </foreignObject> -->
-          </template>
-          <template v-else>
-              <circle cx="0" cy="-3" r="2" 
-                fill="#000"
-              />
-              <path 
-                transform="translate(-10,-10)"
-                fill="#000"              
-                d="M6.5,7.5c-0.9,0-1.6-0.7-1.6-1.6s0.7-1.6,1.6-1.6c0.9,0,1.6,0.7,1.6,1.6S7.3,7.5,6.5,7.5z M6.5,0C2.9,0,0,2.9,0,6.5
-	C0,10,6.5,17.2,6.5,17.2s6.5-7.2,6.5-10.8C12.9,2.9,10,0,6.5,0z"/>
-              
-          </template>
+            <template v-else>              
+              <path d="M5,4.4c-0.5,0-0.8-0.4-0.8-0.8S4.5,2.8,5,2.8c0.5,0,0.8,0.4,0.8,0.8S5.5,4.4,5,4.4z M5,0.5C3.1,0.5,1.6,2,1.6,3.9
+	C1.6,5.7,5,9.5,5,9.5s3.4-3.8,3.4-5.6C8.4,2,6.9,0.5,5,0.5z"/>
+            </template>
+          </g>
         </g>
       </g>
 
@@ -128,7 +110,11 @@ export default {
   },
   computed: {
     pinColor() {
-      return this.$root.config_getLayerOption(this.slugLayerName, 'pin_color');      
+      const pin_color = this.$root.config_getLayerOption(this.slugLayerName, 'pin_color');
+      if(!!pin_color) {
+        return pin_color
+      }
+      return '#ff2719';      
     },
     background_res() {
       return this.$root.settings.sidebar.view === 'Layers' ? 1400 : 2200

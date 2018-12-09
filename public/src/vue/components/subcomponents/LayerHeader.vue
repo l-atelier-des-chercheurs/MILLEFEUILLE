@@ -1,16 +1,16 @@
 <template>
   <div class="card draggable-item margin-sides-small padding-small"
-    :class="{ 'is--visible' : opts.visibility }" 
+    :class="{ 'is--visible' : values.visibility }" 
   >
     <div class="card--header card--header_layer cursor-pointer"
       @click="$root.openLayer(slugLayerName)"
     >
-      <span class="column-drag-handle" @mouseup.stop="" v-if="opts.visibility">
+      <span class="column-drag-handle" @mouseup.stop="" v-if="values.visibility">
         &#x2630;
       </span>
       <button type="button" class="visibility_picto"
-        @click.stop="opts.visibility = !opts.visibility" 
-        :class="{ 'is--active' : opts.visibility }" 
+        @click.stop="values.visibility = !values.visibility" 
+        :class="{ 'is--active' : values.visibility }" 
       > 
         <img v-if="$root.previewURL(layer,50)" :src="$root.previewURL(layer,50)" />
         <svg 
@@ -30,83 +30,181 @@
         ►
       </button>
     </div>
-    <div class="m_layeredit " v-if="opts.visibility">
+    <div class="m_layeredit " v-if="values.visibility">
       <span class="switch switch-verysmall">
-        <input type="checkbox" class="switch" :id="`editlayer_${slugLayerName}`" v-model="opts.editing">
+        <input type="checkbox" class="switch" :id="`editlayer_${slugLayerName}`" v-model="values.editing">
         <label :for="`editlayer_${slugLayerName}`">mise en forme</label>
       </span>
 
-      <template v-if="opts.editing">
+      <template v-if="values.editing">
 <!-- Opacity -->
-        <div 
-          class="margin-bottom-small" 
+        <Card 
+          :variable="options.opacity"
+          v-model="values.opacity"
         >
-          <label>{{ $t('opacity') }}</label><br>
-          <input type="range" min="10" max="100" v-model="opts.opacity" :readonly="read_only">
-        </div>
+        </Card>
 
   <!-- Mode de fusion -->
-        <div 
-          class="margin-bottom-small" 
+        <Card 
+          :variable="options.fusion_mode"
+          v-model="values.fusion_mode"
         >
-          <label>
-            {{ $t('fusion_mode') }}<br>
-          </label>
-          <select v-model="opts.fusion_mode">
-            <option v-for="opt in 'normal | multiply | screen | overlay | darken | lighten | color-dodge | color-burn | hard-light | soft-light | difference | exclusion | hue | saturation | color | luminosity'.split(' | ')" 
-              :value="opt" 
-              :key="opt"
-            >
-              {{ opt }}
-            </option>
-          </select>          
-        </div>
+        </Card>
 
 <!-- pin_mode_media_type -->
-        <div 
-          class="margin-bottom-small" 
+        <Card 
+          :variable="options.pin_type"
+          v-model="values.pin_type"
         >
-          <label>{{ $t('pin_mode_media_type') }}</label><br>
-          <input type="checkbox" v-model="opts.pin_mode_media_type" :readonly="read_only">
-        </div>
+        </Card>
 
 <!-- pin_color -->
-        <div 
-          class="margin-bottom-small" 
+        <Card 
+          :variable="options.pin_color"
+          v-model="values.pin_color"
         >
-          <label>{{ $t('pin_mode_media_type') }}</label><br>
-          <input type="color" v-model="opts.pin_color" :readonly="read_only">
-        </div>
+        </Card>
       </template>
     </div>
-    {{ opts2 }}
 
   </div>
 </template>
 <script>
+import Card from './Card.vue';
 
 
 export default {
   props: {
     layer: Object,
     slugLayerName: String,
-    opts2: {
+    saved_opts: {
       type: Object,
       default: {}
     }
   },
   components: {
+    Card
   },
   data() {
     return {
-      opts: this.opts2
+      values: {
+        visibility: false,
+        editing: false,
+        opacity: 100,
+        fusion_mode: 'normal',
+        pin_type: 'icon',
+        pin_color: '#000'
+      },
+      options: {
+        opacity: {
+          label: 'Opacité',
+          default: 100,
+          min: 0,
+          max: 100,
+          field_type: 'slider'            
+        },
+        fusion_mode: {
+          label: 'Mode de fusion',
+          default: 'normal',
+          field_type: 'select',
+          field_options: [
+            { 
+              key: 'normal',
+              name: 'normal'
+            },
+            
+            { 
+              key: 'multiply',
+              name: 'produit'
+            },
+            {
+              key: 'screen',
+              name: 'écran'
+            },
+            {
+              key: 'overlay',
+              name: 'incrustation'
+            },
+            {
+              key: 'darken',
+              name: 'obscurcir'
+            },
+            {
+              key: 'lighten',
+              name: 'éclaircir'
+            },
+            {
+              key: 'color-dodge',
+              name: 'densité des couleurs -'
+            },
+            {
+              key: 'color-burn',
+              name: 'densité des couleurs +'
+            },
+            {
+              key: 'hard-light',
+              name: 'lumière forte'
+            },
+            {
+              key: 'soft-light',
+              name: 'lumière tamisée'
+            },
+            {
+              key: 'difference',
+              name: 'différence'
+            },
+            {
+              key: 'exclusion',
+              name: 'exclusion'
+            },
+            {
+              key: 'hue',
+              name: 'teinte'
+            },
+            {
+              key: 'saturation',
+              name: 'saturation'
+            },
+            {
+              key: 'color',
+              name: 'couleurs'
+            },
+            {
+              key: 'luminosity',
+              name: 'luminosité'
+            }
+          ]
+
+        },
+        pin_type: {
+          label: 'pin_mode_media_type',
+          default: 'pins',
+          field_type: 'select',
+          field_options: [
+            { 
+              key: 'pins',
+              name: 'pins'
+            },
+            { 
+              key: 'medias',
+              name: 'type de médias'
+            },            
+          ]
+        },
+        pin_color: {
+          label: 'Colour',
+          field_type: 'color',
+          default: '#ff2719'              
+        }
+
+      }
     }
   },
   
   created() {
-    Object.keys(this.opts).map(type => {
-      if(!!this.$root.config_getLayerOption(this.slugLayerName, type)) {
-        this.opts[type] = this.$root.config_getLayerOption(this.slugLayerName, type);
+    Object.keys(this.values).map(type => {
+      if(this.saved_opts.hasOwnProperty(type)) {
+        this.values[type] = this.saved_opts[type];
       }
     })
   },
@@ -125,12 +223,26 @@ export default {
         })
       },
       deep: true,
+    },
+    'saved_opts': {
+      handler(val, oldVal) {
+        if(Object.keys(this.saved_opts).length === 0) {
+          this.values = {
+            visibility: false,
+            editing: false,
+            opacity: 100,
+            fusion_mode: 'normal',
+            pin_type: 'icon',
+            pin_color: '#000'
+          }
+        }
+      },
     }
   },
   computed: {
     // watch the entire as a new object
     computedOptions: function() {
-        return Object.assign({}, this.opts);
+        return Object.assign({}, this.values);
     }
   },
   methods: {

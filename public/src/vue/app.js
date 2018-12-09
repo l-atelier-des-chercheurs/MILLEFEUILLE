@@ -543,7 +543,6 @@ let vm = new Vue({
         if (Object.keys(localConfig).length > 0) {
           this.config.layers_options2 = localConfig;
         }
-        debugger;
       }
     }
 
@@ -609,7 +608,6 @@ let vm = new Vue({
     },
     'config.layers_options2': {
       handler() {
-        debugger;
         localStorage.setItem(
           'config.layers_options2',
           JSON.stringify(this.config.layers_options2)
@@ -1132,21 +1130,21 @@ let vm = new Vue({
           slugFolderName: slugLayerName
         });
       }
-      if (!this.config.layers_options2.hasOwnProperty(type)) {
-        this.$set(this.config.layers_options2, type, {});
+      if (!this.config.layers_options2.hasOwnProperty(slugLayerName)) {
+        this.$set(this.config.layers_options2, slugLayerName, {});
       }
-      if (!this.config.layers_options2[type].hasOwnProperty(slugLayerName)) {
-        this.$set(this.config.layers_options2[type], slugLayerName, value);
+      if (!this.config.layers_options2[slugLayerName].hasOwnProperty(type)) {
+        this.$set(this.config.layers_options2[slugLayerName], type, value);
         return;
       }
-      this.config.layers_options2[type][slugLayerName] = value;
+      this.config.layers_options2[slugLayerName][type] = value;
     },
     config_getLayerOption(slugLayerName, type) {
       if (
-        this.config.layers_options2.hasOwnProperty(type) &&
-        this.config.layers_options2[type].hasOwnProperty(slugLayerName)
+        this.config.layers_options2.hasOwnProperty(slugLayerName) &&
+        this.config.layers_options2[slugLayerName].hasOwnProperty(type)
       ) {
-        return this.config.layers_options2[type][slugLayerName];
+        return this.config.layers_options2[slugLayerName][type];
       }
       return;
     }
