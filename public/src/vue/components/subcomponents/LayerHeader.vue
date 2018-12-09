@@ -92,7 +92,7 @@ export default {
         editing: false,
         opacity: 100,
         fusion_mode: 'normal',
-        pin_type: 'icon',
+        pin_type: 'pins',
         pin_color: '#000'
       },
       options: {

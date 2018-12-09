@@ -29,15 +29,16 @@
         :key="key"      
         class="pins"
         :fill="pinColor"
+        :stroke="pinColor"
         :class="[media.type, { 'is--highlighted' : media.metaFileName === $root.settings.highlight_media || media.metaFileName === $root.media_modal.current_metaFileName }]"
         @mouseover="$root.settings.highlight_media = media.metaFileName"
         @mouseleave="$root.settings.highlight_media = ''"
         @click="$root.openMedia({ slugLayerName, metaFileName: media.metaFileName })"
       >
-        <!-- <circle cx="0" cy="0" r="2" fill="#ff00ff" /> -->
-        <g :style="pinStyle()" class="pins--group">
-          <g transform="translate(-10,-20) scale(2)" >
-            <template v-if="pinModePictoMediaType && ['image', 'video', 'audio'].includes(media.type)">
+        <circle cx="0" cy="0" r="2" fill="transparent" stroke-width="2" />
+        <g :style="pinStyle()" class="pins--group" stroke-width="0">
+          <template v-if="pin_mode === 'medias' && ['image', 'video', 'audio'].includes(media.type)">
+            <g transform="translate(-10,-15) scale(1)">
               <template v-if="media.type === 'image'">
                 <rect x="1.8" y="5" class="st0" width="16.4" height="10.7"/>
                 <polygon class="st0" points="14.6,8.8 5.5,8.8 6.8,3.7 13.3,3.7 "/>
@@ -61,12 +62,14 @@
                   {{ media.value }}
                 </div>
               </foreignObject> -->
-            </template>
-            <template v-else>              
+            </g>
+          </template>
+          <template v-else>              
+            <g transform="translate(-10,-19) scale(2)">
               <path d="M5,4.4c-0.5,0-0.8-0.4-0.8-0.8S4.5,2.8,5,2.8c0.5,0,0.8,0.4,0.8,0.8S5.5,4.4,5,4.4z M5,0.5C3.1,0.5,1.6,2,1.6,3.9
 	C1.6,5.7,5,9.5,5,9.5s3.4-3.8,3.4-5.6C8.4,2,6.9,0.5,5,0.5z"/>
-            </template>
-          </g>
+            </g>
+          </template>
         </g>
       </g>
 
@@ -119,8 +122,8 @@ export default {
     background_res() {
       return this.$root.settings.sidebar.view === 'Layers' ? 1400 : 2200
     },
-    pinModePictoMediaType() {
-      return true;
+    pin_mode() {
+      return this.$root.config_getLayerOption(this.slugLayerName, 'pin_type');
     }
   },
   methods: {

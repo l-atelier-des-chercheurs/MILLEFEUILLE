@@ -76,7 +76,7 @@
         >
           <div class="margin-bottom-verysmall" v-if="Object.keys(this.$root.config.layers_options2).length > 0 || this.$root.config.layers_order.length > 0">
             <button type="button" class="btn_small bg-transparent " @click="$root.resetConfig()">
-              RESET MISE EN FORME
+              RESET
             </button>
           </div>
 
