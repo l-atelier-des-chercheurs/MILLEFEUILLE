@@ -21,18 +21,21 @@
         </p>
       </div>
       <div class="">
-        <label class="">{{ $t('background_map') }}
-            <a 
-              :download="`fond_de_carte-${slugLayerName}.jpeg`" 
-              :href="previewURL" 
-              :title="`fond_de_carte-${slugLayerName}.jpeg`" 
-              target="_blank"
-              class="buttonLink"
-              :disabled="read_only"
-            >
-              {{ $t('download') }}
-            </a>
-          </label><br>
+        <label class="">
+          {{ $t('background_map') }} : 
+          <a 
+            v-if="layer.hasOwnProperty('preview')"
+            :download="`fond_de_carte-${slugLayerName}.jpeg`" 
+            :href="previewURL" 
+            :title="`fond_de_carte-${slugLayerName}.jpeg`" 
+            target="_blank"
+            class="buttonLink margin-none padding-none"
+            :disabled="read_only"
+          >
+            {{ $t('download') }}
+          </a>
+          
+        </label><br>
         <template v-if="layer.hasOwnProperty('preview')">
           <div class="overlay_img_and_link">
             <img :src="$root.previewURL(layer, 400)" class="bg_img">
@@ -43,8 +46,21 @@
         </template>
       </div>
     </div>
-    <div class="padding-sides-small " style="border-bottom: 1px solid #b9b9b9; text-align: center; ">
-      <div class="margin-bottom-small">
+    <div v-if="!!layer.keywords" class="margin-vert-verysmall">
+      <label class="">{{ $t('keywords') }}</label>    
+      <div class="m_keywordField">
+        <span 
+          v-for="keyword in layer.keywords" 
+          :key="keyword.title"
+          :class="['tagcolorid_' + parseInt(keyword.title, 36)%2, { 'is--active' : $root.settings.layer_filter.keyword === keyword.title }]"
+        >
+          {{ keyword.title }}
+        </span>
+      </div>
+    </div>
+
+    <div class="padding-sides-small " style="text-align: center; ">
+      <div class="">
         <button type="button" class="buttonLink " @click="showEditLayerModal = true" :disabled="!$root.state.connected">
           {{ $t('edit_layer') }}
         </button>

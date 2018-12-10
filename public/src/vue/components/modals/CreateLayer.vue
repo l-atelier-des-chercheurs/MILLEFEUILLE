@@ -26,7 +26,6 @@
         />
       </div>
 
-
 <!-- Description -->
       <div 
         class="margin-bottom-small" 
@@ -36,6 +35,12 @@
         </textarea>
       </div>
 
+<!-- Keywords -->
+      <div class="margin-bottom-small">
+        <label>{{ $t('keywords') }}<br>
+        *<small>{{ $t('validate_with_enter') }}</small></label>        
+        <TagsInput @tagsChanged="newTags => layerdata.keywords = newTags"/>
+      </div>
 
 <!-- Password -->
       <!-- <div class="margin-bottom-small">
@@ -78,7 +83,8 @@ export default {
       layerdata: {
         name: '',
         password: '',
-        description: ''
+        description: '',
+        keywords: []
       },
       preview: undefined,
       askBeforeClosingModal: false

@@ -63,13 +63,13 @@
               {{ $t('media') }}
               <span v-if="media.hasOwnProperty('type')">
                 / {{ media.type }}
-              </span>  
+              </span> : 
               <a 
                 :download="media.media_filename" 
                 :href="mediaURL" 
                 :title="media.media_filename" 
                 target="_blank"
-                class="buttonLink hide_on_print margin-bottom-none"
+                class="buttonLink margin-none padding-none"
                 :disabled="read_only"
                 >
                 {{ $t('download') }}
