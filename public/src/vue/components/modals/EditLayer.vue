@@ -39,6 +39,16 @@
         </ImageSelect>
       </div>
 
+<!-- Keywords -->
+      <div class="margin-bottom-small">
+        <label>{{ $t('keywords') }}<br>
+        *<small>{{ $t('validate_with_enter') }}</small></label>
+        <TagsInput 
+          :keywords="layerdata.keywords"
+          @tagsChanged="newTags => layerdata.keywords = newTags"
+        />
+      </div>
+
 <!-- Password -->
 <!--
       <div class="margin-bottom-small">
@@ -97,7 +107,7 @@ export default {
     return {
       layerdata: {
         name: this.layer.name,
-        // keywords: this.layer.keywords
+        keywords: this.layer.keywords,
         description: this.layer.description
       },
       tag: '',

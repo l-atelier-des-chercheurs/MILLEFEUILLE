@@ -30,6 +30,18 @@
         ►
       </button>
     </div>
+    <div class="margin-vert-verysmall">
+      <div class="m_keywordField">
+        <span 
+          v-for="keyword in layer.keywords" 
+          :key="keyword.title"
+          :class="['tagcolorid_' + parseInt(keyword.title, 36)%2, { 'is--active' : $root.settings.layer_filter.keyword === keyword.title }]"
+        >
+          {{ keyword.title }}
+        </span>
+      </div>
+    </div>
+
     <div class="m_layeredit " v-if="values.visibility">
       <span class="switch switch-verysmall">
         <input type="checkbox" class="switch" :id="`editlayer_${slugLayerName}`" v-model="values.editing">

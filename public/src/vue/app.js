@@ -459,6 +459,10 @@ let vm = new Vue({
       perspective_stretch: 100,
 
       highlight_media: '',
+      layer_filter: {
+        keyword: false,
+        author: false
+      },
 
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth
@@ -547,7 +551,19 @@ let vm = new Vue({
     }
 
     this.$eventHub.$on(`socketio.layers.folders_listed`, () => {
-      this.loadVisibleLayersMedias();
+      this.$nextTick(() => {
+        debugger;
+        if (
+          this.sortedLayersSlugs.filter(
+            s => this.config_getLayerOption(s, 'visibility') === true
+          ).length < 3
+        ) {
+          this.sortedLayersSlugs
+            .slice(0, 3)
+            .map(s => this.config_setLayerOption(s, 'visibility', true));
+        }
+        this.loadVisibleLayersMedias();
+      });
     });
 
     /* à la connexion/reconnexion, détecter si un projet ou une publi sont ouverts 
@@ -732,6 +748,27 @@ let vm = new Vue({
       //   accumulator.push(sortedMediaObj);
       //   return accumulator;
       // }, []);
+    },
+    allKeywords() {
+      let allKeywords = [];
+      for (let slugLayerName in this.store.projects) {
+        let layerKeywords = this.store.projects[slugLayerName].keywords;
+        if (!!layerKeywords) {
+          layerKeywords.map(val => {
+            allKeywords.push(val.title);
+          });
+        }
+      }
+      allKeywords = allKeywords.filter(function(item, pos) {
+        return allKeywords.indexOf(item) == pos;
+      });
+
+      return allKeywords.map(kw => {
+        return {
+          text: kw,
+          classes: 'tagcolorid_' + (parseInt(kw, 36) % 2)
+        };
+      });
     }
   },
   methods: {
@@ -869,17 +906,17 @@ let vm = new Vue({
       this.media_modal.current_metaFileName = false;
     },
     setProjectKeywordFilter(newKeywordFilter) {
-      if (this.settings.project_filter.keyword !== newKeywordFilter) {
-        this.settings.project_filter.keyword = newKeywordFilter;
+      if (this.settings.layer_filter.keyword !== newKeywordFilter) {
+        this.settings.layer_filter.keyword = newKeywordFilter;
       } else {
-        this.settings.project_filter.keyword = false;
+        this.settings.layer_filter.keyword = false;
       }
     },
     setProjectAuthorFilter(newAuthorFilter) {
-      if (this.settings.project_filter.author !== newAuthorFilter) {
-        this.settings.project_filter.author = newAuthorFilter;
+      if (this.settings.layer_filter.author !== newAuthorFilter) {
+        this.settings.layer_filter.author = newAuthorFilter;
       } else {
-        this.settings.project_filter.author = false;
+        this.settings.layer_filter.author = false;
       }
     },
     setMediaKeywordFilter(newKeywordFilter) {
