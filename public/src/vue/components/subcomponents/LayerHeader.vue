@@ -85,6 +85,15 @@
 import Card from './Card.vue';
 
 
+const default_values = {
+  visibility: false,
+  editing: false,
+  opacity: 100,
+  fusion_mode: 'normal',
+  pin_type: 'pins',
+  pin_color: '#000'  
+}
+
 export default {
   props: {
     layer: Object,
@@ -99,24 +108,17 @@ export default {
   },
   data() {
     return {
-      values: {
-        visibility: false,
-        editing: false,
-        opacity: 100,
-        fusion_mode: 'normal',
-        pin_type: 'pins',
-        pin_color: '#000'
-      },
+      values: Object.assign({}, default_values),
       options: {
         opacity: {
-          label: 'Opacité',
+          label: this.$t('opacity'),
           default: 100,
           min: 0,
           max: 100,
           field_type: 'slider'            
         },
         fusion_mode: {
-          label: 'Mode de fusion',
+          label: this.$t('fusion_mode'),
           default: 'normal',
           field_type: 'select',
           field_options: [
@@ -189,7 +191,7 @@ export default {
 
         },
         pin_type: {
-          label: 'pin_mode_media_type',
+          label: this.$t('pin_mode_media_type'),
           default: 'pins',
           field_type: 'select',
           field_options: [
@@ -204,7 +206,7 @@ export default {
           ]
         },
         pin_color: {
-          label: 'Colour',
+          label: this.$t('color'),
           field_type: 'color',
           default: '#ff2719'              
         }
@@ -239,14 +241,7 @@ export default {
     'saved_opts': {
       handler(val, oldVal) {
         if(Object.keys(this.saved_opts).length === 0) {
-          this.values = {
-            visibility: false,
-            editing: false,
-            opacity: 100,
-            fusion_mode: 'normal',
-            pin_type: 'icon',
-            pin_color: '#000'
-          }
+          this.values = default_values;
         }
       },
     }

@@ -31,6 +31,7 @@ module.exports = (function() {
       optional: 'optionnel',
       opacity: 'opacité',
       fusion_mode: 'mode de fusion',
+      pin_mode_media_type: 'icônes des pins',
 
       create_a_layer: 'Créer un calque',
       layer_list: 'Liste des calques',
@@ -304,6 +305,7 @@ module.exports = (function() {
       optional: 'optional',
       opacity: 'opacity',
       fusion_mode: 'fusion mode',
+      pin_mode_media_type: 'pins icon',
 
       create_a_layer: 'Create a layer',
       layer_list: 'Layer’s list',
