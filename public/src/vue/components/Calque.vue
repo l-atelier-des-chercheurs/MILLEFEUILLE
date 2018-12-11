@@ -38,7 +38,7 @@
         <circle cx="0" cy="0" r="2" fill="transparent" stroke-width="2" />
         <g :style="pinStyle()" class="pins--group" stroke-width="0">
           <template v-if="pin_mode === 'medias' && ['image', 'video', 'audio'].includes(media.type)">
-            <g transform="translate(-10,-15) scale(1)">
+            <g transform="translate(-10,-20) scale(1)">
               <template v-if="media.type === 'image'">
                 <rect x="1.8" y="5" class="st0" width="16.4" height="10.7"/>
                 <polygon class="st0" points="14.6,8.8 5.5,8.8 6.8,3.7 13.3,3.7 "/>
