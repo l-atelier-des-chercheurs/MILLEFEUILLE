@@ -230,20 +230,38 @@ export default {
   },
 
   watch: {
-    'computedOptions': {
-      handler(val, oldVal) {
-        Object.keys(val).map(v => {
-          if(oldVal.hasOwnProperty(v) && val[v] !== oldVal[v]) {
-            this.$root.config_setLayerOption(this.slugLayerName, v, val[v]);
-          }
-        })
-      },
-      deep: true,
+
+  // visibility: false,
+  // editing: false,
+  // opacity: 100,
+  // fusion_mode: 'normal',
+  // pin_type: 'pins',
+  // pin_color: '#000'  
+
+    'values.visibility': function() {
+      debugger;
+      this.$root.config_setLayerOption(this.slugLayerName, 'visibility', this.values.visibility);
     },
+    'values.editing': function() {
+      this.$root.config_setLayerOption(this.slugLayerName, 'editing', this.values.editing);
+    },
+    'values.opacity': function() {
+      this.$root.config_setLayerOption(this.slugLayerName, 'opacity', this.values.opacity);
+    },
+    'values.fusion_mode': function() {
+      this.$root.config_setLayerOption(this.slugLayerName, 'fusion_mode', this.values.fusion_mode);
+    },
+    'values.pin_type': function() {
+      this.$root.config_setLayerOption(this.slugLayerName, 'pin_type', this.values.pin_type);
+    },
+    'values.pin_color': function() {
+      this.$root.config_setLayerOption(this.slugLayerName, 'pin_color', this.values.pin_color);
+    },
+
     'saved_opts': {
       handler(val, oldVal) {
         if(Object.keys(this.saved_opts).length === 0) {
-          this.values = default_values;
+          this.values = Object.assign({}, default_values);
         }
       },
     }

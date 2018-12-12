@@ -115,7 +115,6 @@
           <button
             class="buttonLink padding-verysmall"
             @click="$root.openMedia({ slugLayerName, metaFileName: media.metaFileName })"
-            :disabled="!$root.state.connected"
             :key="'createButton'"
           >
             <span>

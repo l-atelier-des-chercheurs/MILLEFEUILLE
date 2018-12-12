@@ -566,7 +566,6 @@ let vm = new Vue({
 
     this.$eventHub.$on(`socketio.layers.folders_listed`, () => {
       this.$nextTick(() => {
-        debugger;
         if (
           this.sortedLayersSlugs.filter(
             s => this.config_getLayerOption(s, 'visibility') === true
@@ -1173,7 +1172,14 @@ let vm = new Vue({
       return this.$moment(date, 'YYYY-MM-DD HH:mm:ss').format('LL');
     },
     config_setLayerOption(slugLayerName, type, value) {
-      console.log('config_setLayerOption');
+      console.log(
+        'config_setLayerOption for ' +
+          slugLayerName +
+          ' for type ' +
+          type +
+          ' with value ' +
+          value
+      );
 
       if (type === 'visibility' && value === true) {
         this.$socketio.listMedias({
