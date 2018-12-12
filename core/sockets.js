@@ -26,6 +26,10 @@ module.exports = (function() {
     io = thisIO;
 
     io.on('connection', function(socket) {
+      if (global.hasOwnProperty('mode') && global.mode === 'read_only') {
+        return;
+      }
+
       var onevent = socket.onevent;
       socket.onevent = function(packet) {
         var args = packet.data || [];

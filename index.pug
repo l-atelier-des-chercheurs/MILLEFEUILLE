@@ -28,13 +28,14 @@ html
     script.
       /* store contains content data */
       window.store = {
-        layers: {}
+        layers: !{ !!foldersAndMediaData ? JSON.stringify(foldersAndMediaData) : "{}" },
       };
 
       /* state contains settings data, time and client specific data */
       window.state = {
         appVersion: "!{global.appInfos.version}",
         session_password: "!{global.session_password}",
+        read_only: "!{global.read_only}",
         authorsFolder: "!{authorsFolder}",
         protocol: "!{protocol}",
         connected: false,

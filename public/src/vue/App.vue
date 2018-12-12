@@ -2,7 +2,7 @@
   <div style="display: flex;
     flex-flow: column nowrap;
     height: 100%;">
-    <div class="m_statusbar" v-if="!$root.state.connected">
+    <div class="m_statusbar" v-if="!$root.state.connected && $root.state.mode === 'live'">
       {{ $t('notifications.connection_lost') }} {{ $t('notifications.contents_wont_be_editable') }}      
     </div>    
     <div class="flex-sidebyside">
