@@ -163,8 +163,6 @@
       :read_only="!$root.state.connected"
     />
 
-    <portal-target name="modal_container" />
-
   </div>
 </template>
 
