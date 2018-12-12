@@ -353,73 +353,87 @@ module.exports = (function() {
           });
         });
       });
+    },
+
+    getFolderAndMedia({ slugFolderName, type }) {
+      return new Promise((resolve, reject) => {
+        let folder_and_medias = {};
+        dev.logfunction('EXPORTER — getFolderAndMedia');
+        file
+          .getFolder({
+            type,
+            slugFolderName
+          })
+          .then(folderData => {
+            folder_and_medias = folderData;
+            file
+              .getMediaMetaNames({
+                type,
+                slugFolderName
+              })
+              .then(list_metaFileName => {
+                let medias_list = list_metaFileName.map(metaFileName => {
+                  return {
+                    slugFolderName,
+                    metaFileName
+                  };
+                });
+                file
+                  .readMediaList({
+                    type,
+                    medias_list
+                  })
+                  .then(folder_medias => {
+                    dev.logverbose(`Got medias`);
+                    if (
+                      folder_and_medias.hasOwnProperty(slugFolderName) &&
+                      folder_medias.hasOwnProperty(slugFolderName)
+                    ) {
+                      folder_and_medias[slugFolderName].medias =
+                        folder_medias[slugFolderName].medias;
+                    }
+                    resolve(folder_and_medias);
+                  });
+              });
+          });
+      });
     }
   };
 
   function loadPublication(slugPubliName, pageData) {
     return new Promise((resolve, reject) => {
+      dev.logfunction('EXPORTER — loadPublication');
       let slugFolderName = slugPubliName;
       let type = 'publications';
 
       let publi_and_medias = {};
 
       // get publication
-      file
-        .getFolder({
-          type,
-          slugFolderName
-        })
-        .then(publiData => {
-          publi_and_medias = publiData;
-          file
-            .getMediaMetaNames({
-              type,
-              slugFolderName
-            })
-            .then(list_metaFileName => {
-              let medias_list = list_metaFileName.map(metaFileName => {
-                return {
-                  slugFolderName,
-                  metaFileName
-                };
-              });
-              file
-                .readMediaList({
-                  type,
-                  medias_list
-                })
-                .then(publi_medias => {
-                  dev.logverbose(
-                    `Got medias, now sending to the right clients`
-                  );
-                  publi_and_medias[slugFolderName].medias =
-                    publi_medias[slugFolderName].medias;
-                  pageData.publiAndMediaData = publi_and_medias;
+      getFolderAndMedia({ slugFolderName, type }).then(publi_and_medias => {
+        pageData.publiAndMediaData = publi_and_medias;
 
-                  // we need to get the list of original medias in the publi
-                  var list_of_linked_medias = [];
+        // we need to get the list of original medias in the publi
+        var list_of_linked_medias = [];
 
-                  Object.entries(publi_medias[slugFolderName].medias).forEach(
-                    ([key, value]) => {
-                      list_of_linked_medias.push({
-                        slugFolderName: value.slugProjectName,
-                        metaFileName: value.slugMediaName
-                      });
-                    }
-                  );
-
-                  file
-                    .readMediaList({
-                      type: 'projects',
-                      medias_list: list_of_linked_medias
-                    })
-                    .then(folders_and_medias => {
-                      pageData.folderAndMediaData = folders_and_medias;
-                      resolve(pageData);
-                    });
-                });
+        Object.entries(publi_medias[slugFolderName].medias).forEach(
+          ([key, value]) => {
+            list_of_linked_medias.push({
+              slugFolderName: value.slugProjectName,
+              metaFileName: value.slugMediaName
             });
-        });
+          }
+        );
+
+        file
+          .readMediaList({
+            type: 'projects',
+            medias_list: list_of_linked_medias
+          })
+          .then(folders_and_medias => {
+            pageData.folderAndMediaData = folders_and_medias;
+            resolve(pageData);
+          });
+      });
     });
   }
 })();

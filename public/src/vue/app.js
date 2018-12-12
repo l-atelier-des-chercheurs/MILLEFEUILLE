@@ -144,6 +144,7 @@ Vue.prototype.$socketio = new Vue({
     },
 
     sendAuth() {
+      if (!this.socket) return;
       let admin_access = auth.getAdminAccess();
       console.log(
         `Asking for auth with ${JSON.stringify(admin_access, null, 4)}`
@@ -365,43 +366,56 @@ Vue.prototype.$socketio = new Vue({
       }
     },
     listFolders(fdata) {
+      if (!this.socket) return;
       this.socket.emit('listFolders', fdata);
     },
     listFolder(fdata) {
+      if (!this.socket) return;
       this.socket.emit('listFolder', fdata);
     },
     createFolder(fdata) {
+      if (!this.socket) return;
       this.socket.emit('createFolder', fdata);
     },
     editFolder(fdata) {
+      if (!this.socket) return;
       this.socket.emit('editFolder', fdata);
     },
     removeFolder(fdata) {
+      if (!this.socket) return;
       this.socket.emit('removeFolder', fdata);
     },
 
     listMedias(mdata) {
+      if (!this.socket) return;
       this.socket.emit('listMedias', mdata);
     },
     createMedia(mdata) {
+      if (!this.socket) return;
       this.socket.emit('createMedia', mdata);
     },
     editMedia(mdata) {
+      if (!this.socket) return;
       this.socket.emit('editMedia', mdata);
     },
     removeMedia(mdata) {
+      if (!this.socket) return;
       this.socket.emit('removeMedia', mdata);
     },
     listSpecificMedias(mdata) {
+      if (!this.socket) return;
       this.socket.emit('listSpecificMedias', mdata);
     },
     downloadPubliPDF(pdata) {
+      if (!this.socket) return;
       this.socket.emit('downloadPubliPDF', pdata);
     },
     downloadVideoPubli(pdata) {
+      if (!this.socket) return;
       this.socket.emit('downloadVideoPubli', pdata);
     },
     updateNetworkInfos() {
+      if (!this.socket) return;
       this.socket.emit('updateNetworkInfos');
     }
   }

@@ -6,7 +6,20 @@
         <small class="margin-none">
           • workshop «&nbsp;données situées et cartographie sensible&nbsp;»<br>
           ~ version v0.1
-        </small>       
+        </small>
+        <br>    
+        <button type="button" class="buttonLink margin-left-none padding-left-none"
+          @click="showCreditsModal = true"
+        >
+          crédits
+        </button>
+
+        <Credits
+          v-if="showCreditsModal"
+          @close="showCreditsModal = false"
+          :read_only="!$root.state.connected"
+        />
+
       </div>
       <!-- <div class="mode_switcher border-bottom">
         <label for="image" class="padding-vert-small padding-sides-medium">
@@ -164,6 +177,7 @@ import CreateMediaFromCSV from './modals/CreateMediaFromCSV.vue';
 import LayerPanel from './subcomponents/LayerPanel.vue';
 import EditMedia from './modals/EditMedia.vue'
 import LayerHeader from './subcomponents/LayerHeader.vue';
+import Credits from './modals/Credits.vue'
 
 const applyDrag = (arr, dragResult) => {
   const { removedIndex, addedIndex, payload } = dragResult
@@ -194,13 +208,15 @@ export default {
     CreateMedia,
     CreateMediaFromCSV,
     EditMedia,
-    LayerHeader
+    LayerHeader,
+    Credits
   },
   data () {
     return {
       showCreateLayerModal: false,
       showCreateMediaModal: false,      
-      showCreateMediaFromCSVModal: false
+      showCreateMediaFromCSVModal: false,
+      showCreditsModal: false
     }
   },
   computed: {

@@ -46,7 +46,11 @@ module.exports = function(app, io, m) {
       // pageData.authorsFolder = settings.structure.authors.path;
       pageData.isDebug = dev.isDebug();
 
-      pageData.mode = 'live';
+      if (global.hasOwnProperty('mode')) {
+        pageData.mode = global.mode;
+      } else {
+        pageData.mode = 'live';
+      }
 
       resolve(pageData);
     });
@@ -60,7 +64,47 @@ module.exports = function(app, io, m) {
           `Rendering index with data `,
           JSON.stringify(pageData, null, 4)
         );
-        res.render('index', pageData);
+
+        if (pageData.mode !== 'read_only') {
+          res.render('index', pageData);
+        } else {
+          if (global.hasOwnProperty('foldersAndMediaData')) {
+            pageData.foldersAndMediaData = global.foldersAndMediaData;
+            res.render('index', pageData);
+          } else {
+            const type = 'layers';
+
+            file.getFolder({ type }).then(foldersData => {
+              let tasks = [];
+
+              Object.keys(foldersData).map(slugFolderName => {
+                let myPromise = new Promise((resolve, reject) => {
+                  exporter
+                    .getFolderAndMedia({ slugFolderName, type })
+                    .then(d => {
+                      resolve(d);
+                    });
+                });
+
+                tasks.push(myPromise);
+              });
+
+              Promise.all(tasks).then(d_array => {
+                let allLayersAndMedias = {};
+
+                d_array.map(d => {
+                  const k = Object.keys(d)[0];
+                  const v = Object.values(d)[0];
+                  allLayersAndMedias[k] = v;
+                });
+
+                global.foldersAndMediaData = allLayersAndMedias;
+                pageData.foldersAndMediaData = global.foldersAndMediaData;
+                res.render('index', pageData);
+              });
+            });
+          }
+        }
       },
       err => {
         dev.error(`Err while getting index data: ${err}`);

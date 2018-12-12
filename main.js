@@ -74,22 +74,28 @@ function startApp() {
             dev.log('Will store contents in: ' + global.pathToUserContent);
 
             readSessionMetaFile().then(sessionMeta => {
-              if (
-                !!sessionMeta &&
-                sessionMeta.hasOwnProperty('session_password') &&
-                sessionMeta.session_password !== '' &&
-                typeof sessionMeta.session_password === 'string'
-              ) {
-                function hashCode(s) {
-                  return s.split('').reduce(function(a, b) {
-                    a = (a << 5) - a + b.charCodeAt(0);
-                    return a & a;
-                  }, 0);
-                }
+              if (!!sessionMeta) {
+                if (
+                  sessionMeta.hasOwnProperty('session_password') &&
+                  sessionMeta.session_password !== ''
+                ) {
+                  function hashCode(s) {
+                    return s.split('').reduce(function(a, b) {
+                      a = (a << 5) - a + b.charCodeAt(0);
+                      return a & a;
+                    }, 0);
+                  }
 
-                global.session_password = hashCode(
-                  sessionMeta.session_password
-                );
+                  global.session_password = hashCode(
+                    sessionMeta.session_password
+                  );
+                }
+                if (
+                  sessionMeta.hasOwnProperty('mode') &&
+                  sessionMeta.mode !== ''
+                ) {
+                  global.mode = sessionMeta.mode.trim();
+                }
               }
               portscanner
                 .findAPortNotInUse(settings.port, settings.port + 20)

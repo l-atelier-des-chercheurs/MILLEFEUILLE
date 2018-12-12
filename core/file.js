@@ -947,7 +947,6 @@ module.exports = (function() {
         }
       });
     },
-
     editMediaMeta: ({ type, slugFolderName, metaFileName, data }) => {
       return new Promise(function(resolve, reject) {
         dev.logfunction(
