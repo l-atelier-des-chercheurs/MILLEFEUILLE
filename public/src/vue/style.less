@@ -1112,6 +1112,7 @@ a {
   color: @c-noir;
   // box-shadow: 0px 2px 7px 0px @c-gris;
   // width: 100%;
+  .padding-vert-verysmall;
 
   &:hover {
     // background-color: #f9f9f9;
@@ -1119,7 +1120,10 @@ a {
   }
   
   &.is--visible {
-    margin-left: -@t-skipline/4;
+
+    .card--header {
+      margin-left: -@t-skipline/4;
+    }
 
     .visibility_picto {
       border-radius: 0 4px 4px 0;
@@ -1333,6 +1337,15 @@ a {
   // .c-blanc;
   .padding-sides-medium;
   .padding-bottom-verysmall;
+
+  .padding-left-small;
+  .margin-left-medium;
+
+  
+  &.is--active {
+    border-left: 1px solid black;
+    
+  }
   
   label {
     // .c-blanc;

@@ -1,8 +1,8 @@
 <template>
-  <div class="card draggable-item margin-sides-small padding-small"
+  <div class="card draggable-item"
     :class="{ 'is--visible' : values.visibility }" 
   >
-    <div class="card--header card--header_layer cursor-pointer"
+    <div class="card--header card--header_layer margin-sides-small padding-sides-small padding-vert-none cursor-pointer"
       @click="$root.openLayer(slugLayerName)"
     >
       <span class="column-drag-handle" @mouseup.stop="" v-if="values.visibility">
@@ -30,7 +30,7 @@
         ►
       </button>
     </div>
-    <div class="margin-vert-verysmall">
+    <div class="margin-vert-verysmall margin-sides-small padding-sides-small padding-vert-none">
       <div class="m_keywordField">
         <span 
           v-for="keyword in layer.keywords" 
@@ -42,7 +42,9 @@
       </div>
     </div>
 
-    <div class="m_layeredit " v-if="values.visibility">
+    <div class="m_layeredit " v-if="values.visibility"
+      :class="{ 'is--active' : values.editing }"
+    >
       <span class="switch switch-verysmall">
         <input type="checkbox" class="switch" :id="`editlayer_${slugLayerName}`" v-model="values.editing">
         <label :for="`editlayer_${slugLayerName}`">mise en forme</label>

@@ -166,7 +166,29 @@
 }
 
 .m_modal--mask {
+  &.typeOfModal-fullsize {
+    position: fixed;
+    .padding-vert-large;
+    overflow-y: scroll;
+    
+    .m_modal--container {  
+      max-width: @t-panelWidth * 2;
+      align-self: flex-start;
+      .m_modal--preview {
+        height: auto;
+        @media screen and (max-width: 50rem) {
+          position: relative;
+        }
+      }
+      @media screen and (min-width: 50rem) {
+        width: 90vw;
+      }
 
+      .m_modal--sidebar {
+        margin-top: 0;
+      }
+    }
+  }
   &.typeOfModal-LargeAndScroll {
     // padding-top: @t-skipline;
     .padding-vert-large;
