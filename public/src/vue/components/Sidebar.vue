@@ -4,14 +4,15 @@
       <div class="padding-vert-medium padding-sides-medium">
         <h1 class="margin-none">millefeuille</h1>
         <small class="margin-none">
-          • workshop «&nbsp;données situées et cartographie sensible&nbsp;»<br>
-          ~ version v0.1
+          workshop «&nbsp;données situées et cartographie sensible&nbsp;»
+          <br><b>île de&nbsp;Nantes</b> — 
+          décembre 2018
         </small>
         <br>    
         <button type="button" class="buttonLink margin-left-none padding-left-none"
           @click="showCreditsModal = true"
         >
-          crédits
+          informations
         </button>
 
         <Credits
