@@ -47,7 +47,7 @@
             Millefeuille a été imaginé, créé et développé par Louis Eveillard de l’Atelier des chercheurs, 
             avec la participation de Maryne Buffat et Louise Robert de la revue d’urbanisme Sur Mesure, et de Quentin Lefèvre, spécialiste en cartographie sensible. 
             Les participants du workshop, par leurs retours et suggestions (possibilité d’importer des fichiers CSV, utilisation de pictogrammes des types de médias 
-            à la place des "pins" standards, etc.), ont également participé à cette création pour en faire l’outil que vous avez sous les yeux.
+            à la place des "pins" standards, etc.), ont également contribué à la création de cet outil.
             Millefeuille sera bientôt disponible sur le site de <a href="https://latelier-des-chercheurs.fr" target="blank">l’Atelier des chercheurs</a>.
           </div>
         </div>
