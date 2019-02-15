@@ -125,6 +125,11 @@ module.exports = function({ router }) {
                   sessionMeta.mode !== ''
                 ) {
                   global.mode = sessionMeta.mode.trim();
+                  dev.log(
+                    `Detected mode in session meta file : ${global.mode}`
+                  );
+                } else {
+                  dev.log(`No mode in session meta file`);
                 }
 
                 portscanner
