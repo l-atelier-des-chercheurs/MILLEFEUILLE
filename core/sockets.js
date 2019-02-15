@@ -27,6 +27,10 @@ module.exports = (function() {
       dev.log(`RECEIVED CONNECTION FROM SOCKET.id: ${socket.id}`);
       socket._data = {};
 
+      if (global.hasOwnProperty('mode') && global.mode === 'read_only') {
+        return;
+      }
+
       var onevent = socket.onevent;
       socket.onevent = function(packet) {
         var args = packet.data || [];

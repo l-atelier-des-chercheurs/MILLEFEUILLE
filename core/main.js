@@ -118,6 +118,15 @@ module.exports = function({ router }) {
                     sessionMeta.session_password
                   );
                 }
+
+                if (
+                  !!sessionMeta &&
+                  sessionMeta.hasOwnProperty('mode') &&
+                  sessionMeta.mode !== ''
+                ) {
+                  global.mode = sessionMeta.mode.trim();
+                }
+
                 portscanner
                   .findAPortNotInUse(
                     global.settings.desired_port,
