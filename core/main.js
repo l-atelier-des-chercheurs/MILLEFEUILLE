@@ -2,44 +2,43 @@ const getPath = require('platform-folders');
 const path = require('path');
 const fs = require('fs-extra');
 const portscanner = require('portscanner');
-const packagejson = require('./package.json');
 
 const server = require('./server');
 
-const settings = require('./settings.json'),
-  dev = require('./core/dev-log'),
-  api = require('./core/api'),
-  file = require('./core/file');
+const dev = require('./dev-log'),
+  api = require('./api'),
+  file = require('./file');
 
 module.exports = function({ router }) {
-  global.appInfos = {
-    name: packagejson.name,
-    version: packagejson.version
-  };
-
   let win;
   const electron = require('electron');
-  const { app, BrowserWindow, Menu } = electron;
-  const PDFWindow = require('electron-pdf-window');
 
-  const {
-    default: installExtension,
-    VUEJS_DEVTOOLS
-  } = require('electron-devtools-installer');
+  const { app, BrowserWindow, Menu } = electron;
 
   const { dialog } = require('electron');
   const JSONStorage = require('node-localstorage').JSONStorage;
 
-  require('electron-context-menu')({
-    prepend: (params, BrowserWindow) => [
-      {
-        // Only show it when right-clicking images
-        visible: params.mediaType === 'image'
-      }
-    ]
-  });
+  const is_electron = process.versions.hasOwnProperty('electron');
 
-  if (settings.process === 'electron') {
+  if (is_electron) {
+    require('electron-context-menu')({
+      prepend: (params, BrowserWindow) => [
+        {
+          // Only show it when right-clicking images
+          visible: params.mediaType === 'image'
+        }
+      ]
+    });
+
+    const {
+      default: installExtension,
+      VUEJS_DEVTOOLS
+    } = require('electron-devtools-installer');
+
+    installExtension(VUEJS_DEVTOOLS)
+      .then(name => dev.logverbose(`Added Extension:  ${name}`))
+      .catch(err => dev.logverbose('An error occurred: ', err));
+
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
@@ -63,11 +62,17 @@ module.exports = function({ router }) {
         createWindow(win);
       }
     });
-  } else if (settings.process === 'node') {
-    startApp();
+  } else {
+    setupApp()
+      .then(() => {
+        server(router);
+      })
+      .catch(err => {
+        dev.error(`Error code: ${err}`);
+      });
   }
 
-  function startApp() {
+  function setupApp() {
     return new Promise(function(resolve, reject) {
       console.log(`Starting app ${global.appInfos.name}`);
       console.log(process.versions);
@@ -84,12 +89,9 @@ module.exports = function({ router }) {
         process.traceDeprecation = true;
       }
 
-      global.appRoot = path.resolve(__dirname);
       global.tempStorage = getPath.getCacheFolder();
 
-      dev.log(
-        `——— Starting millefeuille app version ${global.appInfos.version}`
-      );
+      dev.log(`——— Starting dodoc2 app version ${global.appInfos.version}`);
 
       cleanCacheFolder().then(
         () => {
@@ -99,47 +101,51 @@ module.exports = function({ router }) {
               dev.log('Will store contents in: ' + global.pathToUserContent);
 
               readSessionMetaFile().then(sessionMeta => {
-                if (!!sessionMeta) {
-                  if (
-                    sessionMeta.hasOwnProperty('session_password') &&
-                    sessionMeta.session_password !== ''
-                  ) {
-                    function hashCode(s) {
-                      return s.split('').reduce(function(a, b) {
-                        a = (a << 5) - a + b.charCodeAt(0);
-                        return a & a;
-                      }, 0);
-                    }
+                if (
+                  !!sessionMeta &&
+                  sessionMeta.hasOwnProperty('session_password') &&
+                  sessionMeta.session_password !== '' &&
+                  typeof sessionMeta.session_password === 'string'
+                ) {
+                  function hashCode(s) {
+                    return s.split('').reduce(function(a, b) {
+                      a = (a << 5) - a + b.charCodeAt(0);
+                      return a & a;
+                    }, 0);
+                  }
 
-                    global.session_password = hashCode(
-                      sessionMeta.session_password
-                    );
-                  }
-                  if (
-                    sessionMeta.hasOwnProperty('mode') &&
-                    sessionMeta.mode !== ''
-                  ) {
-                    global.mode = sessionMeta.mode.trim();
-                  }
+                  global.session_password = hashCode(
+                    sessionMeta.session_password
+                  );
                 }
                 portscanner
-                  .findAPortNotInUse(settings.port, settings.port + 20)
+                  .findAPortNotInUse(
+                    global.settings.desired_port,
+                    global.settings.desired_port + 20
+                  )
                   .then(
                     port => {
-                      dev.log(`main.js - Found available port: ${port}`);
                       global.appInfos.port = port;
-                      global.appInfos.homeURL = `${settings.protocol}://${
-                        settings.host
-                      }:${global.appInfos.port}`;
+                      global.appInfos.homeURL = `${
+                        global.settings.protocol
+                      }://${global.settings.host}:${global.appInfos.port}`;
 
-                      const appServer = server();
-                      return resolve(appServer);
+                      dev.log(`main.js - Found available port: ${port}`);
+                      return resolve();
                     },
                     function(err) {
                       dev.error('Failed to find available port: ' + err);
                       return reject(err);
                     }
-                  );
+                  )
+                  .catch(err => {
+                    dev.error(`err ${err}`);
+                    if (is_electron)
+                      dev.showErrorBox(
+                        `The app ${app.getName()} wasn’t able to start`,
+                        `Error code: ${err}`
+                      );
+                  });
               });
             },
             function(err) {
@@ -168,8 +174,7 @@ module.exports = function({ router }) {
       windowState = global.nodeStorage.getItem('windowstate')
         ? global.nodeStorage.getItem('windowstate')
         : {};
-      dev.log('Found defaults for windowState: ');
-      dev.log(windowState);
+      dev.log('Found defaults for windowState');
     } catch (err) {
       dev.log('No default for windowState');
     }
@@ -193,7 +198,7 @@ module.exports = function({ router }) {
       }
     });
 
-    PDFWindow.addSupport(win);
+    require('electron-pdf-window').addSupport(win);
 
     if (windowState.isMaximized) {
       win.maximize();
@@ -243,25 +248,18 @@ module.exports = function({ router }) {
       win.focus();
     });
 
-    startApp()
-      .then(appServer => {
-        app.server = appServer;
-        // and load the base url of the app.
+    setupApp()
+      .then(() => {
+        server(router);
+
         win.loadURL(global.appInfos.homeURL);
 
         if (dev.isDebug()) {
           // win.webContents.openDevTools({mode: 'detach'});
-          installExtension(VUEJS_DEVTOOLS)
-            .then(name => console.log(`Added Extension:  ${name}`))
-            .catch(err => console.log('An error occurred: ', err));
         }
       })
       .catch(err => {
-        dialog.showErrorBox(
-          `The app ${app.getName()} wasn’t able to start`,
-          `It seems ports between ${settings.port} and ${settings.port +
-            20} are not available.\nError code: ${err}`
-        );
+        dialog.showErrorBox(`Error code: ${err}`);
       });
   }
 
@@ -269,10 +267,10 @@ module.exports = function({ router }) {
     // Create the Application's main menu
     var template = [
       {
-        label: 'Electron',
+        label: global.appInfos.productName,
         submenu: [
           {
-            label: 'About millefeuille',
+            label: `À propos ${global.appInfos.productName}`,
             selector: 'orderFrontStandardAboutPanel:'
           },
           {
@@ -286,24 +284,24 @@ module.exports = function({ router }) {
             type: 'separator'
           },
           {
-            label: 'Hide Electron',
+            label: `Cacher ${global.appInfos.productName}`,
             accelerator: 'Command+H',
             selector: 'hide:'
           },
           {
-            label: 'Hide Others',
+            label: 'Cacher les autres',
             accelerator: 'Command+Shift+H',
             selector: 'hideOtherApplications:'
           },
           {
-            label: 'Show All',
+            label: 'Montrer tout',
             selector: 'unhideAllApplications:'
           },
           {
             type: 'separator'
           },
           {
-            label: 'Quit',
+            label: 'Quitter',
             accelerator: 'Command+Q',
             click: function() {
               app.quit();
@@ -312,15 +310,15 @@ module.exports = function({ router }) {
         ]
       },
       {
-        label: 'Edit',
+        label: 'Edition',
         submenu: [
           {
-            label: 'Undo',
+            label: 'Annuler',
             accelerator: 'Command+Z',
             selector: 'undo:'
           },
           {
-            label: 'Redo',
+            label: 'Rétablir',
             accelerator: 'Shift+Command+Z',
             selector: 'redo:'
           },
@@ -328,39 +326,39 @@ module.exports = function({ router }) {
             type: 'separator'
           },
           {
-            label: 'Cut',
+            label: 'Couper',
             accelerator: 'Command+X',
             selector: 'cut:'
           },
           {
-            label: 'Copy',
+            label: 'Copier',
             accelerator: 'Command+C',
             selector: 'copy:'
           },
           {
-            label: 'Paste',
+            label: 'Coller',
             accelerator: 'Command+V',
             selector: 'paste:'
           },
           {
-            label: 'Select All',
+            label: 'Sélectionner tout',
             accelerator: 'Command+A',
             selector: 'selectAll:'
           }
         ]
       },
       {
-        label: 'View',
+        label: 'Affichage',
         submenu: [
           {
-            label: 'Reload',
+            label: 'Recharger',
             accelerator: 'Command+R',
             click: function() {
               BrowserWindow.getFocusedWindow().reload();
             }
           },
           {
-            label: 'Toggle DevTools',
+            label: 'Afficher les outils de développement',
             accelerator: 'Alt+Command+I',
             click: function() {
               BrowserWindow.getFocusedWindow().toggleDevTools();
@@ -369,15 +367,15 @@ module.exports = function({ router }) {
         ]
       },
       {
-        label: 'Window',
+        label: 'Fenêtre',
         submenu: [
           {
-            label: 'Minimize',
+            label: 'Réduire',
             accelerator: 'Command+M',
             selector: 'performMiniaturize:'
           },
           {
-            label: 'Close',
+            label: 'Fermer',
             accelerator: 'Command+W',
             selector: 'performClose:'
           },
@@ -385,13 +383,13 @@ module.exports = function({ router }) {
             type: 'separator'
           },
           {
-            label: 'Bring All to Front',
+            label: 'Mettre tout au premier plan',
             selector: 'arrangeInFront:'
           }
         ]
       },
       {
-        label: 'Help',
+        label: 'Aide',
         submenu: []
       }
     ];
@@ -401,34 +399,38 @@ module.exports = function({ router }) {
   }
   function copyAndRenameUserFolder() {
     return new Promise(function(resolve, reject) {
-      const userDirPath =
-        settings.process === 'electron'
-          ? app.getPath(settings.userDirPath)
-          : getPath.getDocumentsFolder();
+      const userDirPath = is_electron
+        ? app.getPath(global.settings.userDirPath)
+        : getPath.getDocumentsFolder();
 
-      const pathToUserContent = path.join(userDirPath, settings.userDirname);
+      const pathToUserContent = path.join(
+        userDirPath,
+        global.settings.userDirname
+      );
       fs.access(pathToUserContent, fs.F_OK, function(err) {
         // if userDir folder doesn't exist yet at destination
         if (err) {
           dev.log(
             `Content folder ${
-              settings.userDirname
+              global.settings.userDirname
             } does not already exists in ${userDirPath}`
           );
           dev.log(
-            `->duplicating ${settings.contentDirname} to create a new one`
+            `->duplicating ${
+              global.settings.contentDirname
+            } to create a new one`
           );
 
           let sourcePathInApp;
-          if (settings.process === 'electron') {
+          if (is_electron) {
             sourcePathInApp = path.join(
-              `${__dirname.replace(`${path.sep}app.asar`, '')}`,
-              `${settings.contentDirname}`
+              `${global.appRoot.replace(`${path.sep}app.asar`, '')}`,
+              `${global.settings.contentDirname}`
             );
-          } else if (settings.process === 'node') {
+          } else {
             sourcePathInApp = path.join(
-              `${__dirname}`,
-              `${settings.contentDirname}`
+              `${global.appRoot}`,
+              `${global.settings.contentDirname}`
             );
           }
           fs.copy(sourcePathInApp, pathToUserContent, function(err) {
@@ -441,7 +443,7 @@ module.exports = function({ router }) {
         } else {
           dev.log(
             `Content folder ${
-              settings.userDirname
+              global.settings.userDirname
             } already exists in ${userDirPath}`
           );
           dev.log(`-> not creating a new one`);
@@ -453,7 +455,10 @@ module.exports = function({ router }) {
 
   function cleanCacheFolder() {
     return new Promise(function(resolve, reject) {
-      let cachePath = path.join(global.tempStorage, settings.cacheDirname);
+      let cachePath = path.join(
+        global.tempStorage,
+        global.settings.cacheDirname
+      );
       fs.emptyDir(cachePath)
         .then(() => {
           resolve();
@@ -471,7 +476,7 @@ module.exports = function({ router }) {
       try {
         var metaFileContent = fs.readFileSync(
           pathToSessionMeta,
-          settings.textEncoding
+          global.settings.textEncoding
         );
         return resolve(api.parseData(metaFileContent));
       } catch (err) {

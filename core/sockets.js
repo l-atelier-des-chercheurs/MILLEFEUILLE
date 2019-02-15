@@ -4,7 +4,6 @@ const dev = require('./dev-log'),
   exporter = require('./exporter');
 
 const file = require('./file');
-const settings = require('../settings.json');
 
 module.exports = (function() {
   dev.log(`Sockets module initialized at ${api.getCurrentDate()}`);
@@ -15,7 +14,6 @@ module.exports = (function() {
     init: (app, io) => init(app, io),
     createMediaMeta: ({ type, slugFolderName, additionalMeta }) =>
       createMediaMeta({ type, slugFolderName, additionalMeta }),
-    pushMessage: msg => pushMessage(msg),
     notify: notify
   };
 
@@ -26,9 +24,8 @@ module.exports = (function() {
     io = thisIO;
 
     io.on('connection', function(socket) {
-      if (global.hasOwnProperty('mode') && global.mode === 'read_only') {
-        return;
-      }
+      dev.log(`RECEIVED CONNECTION FROM SOCKET.id: ${socket.id}`);
+      socket._data = {};
 
       var onevent = socket.onevent;
       socket.onevent = function(packet) {
@@ -57,6 +54,11 @@ module.exports = (function() {
       socket.on('downloadPubliPDF', d => onDownloadPubliPDF(socket, d));
       socket.on('downloadVideoPubli', d => onDownloadVideoPubli(socket, d));
       socket.on('updateNetworkInfos', d => onUpdateNetworkInfos(socket, d));
+
+      socket.on('updateClientInfo', d => onUpdateClientInfo(socket, d));
+      socket.on('listClientsInfo', d => onListClientsInfo(socket, d));
+
+      socket.on('disconnect', d => onClientDisconnect(socket));
     });
   }
 
@@ -64,23 +66,19 @@ module.exports = (function() {
   function onAuthenticate(socket, d) {
     dev.logfunction(`EVENT - onAuthenticate for ${JSON.stringify(d, null, 4)}`);
     auth
-      .setAuthenticate(socket.id, d.admin_access)
-      .then(list_admin_folders => {
+      .setAuthenticate(d.folder_passwords)
+      .then(list_of_authorized_folders => {
+        socket._is_authorized_for_folders = list_of_authorized_folders;
         api.sendEventWithContent(
           'authentificated',
-          list_admin_folders,
+          list_of_authorized_folders,
           io,
           socket
         );
       })
       .catch(err => {
-        api.sendEventWithContent('authentificated', {}, io, socket);
+        dev.error(`Failed to auth: ${err}`);
       });
-  }
-
-  function pushMessage(msg) {
-    dev.logfunction(`EVENT - pushMessage ${msg}`);
-    api.sendEventWithContent('authentificated', {}, io, socket);
   }
 
   function notify({
@@ -106,8 +104,9 @@ module.exports = (function() {
   /**************************************************************** FOLDER ********************************/
   function onListFolders(socket, data) {
     dev.logfunction(`EVENT - onListFolders`);
-    if (!data.hasOwnProperty('type')) {
+    if (!data || !data.hasOwnProperty('type')) {
       dev.error(`Missing type field`);
+      return;
     }
     const type = data.type;
     sendFolders({ type, socket });
@@ -140,9 +139,15 @@ module.exports = (function() {
     file
       .getFolder({ type, slugFolderName })
       .then(foldersData => {
-        if (!auth.hasFolderAuth(socket.id, foldersData)) {
+        if (!auth.canAdminFolder(socket, foldersData, type)) {
+          notify({
+            socket,
+            socketid: socket.id,
+            not_localized_string: `Not allowed to edit`
+          });
           return;
         }
+
         file
           .editFolder({
             type,
@@ -154,7 +159,7 @@ module.exports = (function() {
           });
       })
       .catch(err => {
-        dev.error('No folder found');
+        dev.error(`No folder found: ${err}`);
       });
   }
 
@@ -163,7 +168,12 @@ module.exports = (function() {
     file
       .getFolder({ type, slugFolderName })
       .then(foldersData => {
-        if (!auth.hasFolderAuth(socket.id, foldersData)) {
+        if (!auth.canAdminFolder(socket, foldersData, type)) {
+          notify({
+            socket,
+            socketid: socket.id,
+            not_localized_string: `Not allowed to remove`
+          });
           return;
         }
         file
@@ -182,7 +192,7 @@ module.exports = (function() {
           );
       })
       .catch(err => {
-        dev.error('No folder found');
+        dev.error(`No folder found: ${err}`);
       });
   }
 
@@ -190,7 +200,7 @@ module.exports = (function() {
 
   function onListMedias(socket, { type, slugFolderName }) {
     dev.logfunction(
-      `EVENT - onListMedias : type = ${type}, slugFolderName = ${slugFolderName}`
+      `EVENT - onListMedias : type = ${type}, slugProjectName = ${slugFolderName}`
     );
     sendMedias({ type, slugFolderName, socket });
   }
@@ -375,14 +385,20 @@ module.exports = (function() {
           }
           let thisSocket = socket || io.sockets.connected[sid];
 
-          let filteredFoldersData = auth.filterFolders(sid, foldersData);
+          let filteredFoldersData = auth.filterFolders(
+            thisSocket,
+            type,
+            foldersData
+          );
+
           if (filteredFoldersData === undefined) {
             filteredFoldersData = '';
           } else {
+            // remove password field
             for (let k in filteredFoldersData) {
               // check if there is any password, if there is then send a placeholder
               if (
-                filteredFoldersData[k].password &&
+                filteredFoldersData[k].hasOwnProperty('password') &&
                 filteredFoldersData[k].password !== ''
               ) {
                 filteredFoldersData[k].password = 'has_pass';
@@ -408,7 +424,7 @@ module.exports = (function() {
         });
       })
       .catch(err => {
-        dev.error('No folder found');
+        dev.error(`No folder found: ${err}`);
       });
   }
 
@@ -441,10 +457,17 @@ module.exports = (function() {
               .then(folders_and_medias => {
                 dev.logverbose(`Got medias, now sending to the right clients`);
 
-                if (folders_and_medias !== undefined && metaFileName && id) {
-                  folders_and_medias[slugFolderName].medias[
-                    metaFileName
-                  ].id = id;
+                if (
+                  folders_and_medias !== undefined &&
+                  Object.keys(folders_and_medias).length
+                ) {
+                  if (metaFileName && id) {
+                    folders_and_medias[slugFolderName].medias[
+                      metaFileName
+                    ].id = id;
+                  }
+                  foldersData[slugFolderName].medias =
+                    folders_and_medias[slugFolderName].medias;
                 }
 
                 Object.keys(io.sockets.connected).forEach(sid => {
@@ -452,25 +475,19 @@ module.exports = (function() {
                     return;
                   }
 
-                  // let filteredMediasData = {};
-                  // if (auth.hasFolderAuth(sid, foldersData)) {
-                  //   // let filteredMediasData = auth.filterMedias(mediasData);
-                  //   filteredMediasData = JSON.parse(JSON.stringify(mediasData));
-                  // }
+                  let thisSocket = socket || io.sockets.connected[sid];
 
-                  if (Object.keys(folders_and_medias).length === 0) {
-                    folders_and_medias = {
-                      [slugFolderName]: {
-                        medias: {}
-                      }
-                    };
-                  }
+                  let filtered_folders_and_medias = auth.filterMedias(
+                    thisSocket,
+                    type,
+                    foldersData
+                  );
 
                   api.sendEventWithContent(
                     !!metaFileName ? 'listMedia' : 'listMedias',
-                    { [type]: folders_and_medias },
+                    { [type]: filtered_folders_and_medias },
                     io,
-                    socket || io.sockets.connected[sid]
+                    thisSocket
                   );
                 });
               });
@@ -481,7 +498,7 @@ module.exports = (function() {
           });
       })
       .catch(err => {
-        dev.error('No folder found');
+        dev.error(`No folder found: ${err}`);
       });
   }
 
@@ -496,6 +513,33 @@ module.exports = (function() {
         socket
       );
     });
+  }
+
+  function onUpdateClientInfo(socket, data) {
+    socket._data = data;
+    sendClients();
+  }
+  function onListClientsInfo(socket) {
+    sendClients(socket);
+  }
+
+  function sendClients(socket) {
+    // envoyer la liste des clients connectés
+    dev.logfunction(`COMMON - sendClients`);
+
+    const connected_clients = [];
+    Object.entries(io.sockets.connected).forEach(([id, this_socket]) => {
+      connected_clients.push({
+        id,
+        data: this_socket._data
+      });
+    });
+
+    api.sendEventWithContent('listClients', connected_clients, io, socket);
+  }
+
+  function onClientDisconnect(socket) {
+    sendClients();
   }
 
   return API;
