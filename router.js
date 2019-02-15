@@ -3,8 +3,7 @@ const path = require('path'),
   formidable = require('formidable'),
   archiver = require('archiver');
 
-const settings = require('./settings.json'),
-  sockets = require('./core/sockets'),
+const sockets = require('./core/sockets'),
   dev = require('./core/dev-log'),
   cache = require('./core/cache'),
   api = require('./core/api'),
@@ -41,9 +40,9 @@ module.exports = function(app, io, m) {
       pageData.url = req.path;
       pageData.protocol = req.protocol;
       pageData.folderPreviewFilename_ext =
-        settings.folderPreviewFilename + settings.thumbExt;
-      pageData.structure = settings.structure;
-      // pageData.authorsFolder = settings.structure.authors.path;
+        global.settings.folderPreviewFilename + global.settings.thumbExt;
+      pageData.structure = global.settings.structure;
+      // pageData.authorsFolder = global.settings.structure.authors.path;
       pageData.isDebug = dev.isDebug();
 
       if (global.hasOwnProperty('mode')) {
@@ -204,7 +203,7 @@ module.exports = function(app, io, m) {
     let pdfName = req.param('pdfName');
     const cachePath = path.join(
       global.tempStorage,
-      settings.cacheDirname,
+      global.settings.cacheDirname,
       '_publications'
     );
     const pdfPath = path.join(cachePath, pdfName);
@@ -220,7 +219,7 @@ module.exports = function(app, io, m) {
     let videoName = req.param('videoName');
     const cachePath = path.join(
       global.tempStorage,
-      settings.cacheDirname,
+      global.settings.cacheDirname,
       '_publications'
     );
     const videoPath = path.join(cachePath, videoName);

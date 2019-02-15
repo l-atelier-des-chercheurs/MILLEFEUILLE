@@ -6,7 +6,7 @@
   "author": "L’Atelier des Chercheurs <https://latelier-des-chercheurs.fr/>",
   "homepage": "https://github.com/l-atelier-des-chercheurs/millefeuille#readme",
   "license": "CC-BY-NC-SA-4.0",
-  "main": "main.js",
+  "main": "index.js",
   "private": true,
   "repository": {
     "type": "git",
@@ -64,13 +64,18 @@
     "platform-folders": "^0.2.7",
     "portscanner": "^2.2.0",
     "pug": "^2.0.2",
+    "puppeteer": "^1.12.2",
+    "rich-text": "^3.1.0",
+    "sharedb": "^1.0.0-beta.19",
     "sharp": "^0.21.0",
     "slugg": "^1.2.1",
     "socket.io": "^2.1.1",
     "source-map": "^0.7.3",
+    "spark-md5": "^3.0.0",
     "validator": "^10.9.0",
     "vue": "^2.5.17",
     "vue-i18n": "^8.3.1",
+    "websocket-json-stream": "0.0.3",
     "write-file-atomic": "^2.3.0"
   },
   "devDependencies": {
