@@ -18,6 +18,50 @@ module.exports = (function() {
     loadPublication: (slugPubliName, pageData) =>
       loadPublication(slugPubliName, pageData),
 
+    getFolderAndMedia({ slugFolderName, type }) {
+      return new Promise((resolve, reject) => {
+        let folder_and_medias = {};
+        dev.logfunction('EXPORTER — getFolderAndMedia');
+        file
+          .getFolder({
+            type,
+            slugFolderName
+          })
+          .then(folderData => {
+            folder_and_medias = folderData;
+            file
+              .getMediaMetaNames({
+                type,
+                slugFolderName
+              })
+              .then(list_metaFileName => {
+                let medias_list = list_metaFileName.map(metaFileName => {
+                  return {
+                    slugFolderName,
+                    metaFileName
+                  };
+                });
+                file
+                  .readMediaList({
+                    type,
+                    medias_list
+                  })
+                  .then(folder_medias => {
+                    dev.logverbose(`Got medias`);
+                    if (
+                      folder_and_medias.hasOwnProperty(slugFolderName) &&
+                      folder_medias.hasOwnProperty(slugFolderName)
+                    ) {
+                      folder_and_medias[slugFolderName].medias =
+                        folder_medias[slugFolderName].medias;
+                    }
+                    resolve(folder_and_medias);
+                  });
+              });
+          });
+      });
+    },
+
     copyPubliContent: ({ html, folders_and_medias, slugPubliName }) => {
       return new Promise(function(resolve, reject) {
         // create cache folder that we will need to copy the content
