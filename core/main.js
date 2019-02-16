@@ -18,6 +18,21 @@ module.exports = function({ router }) {
   const { dialog } = require('electron');
   const JSONStorage = require('node-localstorage').JSONStorage;
 
+  console.log(`Starting app ${global.appInfos.name}`);
+  console.log(process.versions);
+
+  const debug =
+    process.argv.length >= 4 ? process.argv[3] === '--debug' : false;
+  const verbose =
+    process.argv.length >= 5 ? process.argv[4] === '--verbose' : false;
+  const logToFile = false;
+
+  dev.init(debug, verbose, logToFile);
+
+  if (dev.isDebug()) {
+    process.traceDeprecation = true;
+  }
+
   const is_electron = process.versions.hasOwnProperty('electron');
 
   if (is_electron) {
@@ -36,8 +51,8 @@ module.exports = function({ router }) {
     } = require('electron-devtools-installer');
 
     installExtension(VUEJS_DEVTOOLS)
-      .then(name => dev.logverbose(`Added Extension:  ${name}`))
-      .catch(err => dev.logverbose('An error occurred: ', err));
+      .then(name => console.log(`Added Extension:  ${name}`))
+      .catch(err => console.log('An error occurred: ', err));
 
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
@@ -74,21 +89,6 @@ module.exports = function({ router }) {
 
   function setupApp() {
     return new Promise(function(resolve, reject) {
-      console.log(`Starting app ${global.appInfos.name}`);
-      console.log(process.versions);
-
-      const debug =
-        process.argv.length >= 4 ? process.argv[3] === '--debug' : false;
-      const verbose =
-        process.argv.length >= 5 ? process.argv[4] === '--verbose' : false;
-      const logToFile = false;
-
-      dev.init(debug, verbose, logToFile);
-
-      if (dev.isDebug()) {
-        process.traceDeprecation = true;
-      }
-
       global.tempStorage = getPath.getCacheFolder();
 
       dev.log(`——— Starting dodoc2 app version ${global.appInfos.version}`);
