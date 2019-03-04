@@ -1,7 +1,7 @@
 {
   "name": "millefeuille",
   "productName": "millefeuille",
-  "version": "7.7.0-dev",
+  "version": "0.9.0-dev",
   "description": "millefeuille is a collaborative tool for cartography.",
   "author": "L’Atelier des Chercheurs <https://latelier-des-chercheurs.fr/>",
   "homepage": "https://github.com/l-atelier-des-chercheurs/millefeuille#readme",
@@ -26,11 +26,11 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "engines": {
-    "node": "8.2.1",
+    "node": "8.9.3",
     "npm": "*"
   },
   "build": {
-    "electronVersion": "2.0.5",
+    "electronVersion": "2.0.17",
     "appId": "millefeuille",
     "productName": "millefeuille",
     "asar": false,
@@ -79,7 +79,7 @@
     "write-file-atomic": "^2.3.0"
   },
   "devDependencies": {
-    "electron": "^2.0.5",
+    "electron": "^2.0.17",
     "electron-builder": "^20.35.0",
     "electron-packager": "^12.2.0",
     "electron-prebuilt": "^1.4.13",
