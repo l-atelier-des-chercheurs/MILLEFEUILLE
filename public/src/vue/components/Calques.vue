@@ -288,20 +288,33 @@ export default {
 
       this.map_projection = d3.geoMercator()
         // .scale(width / 2 / Math.PI)
-        .scale(1189000)
-        .center([-1.544730, 47.2057287])
+        .scale(3760000)
+        .center([2.321913, 48.842449])
         .translate([this.width / 2, this.height / 2])
 
-      // rouge
-      var bottomleft_ref = [-1.574420, 47.199467];
-      // bleu
-      var topright_ref = [-1.514057, 47.215823];
+      // // rouge
+      // var bottomleft_ref = [-1.574420, 47.199467];
+      // // bleu
+      // var topright_ref = [-1.514057, 47.215823];
 
-      var middle_ref = [-1.546236, 47.204049];
-      var stereolux = [-1.563454, 47.205163];
-      var lu = [-1.545169, 47.215575];
+      // var middle_ref = [-1.546236, 47.204049];
+      // var stereolux = [-1.563454, 47.205163];
+      // var lu = [-1.545169, 47.215575];
 
-      // add circles to svg
+      // var coords = [
+      //   {
+      //     name: "Tour Montparnasse",
+      //     lat: 48.842133,
+      //     long: 2.321935
+      //   },
+      //   {
+      //     name: "Musée Bourdel",
+      //     lat: 48.843174,
+      //     long: 2.318671
+      //   },
+      // ]
+
+      // // add circles to svg
       // shapes.selectAll("circle")
       //   .data([bottomleft_ref, topright_ref, middle_ref, stereolux, lu]).enter()
       //   .append("g")
