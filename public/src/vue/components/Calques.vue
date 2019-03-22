@@ -288,18 +288,18 @@ export default {
 
       this.map_projection = d3.geoMercator()
         // .scale(width / 2 / Math.PI)
-        .scale(1189000)
-        .center([-1.544730, 47.2057287])
+        .scale(17390)
+        .center([0.176550, 44.843221])
         .translate([this.width / 2, this.height / 2])
 
       // rouge
-      var bottomleft_ref = [-1.574420, 47.199467];
-      // bleu
-      var topright_ref = [-1.514057, 47.215823];
+      // var bottomleft_ref = [-1.574420, 47.199467];
+      // // bleu
+      // var topright_ref = [-1.514057, 47.215823];
 
-      var middle_ref = [-1.546236, 47.204049];
-      var stereolux = [-1.563454, 47.205163];
-      var lu = [-1.545169, 47.215575];
+      // var middle_ref = [-1.546236, 47.204049];
+      // var stereolux = [-1.563454, 47.205163];
+      // var lu = [-1.545169, 47.215575];
 
       // add circles to svg
       // shapes.selectAll("circle")
