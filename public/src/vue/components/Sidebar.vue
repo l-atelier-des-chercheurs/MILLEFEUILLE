@@ -4,8 +4,8 @@
       <div class="padding-vert-medium padding-sides-medium">
         <h1 class="margin-none">millefeuille</h1>
         <small class="margin-none">
-          workshop «&nbsp;données situées et cartographie sensible&nbsp;»
-          <br><b>île de&nbsp;Nantes</b> — 
+          Dataviz Challenge au 110bis
+          <br><b>Académie de Bordeaux</b> — 
           décembre 2018
         </small>
         <br>    
