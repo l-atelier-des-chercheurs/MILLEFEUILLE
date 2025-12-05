@@ -1,25 +1,25 @@
-const path = require('path'),
-  fs = require('fs-extra'),
-  validator = require('validator'),
-  ffmpegstatic = require('ffmpeg-static'),
-  ffprobestatic = require('ffprobe-static'),
-  ffmpeg = require('fluent-ffmpeg');
+const path = require("path"),
+  fs = require("fs-extra"),
+  validator = require("validator"),
+  ffmpegstatic = require("ffmpeg-static"),
+  ffprobestatic = require("ffprobe-static"),
+  ffmpeg = require("fluent-ffmpeg");
 
-const sharp = require('sharp');
+const sharp = require("sharp");
 
-const dev = require('./dev-log'),
-  api = require('./api'),
-  thumbs = require('./thumbs');
+const dev = require("./dev-log"),
+  api = require("./api"),
+  thumbs = require("./thumbs");
 
-ffmpeg.setFfmpegPath(ffmpegstatic.path);
+ffmpeg.setFfmpegPath(ffmpegstatic);
 ffmpeg.setFfprobePath(ffprobestatic.path);
 
-module.exports = (function() {
+module.exports = (function () {
   const API = {
     getPresentation() {
-      return new Promise(function(resolve, reject) {
-        let presentationMd = path.join(api.getFolderPath(), 'presentation.md');
-        fs.access(presentationMd, fs.F_OK, function(err) {
+      return new Promise(function (resolve, reject) {
+        let presentationMd = path.join(api.getFolderPath(), "presentation.md");
+        fs.access(presentationMd, fs.F_OK, function (err) {
           if (err) {
             resolve(validator.unescape(global.appInfos.presentationMd));
           } else {
@@ -33,7 +33,7 @@ module.exports = (function() {
       });
     },
     getFolder: ({ type, slugFolderName }) => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(
           `COMMON — getFolder type = ${type} with slugFolderName = ${slugFolderName}`
         );
@@ -45,7 +45,7 @@ module.exports = (function() {
         const baseFolderPath = global.settings.structure[type].path;
         const mainFolderPath = api.getFolderPath(baseFolderPath);
 
-        _getFolderSlugs(mainFolderPath).then(folders => {
+        _getFolderSlugs(mainFolderPath).then((folders) => {
           if (folders.length === 0) {
             resolve();
           }
@@ -59,7 +59,7 @@ module.exports = (function() {
             folders = [slugFolderName];
           }
 
-          folders.forEach(slugFolderName => {
+          folders.forEach((slugFolderName) => {
             const thisFolderPath = path.join(mainFolderPath, slugFolderName);
             // For each folder, read their meta file
             allFoldersData.push(
@@ -72,12 +72,12 @@ module.exports = (function() {
                 );
 
                 readMetaFile(metaFolderPath)
-                  .then(meta => {
+                  .then((meta) => {
                     meta = _sanitizeMetaFromFile({ type, meta });
                     meta.slugFolderName = slugFolderName;
 
                     if (
-                      global.settings.structure[type].hasOwnProperty('medias')
+                      global.settings.structure[type].hasOwnProperty("medias")
                     ) {
                       meta.medias = {};
                     }
@@ -86,7 +86,7 @@ module.exports = (function() {
 
                     resolve({ [slugFolderName]: meta });
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     dev.error(
                       `Couldn’t read folder meta, most probably because it doesn’t exist: ${err}`
                     );
@@ -96,7 +96,7 @@ module.exports = (function() {
             );
 
             // For each folder, find a preview (if it exists)
-            if (global.settings.structure[type].hasOwnProperty('preview')) {
+            if (global.settings.structure[type].hasOwnProperty("preview")) {
               allFoldersData.push(
                 new Promise((resolve, reject) => {
                   dev.logverbose(
@@ -108,7 +108,7 @@ module.exports = (function() {
                     global.settings.thumbExt;
                   const pathToPreview = path.join(thisFolderPath, preview_name);
 
-                  fs.access(pathToPreview, fs.F_OK, err => {
+                  fs.access(pathToPreview, fs.F_OK, (err) => {
                     if (err) {
                       return resolve();
                     }
@@ -117,18 +117,18 @@ module.exports = (function() {
                       .makeMediaThumbs(
                         slugFolderName,
                         preview_name,
-                        'image',
+                        "image",
                         type,
-                        'preview'
+                        "preview"
                       )
-                      .then(thumbData => {
+                      .then((thumbData) => {
                         resolve({
                           [slugFolderName]: {
-                            preview: thumbData
-                          }
+                            preview: thumbData,
+                          },
                         });
                       })
-                      .catch(err => {
+                      .catch((err) => {
                         resolve();
                       });
                   });
@@ -136,7 +136,7 @@ module.exports = (function() {
               );
             }
           });
-          Promise.all(allFoldersData).then(parsedFoldersData => {
+          Promise.all(allFoldersData).then((parsedFoldersData) => {
             dev.logverbose(`All folders meta have been processed`);
 
             // on se balade dans l’array, on attrappe la key
@@ -155,7 +155,7 @@ module.exports = (function() {
             */
             // Reunite array items as a single big object
             let flatObjFoldersData = {};
-            parsedFoldersData.forEach(fmeta => {
+            parsedFoldersData.forEach((fmeta) => {
               if (!!fmeta && Object.keys(fmeta).length > 0) {
                 let slugFolderName = Object.keys(fmeta)[0];
                 if (!flatObjFoldersData.hasOwnProperty(slugFolderName)) {
@@ -173,7 +173,7 @@ module.exports = (function() {
       });
     },
     createFolder: ({ type, data }) => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(
           `COMMON — createFolder : will create a new folder for type = ${type} with: ${JSON.stringify(
             data,
@@ -182,8 +182,8 @@ module.exports = (function() {
           )}`
         );
 
-        if (!data.hasOwnProperty('name')) {
-          data.name = 'Untitled Folder';
+        if (!data.hasOwnProperty("name")) {
+          data.name = "Untitled Folder";
         }
 
         if (!global.settings.structure.hasOwnProperty(type)) {
@@ -193,10 +193,10 @@ module.exports = (function() {
         const baseFolderPath = global.settings.structure[type].path;
         const mainFolderPath = api.getFolderPath(baseFolderPath);
 
-        _getFolderSlugs(mainFolderPath).then(folders => {
+        _getFolderSlugs(mainFolderPath).then((folders) => {
           let slugFolderName = api.slug(data.name);
-          if (slugFolderName === '') {
-            slugFolderName = 'untitled';
+          if (slugFolderName === "") {
+            slugFolderName = "untitled";
           }
 
           if (folders.length > 0) {
@@ -219,8 +219,8 @@ module.exports = (function() {
               let tasks = [];
 
               if (
-                data.hasOwnProperty('preview_rawdata') &&
-                global.settings.structure[type].hasOwnProperty('preview')
+                data.hasOwnProperty("preview_rawdata") &&
+                global.settings.structure[type].hasOwnProperty("preview")
               ) {
                 tasks.push(
                   _storeFoldersPreview(
@@ -232,11 +232,11 @@ module.exports = (function() {
               }
 
               tasks.push(
-                new Promise(function(resolve, reject) {
+                new Promise(function (resolve, reject) {
                   data = _makeDefaultMetaFromStructure({
                     type,
-                    method: 'create',
-                    existing: data
+                    method: "create",
+                    existing: data,
                   });
 
                   const metaFolderPath = path.join(
@@ -246,8 +246,8 @@ module.exports = (function() {
                   );
 
                   api
-                    .storeData(metaFolderPath, data, 'create')
-                    .then(function(meta) {
+                    .storeData(metaFolderPath, data, "create")
+                    .then(function (meta) {
                       dev.logverbose(
                         `New folder meta file created at path: ${metaFolderPath} with meta: ${JSON.stringify(
                           meta,
@@ -257,7 +257,7 @@ module.exports = (function() {
                       );
                       resolve();
                     })
-                    .catch(err => {
+                    .catch((err) => {
                       reject(err);
                     });
                 })
@@ -267,7 +267,7 @@ module.exports = (function() {
                 resolve(slugFolderName);
               });
             },
-            function(err, p) {
+            function (err, p) {
               dev.error(`Failed to create folder ${slugFolderName}: ${err}`);
               reject(err);
             }
@@ -276,7 +276,7 @@ module.exports = (function() {
       });
     },
     editFolder: ({ type, foldersData, newFoldersData }) => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(
           `COMMON — editFolder : will edit folder with type = ${type} 
           with ${JSON.stringify(newFoldersData, null, 4)} 
@@ -295,10 +295,10 @@ module.exports = (function() {
         let tasks = [];
 
         if (
-          newFoldersData.hasOwnProperty('preview_rawdata') &&
-          global.settings.structure[type].hasOwnProperty('preview')
+          newFoldersData.hasOwnProperty("preview_rawdata") &&
+          global.settings.structure[type].hasOwnProperty("preview")
         ) {
-          dev.logverbose('Updating folders preview');
+          dev.logverbose("Updating folders preview");
           let preview_rawdata = newFoldersData.preview_rawdata;
           // store preview with sharp
           tasks.push(
@@ -307,18 +307,18 @@ module.exports = (function() {
         }
 
         let updateFoldersMeta = new Promise((resolve, reject) => {
-          dev.logverbose('Updating folders meta');
+          dev.logverbose("Updating folders meta");
           // cleaning up stored meta
           foldersData = _makeDefaultMetaFromStructure({
             type,
-            method: 'create',
-            existing: foldersData
+            method: "create",
+            existing: foldersData,
           });
 
           newFoldersData = _makeDefaultMetaFromStructure({
             type,
-            method: 'update',
-            existing: newFoldersData
+            method: "update",
+            existing: newFoldersData,
           });
 
           // overwrite stored obj with new informations
@@ -329,8 +329,8 @@ module.exports = (function() {
             global.settings.folderMetaFilename + global.settings.metaFileext
           );
 
-          api.storeData(metaFolderPath, foldersData, 'update').then(
-            function(meta) {
+          api.storeData(metaFolderPath, foldersData, "update").then(
+            function (meta) {
               dev.logverbose(
                 `Update folder meta file at path: ${metaFolderPath} with meta: ${JSON.stringify(
                   meta,
@@ -340,7 +340,7 @@ module.exports = (function() {
               );
               resolve();
             },
-            function(err) {
+            function (err) {
               reject(`Couldn't update folder meta: ${err}`);
             }
           );
@@ -352,7 +352,7 @@ module.exports = (function() {
             dev.logverbose(`COMMON — editFolder : now resolving`);
             resolve(slugFolderName);
           })
-          .catch(err => {
+          .catch((err) => {
             dev.error(
               `Failed to edit folder slugFolderName = ${slugFolderName}: ${err}`
             );
@@ -361,7 +361,7 @@ module.exports = (function() {
       });
     },
     removeFolder: ({ type, slugFolderName }) => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(
           `COMMON — removeFolder : will remove folder: ${slugFolderName}`
         );
@@ -388,14 +388,14 @@ module.exports = (function() {
             );
             resolve();
           })
-          .catch(err => {
+          .catch((err) => {
             reject(err);
           });
       });
     },
 
     getMediaMetaNames: ({ type, slugFolderName, metaFileName }) => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(
           `COMMON — getMediaMetaNames in type = ${type}, with slugFolderName = ${slugFolderName} and metaFileName = ${metaFileName}`
         );
@@ -416,7 +416,7 @@ module.exports = (function() {
           path.join(global.settings.structure[type].path, slugFolderName)
         );
 
-        fs.readdir(slugFolderPath, function(err, filenames) {
+        fs.readdir(slugFolderPath, function (err, filenames) {
           if (err) {
             dev.error(`Couldn't read content dir: ${err}`);
             return reject(err);
@@ -430,9 +430,9 @@ module.exports = (function() {
             `Found this many (${filenames.length}) filenames: ${filenames}`
           );
 
-          let list_metaFileName = filenames.filter(_metaFileName => {
+          let list_metaFileName = filenames.filter((_metaFileName) => {
             return (
-              !new RegExp(global.settings.regexpMatchFolderNames, 'i').test(
+              !new RegExp(global.settings.regexpMatchFolderNames, "i").test(
                 _metaFileName
               ) &&
               // endswith global.settings.metaFileext
@@ -446,7 +446,7 @@ module.exports = (function() {
                 global.settings.folderPreviewFilename +
                   global.settings.thumbExt &&
               // not a dotfile
-              _metaFileName.indexOf('.') !== 0 &&
+              _metaFileName.indexOf(".") !== 0 &&
               // if has metaFileName, only if it matches
               (metaFileName ? _metaFileName === metaFileName : true)
             );
@@ -469,7 +469,7 @@ module.exports = (function() {
       });
     },
     readMediaList: ({ type, medias_list }) => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(
           `COMMON — readMediaList: medias_list = ${JSON.stringify(
             medias_list,
@@ -492,8 +492,8 @@ module.exports = (function() {
             readMediaAndThumbs({
               type,
               slugFolderName,
-              metaFileName
-            }).then(meta => {
+              metaFileName,
+            }).then((meta) => {
               if (!meta) {
                 // case of non-existent media
                 // we need to return the absence of meta for this media
@@ -501,14 +501,14 @@ module.exports = (function() {
                   slugFolderName,
                   mediaMeta: {
                     metaFileName,
-                    _isAbsent: true
-                  }
+                    _isAbsent: true,
+                  },
                 });
               }
               meta.metaFileName = metaFileName;
               resolve({
                 slugFolderName,
-                mediaMeta: meta
+                mediaMeta: meta,
               });
             });
           });
@@ -516,7 +516,7 @@ module.exports = (function() {
         });
 
         Promise.all(allMediasData)
-          .then(mediasMeta => {
+          .then((mediasMeta) => {
             dev.logverbose(
               `readMediaList: gathered all metas, now processing : ${JSON.stringify(
                 mediasMeta,
@@ -528,7 +528,7 @@ module.exports = (function() {
             // reunite array items as a single big object
             let folders_and_medias = {};
 
-            mediasMeta.map(d => {
+            mediasMeta.map((d) => {
               // dev.logverbose(
               //   `readMediaList: analyzing ${JSON.stringify(d, null, 4)}`
               // );
@@ -543,14 +543,13 @@ module.exports = (function() {
 
               if (!folders_and_medias.hasOwnProperty(slugFolderName)) {
                 folders_and_medias[slugFolderName] = {
-                  medias: {}
+                  medias: {},
                 };
               }
 
               // if original media is absent (for example, a publication that lists medias that aren’t there anymore)
-              folders_and_medias[slugFolderName].medias[
-                metaFileName
-              ] = mediaMeta;
+              folders_and_medias[slugFolderName].medias[metaFileName] =
+                mediaMeta;
               return;
             });
 
@@ -560,14 +559,14 @@ module.exports = (function() {
             );
             resolve(folders_and_medias);
           })
-          .catch(err => {
+          .catch((err) => {
             dev.error(`Failed readMediaList with ${err}`);
             reject();
           });
       });
     },
     createMediaMeta: ({ type, slugFolderName, additionalMeta }) => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(
           `COMMON — createMediaMeta : will create a new meta file 
           in folder ${slugFolderName}
@@ -582,13 +581,13 @@ module.exports = (function() {
         let mediaName;
         let mediaPath;
         let metaFileName;
-        if (additionalMeta.hasOwnProperty('media_filename')) {
+        if (additionalMeta.hasOwnProperty("media_filename")) {
           mediaName = additionalMeta.media_filename;
           mediaPath = path.join(api.getFolderPath(slugFolderName), mediaName);
           metaFileName = mediaName + global.settings.metaFileext;
-        } else if (additionalMeta.hasOwnProperty('desired_filename')) {
+        } else if (additionalMeta.hasOwnProperty("desired_filename")) {
           let randomString = (
-            Math.random().toString(36) + '00000000000000000'
+            Math.random().toString(36) + "00000000000000000"
           ).slice(2, 3 + 2);
           metaFileName = `${api.slug(
             additionalMeta.desired_filename
@@ -596,11 +595,9 @@ module.exports = (function() {
         } else {
           let timeCreated = api.getCurrentDate();
           let randomString = (
-            Math.random().toString(36) + '00000000000000000'
+            Math.random().toString(36) + "00000000000000000"
           ).slice(2, 3 + 2);
-          metaFileName = `${timeCreated}-${randomString}${
-            global.settings.metaFileext
-          }`;
+          metaFileName = `${timeCreated}-${randomString}${global.settings.metaFileext}`;
         }
 
         let slugFolderPath = api.getFolderPath(
@@ -610,50 +607,50 @@ module.exports = (function() {
         const metaFilePath = path.join(slugFolderPath, metaFileName);
 
         // check that a meta with this name doesn't exist already
-        fs.access(metaFilePath, fs.F_OK, function(err) {
+        fs.access(metaFilePath, fs.F_OK, function (err) {
           // if there's nothing at path, we’re all good
           if (err) {
             // guess file type from filename
             if (
-              !additionalMeta.hasOwnProperty('type') &&
-              additionalMeta.hasOwnProperty('media_filename') &&
+              !additionalMeta.hasOwnProperty("type") &&
+              additionalMeta.hasOwnProperty("media_filename") &&
               mediaName !== undefined
             ) {
               let mediaFileExtension = new RegExp(
                 global.settings.regexpGetFileExtension,
-                'i'
+                "i"
               ).exec(mediaName)[0];
               dev.logverbose(
                 `Trying to guess filetype from extension: ${mediaFileExtension}`
               );
               switch (mediaFileExtension.toLowerCase()) {
-                case '.jpeg':
-                case '.jpg':
-                case '.png':
-                case '.gif':
-                case '.tiff':
-                case '.tif':
-                case '.dng':
-                case '.svg':
-                  additionalMeta.type = 'image';
+                case ".jpeg":
+                case ".jpg":
+                case ".png":
+                case ".gif":
+                case ".tiff":
+                case ".tif":
+                case ".dng":
+                case ".svg":
+                  additionalMeta.type = "image";
                   break;
-                case '.mp4':
-                case '.mov':
-                case '.webm':
-                case '.avi':
-                  additionalMeta.type = 'video';
+                case ".mp4":
+                case ".mov":
+                case ".webm":
+                case ".avi":
+                  additionalMeta.type = "video";
                   break;
-                case '.mp3':
-                case '.wav':
-                case '.m4a':
-                  additionalMeta.type = 'audio';
+                case ".mp3":
+                case ".wav":
+                case ".m4a":
+                  additionalMeta.type = "audio";
                   break;
-                case '.md':
-                case '.rtf':
-                  additionalMeta.type = 'text';
+                case ".md":
+                case ".rtf":
+                  additionalMeta.type = "text";
                   break;
-                case '.pdf':
-                  additionalMeta.type = 'document';
+                case ".pdf":
+                  additionalMeta.type = "document";
                   break;
               }
               dev.logverbose(`Type determined to be: ${additionalMeta.type}`);
@@ -661,9 +658,9 @@ module.exports = (function() {
 
             let mdata = _makeDefaultMetaFromStructure({
               type,
-              type_two: 'medias',
-              method: 'create',
-              existing: additionalMeta
+              type_two: "medias",
+              method: "create",
+              existing: additionalMeta,
             });
 
             let tasks = [];
@@ -673,7 +670,7 @@ module.exports = (function() {
             ***************************************************************************/
             if (
               additionalMeta !== undefined &&
-              additionalMeta.hasOwnProperty('fileCreationDate')
+              additionalMeta.hasOwnProperty("fileCreationDate")
             ) {
               dev.logverbose(`Setting created from additionalMeta`);
               mdata.date_created = api.convertDate(
@@ -683,7 +680,7 @@ module.exports = (function() {
               if (mediaName !== undefined) {
                 dev.logverbose(`Setting created from file birthtime`);
                 let getFileCreationDate = new Promise((resolve, reject) => {
-                  fs.stat(mediaPath, function(err, stats) {
+                  fs.stat(mediaPath, function (err, stats) {
                     if (err) {
                       resolve();
                     }
@@ -697,12 +694,12 @@ module.exports = (function() {
               }
             }
 
-            if (mdata.type === 'image') {
+            if (mdata.type === "image") {
               dev.logverbose(`Looking for EXIF for image`);
               let getEXIFTimestamp = new Promise((resolve, reject) => {
                 thumbs
                   .getTimestampFromEXIF(mediaPath)
-                  .then(ts => {
+                  .then((ts) => {
                     if (ts === false) {
                       dev.logverbose(`No timestamp found in EXIF.`);
                     } else {
@@ -716,7 +713,7 @@ module.exports = (function() {
                     }
                     resolve();
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     dev.logverbose(`No EXIF data to read from: ${err}`);
                     resolve();
                   });
@@ -727,35 +724,35 @@ module.exports = (function() {
             /***************************************************************************
                 RATIO
             ***************************************************************************/
-            if (mdata.type === 'image') {
+            if (mdata.type === "image") {
               let getEXIFRatio = new Promise((resolve, reject) => {
                 thumbs
                   .getRatioFromEXIF(mediaPath)
-                  .then(mediaRatio => {
+                  .then((mediaRatio) => {
                     dev.log(`getEXIFData mediaRatio : ${mediaRatio}`);
                     if (mediaRatio !== undefined) {
                       mdata.ratio = mediaRatio;
                     }
                     resolve();
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     dev.error(`No EXIF data to read from: ${err}`);
                     resolve();
                   });
               });
               tasks.push(getEXIFRatio);
-            } else if (mdata.type === 'video' || mdata.type === 'audio') {
+            } else if (mdata.type === "video" || mdata.type === "audio") {
               let getMediaRatio = new Promise((resolve, reject) => {
                 thumbs
                   .getMediaRatio(mediaPath)
-                  .then(mediaRatio => {
+                  .then((mediaRatio) => {
                     dev.log(`getMediaRatio : ${mediaRatio}`);
                     if (mediaRatio !== undefined) {
                       mdata.ratio = mediaRatio;
                     }
                     resolve();
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     dev.error(`No probe data to read from: ${err}`);
                     resolve();
                   });
@@ -766,20 +763,20 @@ module.exports = (function() {
             /***************************************************************************
                 DURATION
             ***************************************************************************/
-            if (mdata.type === 'video' || mdata.type === 'audio') {
+            if (mdata.type === "video" || mdata.type === "audio") {
               // get video or audio duration
               let getMediaDuration = new Promise((resolve, reject) => {
                 dev.logverbose(`Will attempt to get media duration.`);
                 thumbs
                   .getMediaDuration(mediaPath)
-                  .then(duration => {
+                  .then((duration) => {
                     dev.log(`getMediaDuration: ${duration}`);
                     if (duration) {
                       mdata.duration = duration;
                     }
                     resolve();
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     dev.error(`No probe data to read from: ${err}`);
                     resolve();
                   });
@@ -790,17 +787,17 @@ module.exports = (function() {
             /***************************************************************************
                 DURATION
             ***************************************************************************/
-            if (mdata.type === 'image') {
+            if (mdata.type === "image") {
               let getFullEXIF = new Promise((resolve, reject) => {
                 thumbs
                   .getEXIFData(mediaPath)
-                  .then(exifdata => {
+                  .then((exifdata) => {
                     if (exifdata) {
                       // mdata.exif = validator.escape(JSON.stringify(exifdata));
                     }
                     resolve();
                   })
-                  .catch(err => resolve());
+                  .catch((err) => resolve());
               });
               tasks.push(getFullEXIF);
             }
@@ -809,8 +806,8 @@ module.exports = (function() {
                 DO IT ALL
             ***************************************************************************/
             Promise.all(tasks).then(() => {
-              api.storeData(metaFilePath, mdata, 'create').then(
-                function(meta) {
+              api.storeData(metaFilePath, mdata, "create").then(
+                function (meta) {
                   dev.logverbose(
                     `New media meta file created at path: ${metaFilePath} with meta: ${JSON.stringify(
                       meta,
@@ -820,7 +817,7 @@ module.exports = (function() {
                   );
                   resolve(metaFileName);
                 },
-                function(err) {
+                function (err) {
                   reject(`Couldn't create media meta : ${err}`);
                 }
               );
@@ -834,27 +831,26 @@ module.exports = (function() {
       });
     },
     convertAndSaveMedia: ({ uploadDir, tempPath, newFileName, socketid }) => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(`COMMON — convertAndSaveMedia`);
 
         if (
-          newFileName.toLowerCase().endsWith('.jpeg') ||
-          newFileName.toLowerCase().endsWith('.jpg')
+          newFileName.toLowerCase().endsWith(".jpeg") ||
+          newFileName.toLowerCase().endsWith(".jpg")
         ) {
           let finalPath = path.join(uploadDir, newFileName);
           sharp(tempPath)
             .rotate()
             .withMetadata()
-            .background({ r: 255, g: 255, b: 255 })
-            .flatten()
+            .flatten({ background: { r: 255, g: 255, b: 255 } })
             .jpeg({
-              quality: 90
+              quality: 90,
             })
-            .toFile(finalPath, function(err, info) {
+            .toFile(finalPath, function (err, info) {
               if (err) {
                 reject(err);
               } else {
-                fs.unlink(tempPath, err => {
+                fs.unlink(tempPath, (err) => {
                   dev.logverbose(`Removing raw uploaded file at ${tempPath}`);
                 });
               }
@@ -968,7 +964,7 @@ module.exports = (function() {
     },
 
     editMediaMeta: ({ type, slugFolderName, metaFileName, data }) => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(
           `COMMON — editMediaMeta : will edit media for ${slugFolderName} at ${metaFileName} with ${JSON.stringify(
             data,
@@ -978,7 +974,7 @@ module.exports = (function() {
         );
 
         readMediaMeta({ type, slugFolderName, metaFileName })
-          .then(meta => {
+          .then((meta) => {
             dev.logverbose(
               `Got meta, now updating for ${metaFileName} with ${JSON.stringify(
                 meta,
@@ -990,16 +986,16 @@ module.exports = (function() {
             // cleaning up stored meta
             meta = _makeDefaultMetaFromStructure({
               type,
-              type_two: 'medias',
-              method: 'create',
-              existing: meta
+              type_two: "medias",
+              method: "create",
+              existing: meta,
             });
 
             let newMediaData = _makeDefaultMetaFromStructure({
               type,
-              type_two: 'medias',
-              method: 'update',
-              existing: data
+              type_two: "medias",
+              method: "update",
+              existing: data,
             });
 
             dev.logverbose(
@@ -1020,8 +1016,8 @@ module.exports = (function() {
               );
               let mediaMetaPath = path.join(slugFolderPath, metaFileName);
 
-              api.storeData(mediaMetaPath, meta, 'update').then(
-                meta => {
+              api.storeData(mediaMetaPath, meta, "update").then(
+                (meta) => {
                   dev.logverbose(
                     `Updated media meta file at path: ${mediaMetaPath} with meta: ${JSON.stringify(
                       meta,
@@ -1031,14 +1027,14 @@ module.exports = (function() {
                   );
                   resolve();
                 },
-                function(err) {
+                function (err) {
                   reject(`Couldn't update folder meta : ${err}`);
                 }
               );
             });
             tasks.push(updateMediaMeta);
 
-            if (meta.type === 'text' && data.hasOwnProperty('content')) {
+            if (meta.type === "text" && data.hasOwnProperty("content")) {
               dev.logverbose(`Is text and need to update content.`);
               dev.logverbose(`New content: ${data.content}`);
 
@@ -1049,14 +1045,14 @@ module.exports = (function() {
                   if (
                     global.settings.structure[
                       type
-                    ].medias.fields.hasOwnProperty('media_filename')
+                    ].medias.fields.hasOwnProperty("media_filename")
                   ) {
-                    if (meta.hasOwnProperty('media_filename')) {
+                    if (meta.hasOwnProperty("media_filename")) {
                       return meta.media_filename;
                     } else {
                       return new RegExp(
                         global.settings.regexpRemoveFileExtension,
-                        'i'
+                        "i"
                       ).exec(metaFileName)[1];
                     }
                   }
@@ -1071,16 +1067,16 @@ module.exports = (function() {
                 );
                 let mediaPath = path.join(slugFolderPath, mediaFileName);
 
-                let content = validator.escape(data.content + '');
+                let content = validator.escape(data.content + "");
                 api
-                  .storeData(mediaPath, content, 'update')
-                  .then(content => {
+                  .storeData(mediaPath, content, "update")
+                  .then((content) => {
                     dev.logverbose(
                       `Updated media file at path: ${mediaPath} with content: ${content}`
                     );
                     resolve();
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     reject(err);
                   });
               });
@@ -1091,36 +1087,36 @@ module.exports = (function() {
               resolve(slugFolderName);
             });
           })
-          .catch(err => {
+          .catch((err) => {
             reject(err);
           });
       });
     },
     removeMedia: ({ type, slugFolderName, metaFileName }) => {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(
           `COMMON — removeMedia : will remove media at path: ${slugFolderName}/${metaFileName}`
         );
 
-        readMediaMeta({ type, slugFolderName, metaFileName }).then(meta => {
+        readMediaMeta({ type, slugFolderName, metaFileName }).then((meta) => {
           // Legacy : if no filename in meta file when it is expected in blueprint
           // then it means its in the name of the text file
           function getMediaFilename(meta, metaFileName) {
             if (
               global.settings.structure[type].medias.fields.hasOwnProperty(
-                'media_filename'
+                "media_filename"
               )
             ) {
-              if (meta.hasOwnProperty('media_filename')) {
+              if (meta.hasOwnProperty("media_filename")) {
                 return meta.media_filename;
               } else {
                 return new RegExp(
                   global.settings.regexpRemoveFileExtension,
-                  'i'
+                  "i"
                 ).exec(metaFileName)[1];
               }
             } else {
-              return '';
+              return "";
             }
           }
           let mediaFileName = getMediaFilename(meta, metaFileName);
@@ -1138,7 +1134,7 @@ module.exports = (function() {
 
           fs.move(mediaMetaPath, movedMediaMetaPath, { overwrite: true })
             .then(() => {
-              if (mediaFileName === '') {
+              if (mediaFileName === "") {
                 return resolve();
               }
               let mediaPath = path.join(slugFolderPath, mediaFileName);
@@ -1148,7 +1144,7 @@ module.exports = (function() {
                 mediaFileName
               );
               return fs.move(mediaPath, movedMediaPath, {
-                overwrite: true
+                overwrite: true,
               });
             })
             .then(() => {
@@ -1161,33 +1157,33 @@ module.exports = (function() {
             .then(() => {
               resolve();
             })
-            .catch(err => {
+            .catch((err) => {
               reject(err);
             });
         });
       });
     },
-    createMedia: ({ type, rawData, slugFolderName, additionalMeta = '' }) => {
-      return new Promise(function(resolve, reject) {
+    createMedia: ({ type, rawData, slugFolderName, additionalMeta = "" }) => {
+      return new Promise(function (resolve, reject) {
         dev.logfunction(
           `COMMON — createMedia with type = ${type}, 
           slugFolderName = ${slugFolderName} 
           and additionalMeta = ${JSON.stringify(additionalMeta, null, 4)}`
         );
 
-        if (!additionalMeta.hasOwnProperty('type')) {
+        if (!additionalMeta.hasOwnProperty("type")) {
           dev.logverbose(
-            'Missing type field, so this media doesn’t have an associated file'
+            "Missing type field, so this media doesn’t have an associated file"
           );
           return resolve(additionalMeta);
         }
 
         let timeCreated = api.getCurrentDate();
         let randomString = (
-          Math.random().toString(36) + '00000000000000000'
+          Math.random().toString(36) + "00000000000000000"
         ).slice(2, 3 + 2);
 
-        let mediaName = additionalMeta.hasOwnProperty('type')
+        let mediaName = additionalMeta.hasOwnProperty("type")
           ? `${additionalMeta.type}-${timeCreated}-${randomString}`
           : `${timeCreated}-${randomString}`;
 
@@ -1210,22 +1206,21 @@ module.exports = (function() {
 
         // the only code that still uses this logic is for stopmotions
 
-        if (additionalMeta.type === 'image') {
+        if (additionalMeta.type === "image") {
           tasks.push(
             new Promise((resolve, reject) => {
-              mediaName += '.jpeg';
+              mediaName += ".jpeg";
               let pathToMedia = path.join(slugFolderPath, mediaName);
 
               let imageBuffer = rawData;
               sharp(imageBuffer)
                 .rotate()
                 .withMetadata()
-                .background({ r: 255, g: 255, b: 255 })
-                .flatten()
+                .flatten({ background: { r: 255, g: 255, b: 255 } })
                 .jpeg({
-                  quality: 90
+                  quality: 90,
                 })
-                .toFile(pathToMedia, function(err, info) {
+                .toFile(pathToMedia, function (err, info) {
                   if (err) {
                     dev.error(err);
                     reject(err);
@@ -1235,10 +1230,10 @@ module.exports = (function() {
                 });
             })
           );
-        } else if (additionalMeta.type === 'video') {
+        } else if (additionalMeta.type === "video") {
           tasks.push(
             new Promise((resolve, reject) => {
-              mediaName += '.webm';
+              mediaName += ".webm";
               let pathToMedia = path.join(slugFolderPath, mediaName);
 
               // only works for projects media (root) for now
@@ -1247,15 +1242,15 @@ module.exports = (function() {
                 .then(() => {
                   resolve();
                 })
-                .catch(err => {
+                .catch((err) => {
                   reject(err);
                 });
             })
           );
-        } else if (additionalMeta.type === 'audio') {
+        } else if (additionalMeta.type === "audio") {
           tasks.push(
             new Promise((resolve, reject) => {
-              mediaName += '.mp3';
+              mediaName += ".mp3";
 
               // only works for projects media (root) for now
               api
@@ -1263,48 +1258,48 @@ module.exports = (function() {
                 .then(() => {
                   resolve();
                 })
-                .catch(err => {
+                .catch((err) => {
                   reject(err);
                 });
             })
           );
-        } else if (additionalMeta.type === 'svg') {
+        } else if (additionalMeta.type === "svg") {
           tasks.push(
             new Promise((resolve, reject) => {
-              mediaName += '.svg';
+              mediaName += ".svg";
               let pathToMedia = path.join(slugFolderPath, mediaName);
-              additionalMeta.type = 'image';
+              additionalMeta.type = "image";
 
-              var fileBuffer = new Buffer(rawData, 'base64');
-              fs.writeFile(pathToMedia, fileBuffer, function(err) {
+              var fileBuffer = new Buffer(rawData, "base64");
+              fs.writeFile(pathToMedia, fileBuffer, function (err) {
                 if (err) reject(err);
                 resolve();
               });
             })
           );
-        } else if (additionalMeta.type === 'text') {
+        } else if (additionalMeta.type === "text") {
           tasks.push(
             new Promise((resolve, reject) => {
-              mediaName += '.md';
+              mediaName += ".md";
               let pathToMedia = path.join(slugFolderPath, mediaName);
 
-              api.storeData(pathToMedia, rawData, 'create').then(
-                function(meta) {
+              api.storeData(pathToMedia, rawData, "create").then(
+                function (meta) {
                   resolve();
                 },
-                function(err) {
+                function (err) {
                   dev.error(`Failed to storeData for textmedia: ${err}`);
                   reject(err);
                 }
               );
             })
           );
-        } else if (additionalMeta.type === 'stopmotion') {
+        } else if (additionalMeta.type === "stopmotion") {
           tasks.push(
             new Promise((resolve, reject) => {
-              mediaName += '.mp4';
+              mediaName += ".mp4";
               let pathToMedia = path.join(slugFolderPath, mediaName);
-              additionalMeta.type = 'video';
+              additionalMeta.type = "video";
 
               // only works for projects media (root) for now
               api
@@ -1313,12 +1308,12 @@ module.exports = (function() {
                   pathToMedia,
                   images: rawData,
                   slugStopmotionName: additionalMeta.slugStopmotionName,
-                  frameRate: additionalMeta.frameRate
+                  frameRate: additionalMeta.frameRate,
                 })
                 .then(() => {
                   resolve();
                 })
-                .catch(err => {
+                .catch((err) => {
                   reject(err);
                 });
             })
@@ -1330,30 +1325,30 @@ module.exports = (function() {
             dev.logverbose(`Passed all tasks for captured medias`);
             let newMediaInfos = {
               media_filename: mediaName,
-              fileCreationDate: api.parseDate(timeCreated)
+              fileCreationDate: api.parseDate(timeCreated),
             };
-            if (typeof additionalMeta !== 'undefined') {
+            if (typeof additionalMeta !== "undefined") {
               newMediaInfos = Object.assign({}, newMediaInfos, additionalMeta);
             }
             resolve(newMediaInfos);
           })
-          .catch(err => {
+          .catch((err) => {
             dev.error(`Failed to store captured media as file: ${err}`);
             reject(`${err}`);
           });
       });
-    }
+    },
   };
 
   function readMediaMeta({ type, slugFolderName, metaFileName }) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       // pour chaque item, on regarde s’il contient un fichier méta (même nom + .txt)
       let slugFolderPath = api.getFolderPath(
         path.join(global.settings.structure[type].path, slugFolderName)
       );
       let metaFile = path.join(slugFolderPath, metaFileName);
 
-      fs.access(metaFile, fs.F_OK, err => {
+      fs.access(metaFile, fs.F_OK, (err) => {
         // if there's no META file at path
         if (err) {
           dev.logverbose(`No meta for this media: ${err}`);
@@ -1362,30 +1357,30 @@ module.exports = (function() {
 
         dev.logverbose(`Found meta there: ${metaFile}`);
         readMetaFile(metaFile)
-          .then(mediaData => {
+          .then((mediaData) => {
             mediaData = _sanitizeMetaFromFile({
               type,
-              type_two: 'medias',
-              meta: mediaData
+              type_two: "medias",
+              meta: mediaData,
             });
 
             // Legacy : if no filename in meta file when it is expected in blueprint
             // then it means its in the name of the text file
             if (
-              !mediaData.hasOwnProperty('media_filename') &&
+              !mediaData.hasOwnProperty("media_filename") &&
               global.settings.structure[type].medias.fields.hasOwnProperty(
-                'media_filename'
+                "media_filename"
               )
             ) {
               mediaData.media_filename = new RegExp(
                 global.settings.regexpRemoveFileExtension,
-                'i'
+                "i"
               ).exec(metaFileName)[1];
             }
 
             if (
-              mediaData.type === 'text' &&
-              mediaData.hasOwnProperty('media_filename')
+              mediaData.type === "text" &&
+              mediaData.hasOwnProperty("media_filename")
             ) {
               // get text content
               let mediaPath = path.join(
@@ -1400,20 +1395,20 @@ module.exports = (function() {
             }
             return resolve(mediaData);
           })
-          .catch(err => {
+          .catch((err) => {
             return reject(err);
           });
       });
     });
   }
   function readMediaAndThumbs({ type, slugFolderName, metaFileName }) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logfunction(
         `COMMON — readMediaAndThumbs: slugFolderName = ${slugFolderName} & metaFileName = ${metaFileName}`
       );
 
       readMediaMeta({ type, slugFolderName, metaFileName })
-        .then(mediaData => {
+        .then((mediaData) => {
           dev.logverbose(
             `Read Meta, now getting thumbs for ${JSON.stringify(
               mediaData,
@@ -1423,7 +1418,7 @@ module.exports = (function() {
           );
 
           if (
-            mediaData.hasOwnProperty('media_filename') &&
+            mediaData.hasOwnProperty("media_filename") &&
             global.settings.structure[type].medias.thumbs
           ) {
             // let’s find or create thumbs
@@ -1433,26 +1428,26 @@ module.exports = (function() {
                 mediaData.media_filename,
                 mediaData.type,
                 type,
-                'medias'
+                "medias"
               )
-              .then(thumbData => {
+              .then((thumbData) => {
                 mediaData.thumbs = thumbData;
                 resolve(mediaData);
               })
-              .catch(err => {
+              .catch((err) => {
                 resolve();
               });
           } else {
             resolve(mediaData);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           resolve();
         });
     });
   }
   function readMetaFile(metaPath) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logfunction(`COMMON — readMetaFile: ${metaPath}`);
       var metaFileContent = fs.readFileSync(
         metaPath,
@@ -1463,7 +1458,7 @@ module.exports = (function() {
     });
   }
   function _getFolderSlugs(mainFolderPath) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logfunction(`COMMON — _getFolderSlugs in ${mainFolderPath}`);
       fs.readdir(mainFolderPath, (err, filenames) => {
         if (err) {
@@ -1475,21 +1470,19 @@ module.exports = (function() {
           return resolve([]);
         }
 
-        var folders = filenames.filter(function(thisSlugFolderName) {
+        var folders = filenames.filter(function (thisSlugFolderName) {
           // is a folder
           return (
-            new RegExp(global.settings.regexpMatchFolderNames, 'i').test(
+            new RegExp(global.settings.regexpMatchFolderNames, "i").test(
               thisSlugFolderName
             ) &&
             // if doesn’t start with _ (these folders are generated by the tool, can’t be created through the interface)
-            thisSlugFolderName.indexOf('_') !== 0
+            thisSlugFolderName.indexOf("_") !== 0
           );
         });
 
         dev.logverbose(
-          `Number of folders that match in ${mainFolderPath} = ${
-            folders.length
-          }. Folder(s) is(are) ${folders}`
+          `Number of folders that match in ${mainFolderPath} = ${folders.length}. Folder(s) is(are) ${folders}`
         );
         return resolve(folders);
       });
@@ -1524,7 +1517,7 @@ module.exports = (function() {
           );
         })
         .then(() => {
-          if (preview_rawdata === '') {
+          if (preview_rawdata === "") {
             dev.logverbose(
               `COMMON — _storeFoldersPreview : No new preview data found, returning.`
             );
@@ -1538,29 +1531,30 @@ module.exports = (function() {
             .rotate()
             .resize(
               global.settings.structure[type].preview.width,
-              global.settings.structure[type].preview.height
+              global.settings.structure[type].preview.height,
+              {
+                fit: "inside",
+                withoutEnlargement: true,
+              }
             )
-            .max()
-            .withoutEnlargement()
-            .background({ r: 255, g: 255, b: 255 })
-            .flatten()
+            .flatten({ background: { r: 255, g: 255, b: 255 } })
             .withMetadata()
             .toFormat(global.settings.thumbFormat, {
-              quality: global.settings.mediaThumbQuality
+              quality: global.settings.mediaThumbQuality,
             })
             .toFile(pathToPreview)
-            .then(function() {
+            .then(function () {
               dev.logverbose(
                 `COMMON — _storeFoldersPreview : Finished making a folder preview at ${pathToPreview}`
               );
               resolve();
             })
-            .catch(err => {
+            .catch((err) => {
               console.error(err);
               reject(err);
             });
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           reject(err);
         });
@@ -1570,8 +1564,8 @@ module.exports = (function() {
   function _makeDefaultMetaFromStructure({
     type,
     type_two,
-    method = 'create',
-    existing = {}
+    method = "create",
+    existing = {},
   }) {
     dev.logfunction(
       `COMMON — _makeDefaultMetaFromStructure : will '${method}' a new default meta object for type = ${type} and type_two = ${type_two}.`
@@ -1588,7 +1582,7 @@ module.exports = (function() {
 
     Object.entries(fields).forEach(([key, val]) => {
       // dev.logverbose(`Iterating through struct entries, at key ${key}`);
-      if (!val.hasOwnProperty('type')) {
+      if (!val.hasOwnProperty("type")) {
         dev.error(
           `Missing type property for field name ${key} in global.settings.json`
         );
@@ -1597,8 +1591,8 @@ module.exports = (function() {
 
       // if updating and "read_only", let’s stop right there for that key
       if (
-        method === 'update' &&
-        val.hasOwnProperty('read_only') &&
+        method === "update" &&
+        val.hasOwnProperty("read_only") &&
         val.read_only === true
       ) {
         return;
@@ -1607,85 +1601,85 @@ module.exports = (function() {
       // if updating a meta file and the new meta doesn’t have the iterated value
       // we stop except if that field has "override"
       if (
-        method === 'update' &&
+        method === "update" &&
         !existing.hasOwnProperty(key) &&
-        !(val.hasOwnProperty('override') && val.override === true)
+        !(val.hasOwnProperty("override") && val.override === true)
       ) {
         return;
       }
 
-      if (type === 'date') {
+      if (type === "date") {
         // "override" means "reapply default everytime we update this file"
         if (
-          (!val.hasOwnProperty('override') || val.override === false) &&
+          (!val.hasOwnProperty("override") || val.override === false) &&
           existing.hasOwnProperty(key)
         ) {
           // get from original if it exists and if override is not set or set to false
-          output_obj[key] = api.convertDate(existing[key] + '');
-        } else if (val.hasOwnProperty('default')) {
+          output_obj[key] = api.convertDate(existing[key] + "");
+        } else if (val.hasOwnProperty("default")) {
           // get from default if set
           output_obj[key] =
-            val.default === 'current' ? api.getCurrentDate() : val.default;
+            val.default === "current" ? api.getCurrentDate() : val.default;
         }
-      } else if (type === 'boolean') {
+      } else if (type === "boolean") {
         if (
-          (!val.hasOwnProperty('override') || val.override === false) &&
+          (!val.hasOwnProperty("override") || val.override === false) &&
           existing.hasOwnProperty(key)
         ) {
           // get from original if it exists and if override is not set or set to false
-          output_obj[key] = validator.toBoolean(existing[key] + '');
+          output_obj[key] = validator.toBoolean(existing[key] + "");
         } else if (
-          val.hasOwnProperty('default') &&
-          typeof val.default === 'boolean'
+          val.hasOwnProperty("default") &&
+          typeof val.default === "boolean"
         ) {
           output_obj[key] = val.default;
         }
-      } else if (type === 'string') {
+      } else if (type === "string") {
         if (
-          (!val.hasOwnProperty('override') || val.override === false) &&
+          (!val.hasOwnProperty("override") || val.override === false) &&
           existing.hasOwnProperty(key)
         ) {
-          if (val.hasOwnProperty('options')) {
-            let new_val = validator.escape(existing[key] + '');
+          if (val.hasOwnProperty("options")) {
+            let new_val = validator.escape(existing[key] + "");
             if (val.options.includes(new_val)) {
               output_obj[key] = new_val;
-            } else if (val.hasOwnProperty('default')) {
+            } else if (val.hasOwnProperty("default")) {
               output_obj[key] = val.default;
             }
           } else {
-            output_obj[key] = validator.escape(existing[key] + '');
+            output_obj[key] = validator.escape(existing[key] + "");
           }
-        } else if (val.hasOwnProperty('default')) {
+        } else if (val.hasOwnProperty("default")) {
           output_obj[key] = val.default;
         }
-      } else if (type === 'number') {
+      } else if (type === "number") {
         if (
-          (!val.hasOwnProperty('override') || val.override === false) &&
+          (!val.hasOwnProperty("override") || val.override === false) &&
           existing.hasOwnProperty(key)
         ) {
-          if (val.hasOwnProperty('clip')) {
+          if (val.hasOwnProperty("clip")) {
             output_obj[key] = api.clip(
-              validator.toFloat(existing[key] + ''),
+              validator.toFloat(existing[key] + ""),
               val.clip.min,
               val.clip.max
             );
           } else {
-            output_obj[key] = validator.toFloat(existing[key] + '');
+            output_obj[key] = validator.toFloat(existing[key] + "");
           }
-        } else if (val.hasOwnProperty('default')) {
+        } else if (val.hasOwnProperty("default")) {
           output_obj[key] =
-            val.default === 'random' ? Math.random() : val.default;
+            val.default === "random" ? Math.random() : val.default;
         }
-      } else if (type === 'array') {
+      } else if (type === "array") {
         if (
-          (!val.hasOwnProperty('override') || val.override === false) &&
+          (!val.hasOwnProperty("override") || val.override === false) &&
           existing.hasOwnProperty(key)
         ) {
           if (!Array.isArray(existing[key])) {
             return;
           }
           output_obj[key] = existing[key];
-        } else if (val.hasOwnProperty('default')) {
+        } else if (val.hasOwnProperty("default")) {
           output_obj[key] = val.default;
         }
       }
@@ -1715,18 +1709,18 @@ module.exports = (function() {
         ? global.settings.structure[type].fields
         : global.settings.structure[type][type_two].fields;
 
-    Object.keys(meta).forEach(key => {
-      if (fields.hasOwnProperty(key) && fields[key].hasOwnProperty('type')) {
+    Object.keys(meta).forEach((key) => {
+      if (fields.hasOwnProperty(key) && fields[key].hasOwnProperty("type")) {
         const fieldType = fields[key].type;
-        if (fieldType === 'date') {
+        if (fieldType === "date") {
           new_meta[key] = api.parseDate(meta[key]);
-        } else if (fieldType === 'string') {
+        } else if (fieldType === "string") {
           new_meta[key] = validator.unescape(meta[key]);
-        } else if (fieldType === 'number') {
+        } else if (fieldType === "number") {
           new_meta[key] = validator.toFloat(meta[key]);
-        } else if (fieldType === 'boolean') {
+        } else if (fieldType === "boolean") {
           new_meta[key] = validator.toBoolean(meta[key]);
-        } else if (fieldType === 'array') {
+        } else if (fieldType === "array") {
           new_meta[key] = meta[key];
         } else {
           dev.error(`Unexpected field type ${fieldType}.`);

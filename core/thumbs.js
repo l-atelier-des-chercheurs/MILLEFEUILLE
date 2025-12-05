@@ -1,20 +1,20 @@
-const path = require('path'),
-  fs = require('fs-extra'),
-  ffmpegstatic = require('ffmpeg-static'),
-  ffprobestatic = require('ffprobe-static'),
-  ffmpeg = require('fluent-ffmpeg'),
-  exifReader = require('exif-reader');
+const path = require("path"),
+  fs = require("fs-extra"),
+  ffmpegstatic = require("ffmpeg-static"),
+  ffprobestatic = require("ffprobe-static"),
+  ffmpeg = require("fluent-ffmpeg"),
+  exifReader = require("exif-reader");
 
-const sharp = require('sharp');
+const sharp = require("sharp");
 sharp.cache(false);
 
-const dev = require('./dev-log'),
-  api = require('./api');
+const dev = require("./dev-log"),
+  api = require("./api");
 
-ffmpeg.setFfmpegPath(ffmpegstatic.path);
+ffmpeg.setFfmpegPath(ffmpegstatic);
 ffmpeg.setFfprobePath(ffprobestatic.path);
 
-module.exports = (function() {
+module.exports = (function () {
   const API = {
     makeMediaThumbs: (slugFolderName, filename, mediaType, type, subtype) =>
       makeMediaThumbs(slugFolderName, filename, mediaType, type, subtype),
@@ -23,22 +23,22 @@ module.exports = (function() {
     removeFolderThumbs: (slugFolderName, type) =>
       removeFolderThumbs(slugFolderName, type),
 
-    getEXIFData: mediaPath => getEXIFData(mediaPath),
-    getRatioFromEXIF: mediaPath => getRatioFromEXIF(mediaPath),
-    getTimestampFromEXIF: mediaPath => getTimestampFromEXIF(mediaPath),
+    getEXIFData: (mediaPath) => getEXIFData(mediaPath),
+    getRatioFromEXIF: (mediaPath) => getRatioFromEXIF(mediaPath),
+    getTimestampFromEXIF: (mediaPath) => getTimestampFromEXIF(mediaPath),
 
-    getMediaDuration: mediaPath => getMediaDuration(mediaPath),
-    getMediaRatio: mediaPath => getMediaRatio(mediaPath)
+    getMediaDuration: (mediaPath) => getMediaDuration(mediaPath),
+    getMediaRatio: (mediaPath) => getMediaRatio(mediaPath),
   };
 
   // this function is used both when creating a media and when all medias are listed.
   // this way, if thumbs are deleted or moved while the app is running, they will be recreated next time they are required
   function makeMediaThumbs(slugFolderName, filename, mediaType, type, subtype) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logfunction(
         `THUMBS — makeMediaThumbs — Making thumbs for media with slugFolderName = ${slugFolderName}, filename = ${filename}, mediaType: ${mediaType}, type: ${type}, subtype: ${subtype}`
       );
-      if (!['image', 'video'].includes(mediaType)) {
+      if (!["image", "video"].includes(mediaType)) {
         dev.logverbose(
           `THUMBS — makeMediaThumbs — media is not of type image or video`
         );
@@ -58,7 +58,7 @@ module.exports = (function() {
       let mediaPath = path.join(mainFolderPath, slugFolderName, filename);
 
       // let’s make sure that our thumb folder exists first
-      fs.mkdirp(api.getFolderPath(thumbFolderPath), function(err) {
+      fs.mkdirp(api.getFolderPath(thumbFolderPath), function (err) {
         if (err) {
           reject(err);
         }
@@ -66,18 +66,18 @@ module.exports = (function() {
         // regroup all thumbs promises so they can happen as fast as possible
         let makeThumbs = [];
 
-        if (mediaType === 'image') {
-          thumbResolutions.forEach(thumbRes => {
+        if (mediaType === "image") {
+          thumbResolutions.forEach((thumbRes) => {
             let makeThumb = new Promise((resolve, reject) => {
               _makeImageThumb(mediaPath, thumbFolderPath, filename, thumbRes)
-                .then(thumbPath => {
+                .then((thumbPath) => {
                   let thumbMeta = {
                     path: thumbPath,
-                    size: thumbRes
+                    size: thumbRes,
                   };
                   resolve(thumbMeta);
                 })
-                .catch(err => {
+                .catch((err) => {
                   dev.error(
                     `makeMediaThumbs / Failed to make image thumbs with error ${err}`
                   );
@@ -88,10 +88,10 @@ module.exports = (function() {
           });
         }
 
-        if (mediaType === 'video') {
+        if (mediaType === "video") {
           // make screenshot
           let screenshotsTimemarks = [0];
-          screenshotsTimemarks.forEach(timeMark => {
+          screenshotsTimemarks.forEach((timeMark) => {
             let makeScreenshot = new Promise((resolve, reject) => {
               _makeVideoScreenshot(
                 mediaPath,
@@ -107,7 +107,7 @@ module.exports = (function() {
 
                   let makeThumbsFromScreenshot = [];
 
-                  thumbResolutions.forEach(thumbRes => {
+                  thumbResolutions.forEach((thumbRes) => {
                     let makeThumbFromScreenshot = new Promise(
                       (resolve, reject) => {
                         _makeImageThumb(
@@ -116,14 +116,14 @@ module.exports = (function() {
                           screenshotName,
                           thumbRes
                         )
-                          .then(thumbPath => {
+                          .then((thumbPath) => {
                             let thumbMeta = {
                               path: thumbPath,
-                              size: thumbRes
+                              size: thumbRes,
                             };
                             resolve(thumbMeta);
                           })
-                          .catch(err => {
+                          .catch((err) => {
                             dev.error(
                               `makeMediaThumbs / Failed to make video thumbs with error ${err}`
                             );
@@ -133,11 +133,11 @@ module.exports = (function() {
                     );
                     makeThumbsFromScreenshot.push(makeThumbFromScreenshot);
                   });
-                  Promise.all(makeThumbsFromScreenshot).then(thumbsData => {
+                  Promise.all(makeThumbsFromScreenshot).then((thumbsData) => {
                     resolve({ timeMark, thumbsData });
                   });
                 })
-                .catch(err => {
+                .catch((err) => {
                   dev.error(`Couldn’t make video screenshots.`);
                   resolve();
                 });
@@ -147,10 +147,10 @@ module.exports = (function() {
         }
 
         Promise.all(makeThumbs)
-          .then(thumbData => {
+          .then((thumbData) => {
             resolve(thumbData);
           })
-          .catch(err => {
+          .catch((err) => {
             reject(err);
           });
       });
@@ -158,9 +158,9 @@ module.exports = (function() {
   }
 
   function getRatioFromEXIF(mediaPath) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       getEXIFData(mediaPath)
-        .then(exifdata => {
+        .then((exifdata) => {
           let mediaRatio;
           mediaRatio = exifdata.height / exifdata.width;
           if (
@@ -172,41 +172,41 @@ module.exports = (function() {
           }
           resolve(mediaRatio);
         })
-        .catch(err => reject());
+        .catch((err) => reject());
     });
   }
 
   function getTimestampFromEXIF(mediaPath) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       getEXIFData(mediaPath)
-        .then(exifdata => {
+        .then((exifdata) => {
           let ts = _extractImageTimestamp(exifdata);
           dev.logverbose(`TS is ${ts}`);
           resolve(ts);
         })
-        .catch(err => reject(err));
+        .catch((err) => reject(err));
     });
   }
 
   function getEXIFData(mediaPath) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logfunction(`THUMBS — readEXIFData — for: ${mediaPath}`);
 
       sharp(mediaPath)
         .metadata()
-        .then(exifdata => {
-          if (typeof exifdata === 'undefined') {
+        .then((exifdata) => {
+          if (typeof exifdata === "undefined") {
             reject();
           }
           dev.logverbose(`Gotten metadata.`);
           resolve(exifdata);
         })
-        .catch(err => reject(err));
+        .catch((err) => reject(err));
     });
   }
 
   function removeMediaThumbs(slugFolderName, type, slugMediaName) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logfunction(
         `THUMBS — removeMediaThumbs — for slugFolderName = ${slugFolderName}, slugMediaName = ${slugMediaName}`
       );
@@ -220,13 +220,13 @@ module.exports = (function() {
 
       let fullThumbFolderPath = api.getFolderPath(thumbFolderPath);
 
-      fs.mkdirp(fullThumbFolderPath, function(err) {
+      fs.mkdirp(fullThumbFolderPath, function (err) {
         if (err) {
           reject(err);
         }
 
         // get all thumbs
-        fs.readdir(fullThumbFolderPath, function(err, filenames) {
+        fs.readdir(fullThumbFolderPath, function (err, filenames) {
           //         dev.logverbose(`Found filenames: ${filenames}`);
           if (err) {
             dev.error(`Couldn't read content dir: ${err}`);
@@ -238,16 +238,16 @@ module.exports = (function() {
           }
 
           // get all thumbs that start with
-          var thumbs = filenames.filter(name => {
+          var thumbs = filenames.filter((name) => {
             return name.indexOf(slugMediaName) === 0;
           });
 
           let tasks = [];
 
-          thumbs.map(thumbName => {
+          thumbs.map((thumbName) => {
             let removeThisThumb = new Promise((resolve, reject) => {
               let pathToThumb = path.join(fullThumbFolderPath, thumbName);
-              fs.unlink(pathToThumb, err => {
+              fs.unlink(pathToThumb, (err) => {
                 dev.logverbose(`Removing thumb ${thumbName}`);
                 if (err) {
                   reject(`${err}`);
@@ -268,7 +268,7 @@ module.exports = (function() {
   }
 
   function removeMediaThumbs(slugFolderName, type, slugMediaName) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logfunction(
         `THUMBS — removeMediaThumbs — for slugFolderName = ${slugFolderName}, slugMediaName = ${slugMediaName}`
       );
@@ -282,13 +282,13 @@ module.exports = (function() {
 
       let fullThumbFolderPath = api.getFolderPath(thumbFolderPath);
 
-      fs.mkdirp(fullThumbFolderPath, function(err) {
+      fs.mkdirp(fullThumbFolderPath, function (err) {
         if (err) {
           reject(err);
         }
 
         // get all thumbs
-        fs.readdir(fullThumbFolderPath, function(err, filenames) {
+        fs.readdir(fullThumbFolderPath, function (err, filenames) {
           //         dev.logverbose(`Found filenames: ${filenames}`);
           if (err) {
             dev.error(`Couldn't read content dir: ${err}`);
@@ -300,16 +300,16 @@ module.exports = (function() {
           }
 
           // get all thumbs that start with
-          var thumbs = filenames.filter(name => {
+          var thumbs = filenames.filter((name) => {
             return name.indexOf(slugMediaName) === 0;
           });
 
           let tasks = [];
 
-          thumbs.map(thumbName => {
+          thumbs.map((thumbName) => {
             let removeThisThumb = new Promise((resolve, reject) => {
               let pathToThumb = path.join(fullThumbFolderPath, thumbName);
-              fs.unlink(pathToThumb, err => {
+              fs.unlink(pathToThumb, (err) => {
                 dev.logverbose(`Removing thumb ${thumbName}`);
                 if (err) {
                   reject(`${err}`);
@@ -330,7 +330,7 @@ module.exports = (function() {
   }
 
   function removeFolderThumbs(slugFolderName, type) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logfunction(
         `THUMBS — removeFolderThumbs — for slugFolderName = ${slugFolderName}, type = ${type}`
       );
@@ -378,7 +378,7 @@ module.exports = (function() {
   }
 
   function _makeImageThumb(mediaPath, thumbFolderPath, filename, thumbRes) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logverbose(
         `Looking/Making an image thumb for ${mediaPath} and resolution = ${thumbRes}`
       );
@@ -388,7 +388,7 @@ module.exports = (function() {
       let fullThumbPath = api.getFolderPath(thumbPath);
 
       // check first if it exists, resolve if it does
-      fs.access(fullThumbPath, fs.F_OK, function(err) {
+      fs.access(fullThumbPath, fs.F_OK, function (err) {
         // if userDir folder doesn't exist yet at destination
         if (err) {
           dev.log(
@@ -396,20 +396,20 @@ module.exports = (function() {
           );
           sharp(mediaPath)
             .rotate()
-            .resize(thumbRes, thumbRes)
-            .max()
-            .withoutEnlargement()
-            .withMetadata()
-            .toFormat(global.settings.thumbFormat, {
-              quality: global.settings.mediaThumbQuality
+            .resize(thumbRes, thumbRes, {
+              fit: "inside",
+              withoutEnlargement: true,
             })
-            .background({ r: 255, g: 255, b: 255 })
-            .flatten()
+            .withMetadata()
+            .flatten({ background: { r: 255, g: 255, b: 255 } })
+            .toFormat(global.settings.thumbFormat, {
+              quality: global.settings.mediaThumbQuality,
+            })
             .toFile(fullThumbPath)
-            .then(function() {
+            .then(function () {
               resolve(thumbPath);
             })
-            .catch(err => reject(err));
+            .catch((err) => reject(err));
         } else {
           resolve(thumbPath);
         }
@@ -422,7 +422,7 @@ module.exports = (function() {
     filename,
     timeMark
   ) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logverbose(
         `Looking to make a video screenshot for ${mediaPath} and timeMark = ${timeMark}`
       );
@@ -432,26 +432,26 @@ module.exports = (function() {
       let fullScreenshotPath = api.getFolderPath(screenshotPath);
 
       // check first if it exists, resolve if it does
-      fs.access(fullScreenshotPath, fs.F_OK, function(err) {
+      fs.access(fullScreenshotPath, fs.F_OK, function (err) {
         // if userDir folder doesn't exist yet at destination
         if (err) {
           ffmpeg(mediaPath)
             // setup event handlers
-            .on('end', function(files) {
+            .on("end", function (files) {
               dev.logverbose(
                 `Screenshots were saved : ${JSON.stringify(files, null, 4)}`
               );
               resolve({ screenshotPath, screenshotName });
             })
-            .on('error', function(err) {
+            .on("error", function (err) {
               dev.error(`ffmpeg failed: ${err.message}`);
               reject(err.message);
             })
             .screenshots({
               count: 1,
-              timemarks: ['00:00:00'],
+              timemarks: ["00:00:00"],
               filename: screenshotName,
-              folder: api.getFolderPath(thumbFolderPath)
+              folder: api.getFolderPath(thumbFolderPath),
             });
         } else {
           dev.logverbose(
@@ -464,10 +464,10 @@ module.exports = (function() {
   }
 
   function getMediaDuration(mediaPath) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logfunction(`getMediaDuration: ${mediaPath}`);
-      ffmpeg.ffprobe(mediaPath, function(err, metadata) {
-        if (err || typeof metadata === 'undefined') {
+      ffmpeg.ffprobe(mediaPath, function (err, metadata) {
+        if (err || typeof metadata === "undefined") {
           dev.log(`getMediaDuration: PROBE DATA isn’t valid`);
           reject();
         } else {
@@ -479,10 +479,10 @@ module.exports = (function() {
   }
 
   function getMediaRatio(mediaPath) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       dev.logfunction(`getMediaRatio: ${mediaPath}`);
-      ffmpeg.ffprobe(mediaPath, function(err, metadata) {
-        if (err || typeof metadata === 'undefined') {
+      ffmpeg.ffprobe(mediaPath, function (err, metadata) {
+        if (err || typeof metadata === "undefined") {
           dev.log(`getMediaRatio: PROBE DATA isn’t valid`);
           reject();
         } else {
