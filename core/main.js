@@ -405,8 +405,53 @@ module.exports = function ({ router }) {
     menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
   }
+  const customUserContentPath = global.settings.customUserContentPath;
+
   function copyAndRenameUserFolder() {
     return new Promise(function (resolve, reject) {
+      if (customUserContentPath) {
+        dev.log(`Using custom user content path: ${customUserContentPath}`);
+
+        // Verify if the custom path exists
+        fs.access(customUserContentPath, fs.F_OK, function (err) {
+          if (err) {
+            // If custom path doesn't exist, create it and copy content
+            dev.log(
+              `Custom content folder ${customUserContentPath} does not exist`
+            );
+            dev.log(
+              `-> duplicating ${global.settings.contentDirname} to create a new one`
+            );
+
+            let sourcePathInApp;
+            if (is_electron) {
+              sourcePathInApp = path.join(
+                `${global.appRoot.replace(`${path.sep}app.asar`, "")}`,
+                `${global.settings.contentDirname}`
+              );
+            } else {
+              sourcePathInApp = path.join(
+                `${global.appRoot}`,
+                `${global.settings.contentDirname}`
+              );
+            }
+            fs.copy(sourcePathInApp, customUserContentPath, function (err) {
+              if (err) {
+                dev.error(`Failed to copy: ${err}`);
+                reject(err);
+              }
+              resolve(customUserContentPath);
+            });
+          } else {
+            dev.log(
+              `Custom content folder ${customUserContentPath} already exists`
+            );
+            resolve(customUserContentPath);
+          }
+        });
+        return;
+      }
+
       const userDirPath = is_electron
         ? app.getPath(global.settings.userDirPath)
         : getPath.getDocumentsFolder();
